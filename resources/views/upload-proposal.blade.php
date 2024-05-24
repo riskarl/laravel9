@@ -3,7 +3,6 @@
 @section('content')
 <div class="row">
     <div class="col-lg-12 mb-4">
-        <!-- Simple Tables -->
         <div class="card">
             <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
                 <h6 class="m-0 font-weight-bold text-primary">Manajemen Proposal</h6>
@@ -30,7 +29,11 @@
                             <td>{{ $proker->proposal ? $proker->proposal->file_proposal : 'Tidak ada file' }}</td>
                             <td>{{ $proker->proposal ? $proker->proposal->status : 'Pending'}}</td>
                             <td>{{ $proker->proposal ? $proker->proposal->catatan : 'Tidak Ada Catatan' }}</td>
-                            <td><button type="button" class="btn btn-warning mr-2" data-toggle="modal" data-target="#uploadModal">Upload File</button></td>
+                            <td>
+                              <button type="button" class="btn btn-warning mr-2" data-toggle="modal" data-target="#uploadModal" data-id="{{ $proker->id }}">
+                                  Upload File
+                              </button>
+                          </td>
                         </tr>
                         @endforeach
                     </tbody>
@@ -44,33 +47,34 @@
 <div class="modal fade" id="uploadModal" tabindex="-1" role="dialog" aria-labelledby="uploadModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="uploadModalLabel">Upload File</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <input type="file" id="fileInput" class="form-control">
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary" onclick="uploadFile()">Upload File</button>
-            </div>
+            <form action="{{ route('file.upload') }}" method="POST" enctype="multipart/form-data">
+                @csrf
+                <div class="modal-header">
+                    <h5 class="modal-title" id="uploadModalLabel">Upload File</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" name="id_proker" id="prokerId">
+                    <input type="file" name="file" id="fileInput" class="form-control" required>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Upload File</button>
+                </div>
+            </form>
         </div>
     </div>
 </div>
 
 <script>
-function uploadFile() {
-    var fileInput = document.getElementById('fileInput');
-    var file = fileInput.files[0];
-    var formData = new FormData();
-    formData.append('file', file);
-    formData.append('_token', '{{ csrf_token() }}'); // CSRF token
-
-
-}
+$('#uploadModal').on('show.bs.modal', function (event) {
+    var button = $(event.relatedTarget);
+    var idProker = button.data('id');
+    var modal = $(this);
+    modal.find('#prokerId').val(idProker);
+});
 </script>
 
 @endsection

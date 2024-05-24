@@ -11,7 +11,7 @@ use App\Models\User;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\OrganisasiController;
-
+use App\Http\Controllers\UploadController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -90,3 +90,6 @@ Route::get('/pengecekanproposalbpm', [ProposalController::class, 'pengecekanprop
 Route::get('/pengecekanlpj', [LpjController::class, 'pengecekanlpj'])->middleware('role:3');
 Route::get('/pengecekanlpjbpm', [LpjController::class, 'pengecekanlpjbpm'])->middleware('role:4');
 Route::get('/pengecekanrab', [RabController::class, 'uploadsrpd'])->middleware('role:4');
+
+
+Route::post('/upload-file', [UploadController::class, 'store'])->name('file.upload');
