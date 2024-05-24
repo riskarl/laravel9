@@ -30,7 +30,7 @@
                             <td>{{ $proker->proposal ? $proker->proposal->status : 'Pending'}}</td>
                             <td>{{ $proker->proposal ? $proker->proposal->catatan : 'Tidak Ada Catatan' }}</td>
                             <td>
-                              <button type="button" class="btn btn-warning mr-2" data-toggle="modal" data-target="#uploadModal" data-id="{{ $proker->id }}">
+                              <button type="button" class="btn btn-warning mr-2 btnModal" data-toggle="modal" data-target="#uploadModal" data-id="{{ $proker->id }}">
                                   Upload File
                               </button>
                           </td>
@@ -69,12 +69,19 @@
 </div>
 
 <script>
-$('#uploadModal').on('show.bs.modal', function (event) {
-    var button = $(event.relatedTarget);
-    var idProker = button.data('id');
-    var modal = $(this);
-    modal.find('#prokerId').val(idProker);
-});
-</script>
+  document.addEventListener('DOMContentLoaded', function () {
+      var modal = document.getElementById('uploadModal');
+      var buttons = document.querySelectorAll('.btnModal');
+      var prokerIdInput = document.getElementById('prokerId');
+  
+      buttons.forEach(function (button) {
+          button.addEventListener('click', function () {
+              var idProker = this.getAttribute('data-id');
+              prokerIdInput.value = idProker;
+              console.log('idProker:', idProker);
+          });
+      });
+  });
+  </script>
 
 @endsection

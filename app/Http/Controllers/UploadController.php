@@ -11,7 +11,6 @@ class UploadController extends Controller
 {
     public function store(Request $request)
     {
-
         $file = $request->file('file');
         $filename = Str::uuid() . '.' . $file->getClientOriginalExtension();
         $directory = public_path('files');
