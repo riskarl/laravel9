@@ -29,10 +29,9 @@ class UsermanajemenController extends Controller
 
     function create()
     {
-        $users = User::all();
-        $jabatans = Jabatan::all();
+        $users = User::with('jabatan')->get();
 
-        return view('usermanajemen', ['users' => $users, 'jabatans' => $jabatans]);
+        return view('usermanajemen', ['users' => $users]);
     }
 
     function createform()

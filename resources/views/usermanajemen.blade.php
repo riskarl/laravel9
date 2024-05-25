@@ -34,7 +34,7 @@
                 <td>{{ $user->username }}</td>
                 <td>{{ $user->password }}</td>
                 <td>{{ $user->organization }}</td>
-                <td>{{ $user->jabatan }}</td>
+                <td>{{ $user->jabatan->jabatan }}</td>
                 <td>{{ $user->role }}</td>
                 <td class="d-flex">
                   <a href="/usermanajemen/{{ $user->id }}" type="button" class="btn btn-warning mr-2">Edit</a>
