@@ -19,6 +19,11 @@ class Proker extends Model
         return $this->belongsTo(Organisasi::class, 'nama_organisasi');
     }
 
+    public function proposal()
+    {
+        return $this->hasOne(Proposal::class, 'id_proker');
+    }
+
     public function lpj()
     {
         return $this->belongsTo(Lpj::class, 'lpj');

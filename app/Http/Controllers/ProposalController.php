@@ -10,8 +10,7 @@ class ProposalController extends Controller
 {
     public function index()
     {
-        $proker = Proker::all();
-
+        $proker = Proker::with(['organisasi', 'proposal'])->get();
         // Mengirim data pengguna ke view 'upload-proposal'
         return view('upload-proposal', ['listproker' => $proker]);
     }
