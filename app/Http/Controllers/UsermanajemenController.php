@@ -14,8 +14,16 @@ class UsermanajemenController extends Controller
 {
     function store(Request $request)
     {
-        $result = $request->validate(['name' => "required|max:35", "username" => "required|max:15", "password" => "required", "organization" => "required", "id_jabatan" => "required", "role" => "required"]);
-        User::create($result);
+        $validatedData = $request->validate([
+            'name' => 'required|max:35',
+            'username' => 'required|max:15|unique:users,username',
+            'password' => 'required',
+            'organization' => 'required',
+            'jabatan_id' => 'required|exists:jabatan,jabatan_id',
+            'role' => 'required'
+        ]);
+        
+        User::create($validatedData);
         return redirect('/usermanajemen');
     }
 
