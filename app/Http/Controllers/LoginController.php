@@ -4,48 +4,48 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\DB;
-use Config;
+use App\Models\User;
 use Session;
 
 class LoginController extends Controller
 {
     function signin(Request $request)
-    { {
-            $credentials = $request->validate([
-                'username' => 'required',
-                'password' => 'required'
-            ]);
+    {
+        $credentials = $request->validate([
+            'username' => 'required',
+            'password' => 'required'
+        ]);
 
-            if (Auth::attempt($credentials)) {
-                $request->session()->regenerate();
-                if (Auth::user()->role == 1) {
+        if (Auth::attempt($credentials)) {
+            $request->session()->regenerate();
+
+            $user = Auth::user();
+            $jabatan = $user->jabatan()->first();
+
+            session(['user' => $user->only(['id', 'name', 'username', 'role'])]);
+            session(['jabatan' => $jabatan ? $jabatan->only(['jabatan_id', 'jabatan']) : null]);
+
+            switch ($user->role) {
+                case 1:
                     return redirect()->intended('/dashboard');
-                } else if (Auth::user()->role == 2) {
+                case 2:
                     return redirect()->intended('/dashboard/organisasi');
-                } else if (Auth::user()->role == 3) {
+                case 3:
                     return redirect()->intended('/dashboard/pengecek');
-                } else if (Auth::user()->role == 4) {
+                case 4:
                     return redirect()->intended('/dashboard/bpm');
-                }
+                default:
+                    return redirect('/'); // default redirection
             }
-
-            return back()->with('loginError', 'Login Failed!');
         }
-        // $user = DB::table('users')->where('username', $request->username)->first();
-        // if ($user && $request->password == $user->password) {
-        //     return redirect()->intended('dashboard');
-        // }
-        // return back()->withErrors([
-        //     'username' => 'The provided credentials do not match our records.',
-        // ]);
-    }
 
+        return back()->with('loginError', 'Login Failed!');
+    }
 
     function logout()
     {
         Session::flush();
-        return redirect('/'); // removes all session data
+        Auth::logout();
+        return redirect('/'); // Redirect ke halaman login setelah logout
     }
 }
