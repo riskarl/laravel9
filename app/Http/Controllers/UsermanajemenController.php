@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Models\Jabatan; 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\DB;
@@ -13,7 +14,7 @@ class UsermanajemenController extends Controller
 {
     function store(Request $request)
     {
-        $result = $request->validate(['name' => "required|max:35", "username" => "required|max:15", "password" => "required", "organization" => "required", "jabatan" => "required", "role" => "required"]);
+        $result = $request->validate(['name' => "required|max:35", "username" => "required|max:15", "password" => "required", "organization" => "required", "id_jabatan" => "required", "role" => "required"]);
         User::create($result);
         return redirect('/usermanajemen');
     }
@@ -21,7 +22,8 @@ class UsermanajemenController extends Controller
     function create()
     {
         $user = User::all();
-        return view('usermanajemen', ['users' => $user]);
+        $jabatans = Jabatan::all();
+        return view('usermanajemen', ['users' => $users, 'jabatans' => $jabatans]);
     }
 
     function update(Request $request, User $user)

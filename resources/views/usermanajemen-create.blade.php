@@ -28,24 +28,14 @@
       </select>
     </div>
     <div class="form-group">
-      <label for="exampleFormControlSelect1">Pilih Jabatan</label>
-      <select class="form-control" name="jabatan" id="jabatan">
-        <option>Ketua BEM</option> 
-        <option>Sekretaris BEM</option>
-        <option>Pembina BEM</option>
-        <option>Ketua BPM</option>
-        <option>Bendahara BPM</option>
-        <option>Wakil Direktur III Bidang Kemahasiswaan</option>
-        <option>Koordinator Subbagian Akademik dan Kemahasiswaan</option>
-        <option>Ketua HIMA</option>
-        <option>Sekretaris HIMA</option>
-        <option>Ketua Jurusan / Prodi</option>
-        <option>Pembina HIMA</option>
-        <option>Ketua UKM</option>
-        <option>Sekretaris UKM</option>
-        <option>Pembina UKM</option>
+      <label for="jabatan">Pilih Jabatan</label>
+      <select class="form-control" name="jabatan_id" id="jabatan">
+          @foreach($jabatans as $jabatan)
+              <option value="{{ $jabatan->jabatan_id }}">{{ $jabatan->jabatan }}</option>
+          @endforeach
       </select>
     </div>
+  
     <div class="form-group">
       <label for="exampleFormControlSelect1">Pilih Role</label>
       <select class="form-control" name="role" id="role">
