@@ -48,9 +48,7 @@ Route::get('/dashboard/bpm', function () {
     return view('dashboard-bpm');
 })->middleware('role:4');
 
-Route::get('/usermanajemen/{user}', function (User $user) {
-    return view('usermanajemen-edit', ['user' => $user, 'id' => $user->id]);
-})->middleware('role:1');
+Route::get('/usermanajemen/{user}', [UsermanajemenController::class, 'edit'])->middleware('role:1');
 
 Route::put('/usermanajemen/{user}', [UsermanajemenController::class, 'update'])->middleware('role:1');
 

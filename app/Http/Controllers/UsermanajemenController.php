@@ -41,6 +41,13 @@ class UsermanajemenController extends Controller
         return view('usermanajemen-create', ['jabatans' => $jabatans]);
     }
 
+    function edit(User $user)
+    {
+        $jabatans = Jabatan::all();
+        return view('usermanajemen-edit', ['user' => $user, 'jabatans' => $jabatans]);
+    }
+
+
     function update(Request $request, User $user)
     {
         $result = $request->validate(['name' => "required|max:35", "username" => "required|max:15", "organization" => "required", "jabatan" => "required", "role" => "required"]);

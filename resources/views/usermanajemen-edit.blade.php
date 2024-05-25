@@ -2,7 +2,7 @@
 
 @section('kontainer')
 
-<form action="/usermanajemen/{{ $id }}"  method="POST">
+<form action="/usermanajemen/{{ $user->id }}"  method="POST">
     @method ('put')
     @csrf
     <h1>Edit Akun</h1>
@@ -29,23 +29,15 @@
       </select>
     </div> 
     <div class="form-group">
-      <label for="exampleFormControlSelect1">Pilih Jabatan</label>
-      <select class="form-control" name="jabatan" id="jabatan">
-        <option {{ old('jabatan', $user->jabatan) == 'Ketua BEM' ? 'selected' : '' }}>Ketua BEM</option> 
-        <option {{ old('jabatan', $user->jabatan) == 'Sekretaris BEM' ? 'selected' : '' }}>Sekretaris BEM</option>
-        <option {{ old('jabatan', $user->jabatan) == 'Pembina BEM' ? 'selected' : '' }}>Pembina BEM</option>
-        <option {{ old('jabatan', $user->jabatan) == 'Ketua BPM' ? 'selected' : '' }}>Ketua BPM</option>
-        <option {{ old('jabatan', $user->jabatan) == 'Wakil Direktur III Bidang Kemahasiswaan' ? 'selected' : '' }}>Wakil Direktur III Bidang Kemahasiswaan</option>
-        <option {{ old('jabatan', $user->jabatan) == 'Koordinator Subbagian Akademik dan Kemahasiswaan' ? 'selected' : '' }}>Koordinator Subbagian Akademik dan Kemahasiswaan</option>
-        <option {{ old('jabatan', $user->jabatan) == 'Ketua HIMA' ? 'selected' : '' }}>Ketua HIMA</option>
-        <option {{ old('jabatan', $user->jabatan) == 'Sekretaris HIMA' ? 'selected' : '' }}>Sekretaris HIMA</option>
-        <option {{ old('jabatan', $user->jabatan) == 'Ketua Jurusan / Prodi' ? 'selected' : '' }}>Ketua Jurusan / Prodi</option>
-        <option {{ old('jabatan', $user->jabatan) == 'Pembina HIMA' ? 'selected' : '' }}>Pembina HIMA</option>
-        <option {{ old('jabatan', $user->jabatan) == 'Ketua UKM' ? 'selected' : '' }}>Ketua UKM</option>
-        <option {{ old('jabatan', $user->jabatan) == 'Sekretaris UKM' ? 'selected' : '' }}>Sekretaris UKM</option>
-        <option {{ old('jabatan', $user->jabatan) == 'Pembina UKM' ? 'selected' : '' }}>Pembina UKM</option>
+      <label for="jabatan">Pilih Jabatan</label>
+      <select class="form-control" name="jabatan_id" id="jabatan">
+          @foreach($jabatans as $jabatan)
+              <option value="{{ $jabatan->jabatan_id }}" {{ old('jabatan_id', $user->jabatan_id) == $jabatan->jabatan_id ? 'selected' : '' }}>
+                  {{ $jabatan->jabatan }}
+              </option>
+          @endforeach
       </select>
-    </div>    
+  </div>
     {{-- <div class="form-group">
         <label for="exampleInputEmail1">Jabatan</label>
         <input type="text" value="{{ old('jabatan', $user->jabatan ) }} "name="jabatan" class="form-control" id="jabatan" aria-describedby="emailHelp"
