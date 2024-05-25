@@ -26,11 +26,19 @@
                             <td>{{ $proker->id }}</td>
                             <td>{{ $proker->organisasi ? $proker->organisasi->nama_organisasi : 'Tidak ada organisasi' }}</td>
                             <td>{{ $proker->nama_proker }}</td>
-                            <td>{{ $proker->proposal ? $proker->proposal->file_proposal : 'Tidak ada file' }}</td>
+                            <td> 
+                                @if ($proker->proposal && $proker->proposal->file_proposal)
+                                <a href="{{ asset('files/' . $proker->proposal->file_proposal) }}" target="_blank">
+                                    {{ $proker->proposal->file_proposal }}
+                                </a>
+                                @else
+                                Tidak ada file
+                                @endif
+                            </td>
                             <td>{{ $proker->proposal ? $proker->proposal->status : 'Pending'}}</td>
                             <td>{{ $proker->proposal ? $proker->proposal->catatan : 'Tidak Ada Catatan' }}</td>
                             <td>
-                              <button type="button" class="btn btn-warning mr-2 btnModal" data-toggle="modal" data-target="#uploadModal" data-id="{{ $proker->id }}">
+                              <button type="button" class="btn btn-primary mr-2 btnModal" data-toggle="modal" data-target="#uploadModal" data-id="{{ $proker->id }}">
                                   Upload File
                               </button>
                           </td>
