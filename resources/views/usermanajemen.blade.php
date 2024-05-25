@@ -1,7 +1,6 @@
 @extends('layouts.admin-layout')
 
 @section('kontainer')
-
 <div class="row">
     <div class="col-lg-12 mb-4">
       <!-- Simple Tables -->
@@ -32,37 +31,13 @@
                 <td>{{ $user->id }}</td>
                 <td>{{ $user->name }}</td>
                 <td>{{ $user->username }}</td>
-                <td>{{ $user->password }}</td>
+                <td>{{ $user->password }}</td> <!-- Consider hiding this for security -->
                 <td>{{ $user->organization }}</td>
                 <td>{{ $user->jabatan->jabatan }}</td>
                 <td>{{ $user->role }}</td>
                 <td class="d-flex">
                   <a href="/usermanajemen/{{ $user->id }}" type="button" class="btn btn-warning mr-2">Edit</a>
                   <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteModal" data-userid="{{ $user->id }}">Hapus</button>
-                  <!-- Delete Confirmation Modal -->
-                  <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
-                    <div class="modal-dialog" role="document">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title" id="deleteModalLabel">Konfirmasi Hapus Akun</h5>
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                    <span aria-hidden="true">&times;</span>
-                                </button>
-                            </div>
-                            <div class="modal-body">
-                                Apakah Anda yakin ingin menghapus akun ini?
-                            </div>
-                            <div class="modal-footer">
-                                <form id="deleteForm" action="/usermanajemen/{{ $user->id }}" method="POST">
-                                    @method('DELETE')
-                                    @csrf
-                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
-                                    <button type="submit" class="btn btn-danger">Hapus</button>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
-                  </div>
                 </td>                
               </tr> 
               @endforeach
@@ -73,6 +48,42 @@
       </div>
     </div>
   </div>
-  @endsection
 
-  
+  <!-- Delete Confirmation Modal -->
+  <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteModalLabel">Konfirmasi Hapus Akun</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                Apakah Anda yakin ingin menghapus akun ini?
+            </div>
+            <div class="modal-footer">
+                <form id="deleteForm" action="" method="POST">
+                    @method('DELETE')
+                    @csrf
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
+                    <button type="submit" class="btn btn-danger">Hapus</button>
+                </form>
+            </div>
+        </div>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var deleteButtons = document.querySelectorAll('[data-target="#deleteModal"]');
+        deleteButtons.forEach(function(button) {
+            button.addEventListener('click', function() {
+                var userId = button.getAttribute('data-userid');
+                var formAction = '/usermanajemen/' + userId;
+                document.getElementById('deleteForm').action = formAction;
+            });
+        });
+    });
+    </script>
+@endsection
