@@ -50,10 +50,18 @@ class UsermanajemenController extends Controller
 
     function update(Request $request, User $user)
     {
-        $result = $request->validate(['name' => "required|max:35", "username" => "required|max:15", "organization" => "required", "jabatan" => "required", "role" => "required"]);
-        User::where("id", $user->id)->update($result);
+        $validatedData = $request->validate([
+            'name' => "required|max:35",
+            'username' => "required|max:15",
+            'organization' => "required",
+            'jabatan_id' => "required|exists:jabatan,jabatan_id",
+            'role' => "required"
+        ]);
+
+        $user->update($validatedData);
         return redirect('/usermanajemen');
     }
+
 
     function delete($id)
     {
