@@ -31,9 +31,7 @@ Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware('role:1');
 
-Route::get('/usermanajemen/create', function () {
-    return view('usermanajemen-create');
-});
+Route::get('/usermanajemen/create',[UsermanajemenController::class, 'createform']);
 
 Route::post('/usermanajemen', [UsermanajemenController::class, 'store']);
 Route::get('/usermanajemen', [UsermanajemenController::class, 'create'])->middleware('role:1');

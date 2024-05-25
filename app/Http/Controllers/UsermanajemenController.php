@@ -21,9 +21,17 @@ class UsermanajemenController extends Controller
 
     function create()
     {
-        $user = User::all();
+        $users = User::all();
         $jabatans = Jabatan::all();
+
         return view('usermanajemen', ['users' => $users, 'jabatans' => $jabatans]);
+    }
+
+    function createform()
+    {
+        $jabatans = Jabatan::all();
+
+        return view('usermanajemen-create', ['jabatans' => $jabatans]);
     }
 
     function update(Request $request, User $user)
