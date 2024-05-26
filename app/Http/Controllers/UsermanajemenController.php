@@ -2,8 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Organisasi;
 use App\Models\User;
-use App\Models\Jabatan; 
+use App\Models\Jabatan;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\DB;
@@ -22,7 +23,7 @@ class UsermanajemenController extends Controller
             'jabatan_id' => 'required|exists:jabatan,jabatan_id',
             'role' => 'required'
         ]);
-        
+
         User::create($validatedData);
         return redirect('/usermanajemen');
     }
@@ -37,8 +38,9 @@ class UsermanajemenController extends Controller
     function createform()
     {
         $jabatans = Jabatan::all();
+        $organisasi = Organisasi::all();
 
-        return view('usermanajemen-create', ['jabatans' => $jabatans]);
+        return view('usermanajemen-create', ['jabatans' => $jabatans, 'organisasi' => $organisasi]);
     }
 
     function edit(User $user)

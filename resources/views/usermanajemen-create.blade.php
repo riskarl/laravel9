@@ -23,8 +23,9 @@
       <label for="exampleFormControlSelect1">Pilih Organisasi</label>
       <select class="form-control" name="organization" id="organization">
         <option>Kampus</option> 
-        <option>Organisasi Kemahasiswaan</option>
-        <option>UKM</option>
+        @foreach($organisasi as $org)
+        <option value="{{ $org->nama_organisasi }}">{{ $org->nama_organisasi }}</option>
+        @endforeach
       </select>
     </div>
     <div class="form-group">
