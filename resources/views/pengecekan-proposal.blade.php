@@ -15,7 +15,8 @@
               <tr>
                 <th>ID</th>
                 <th>Nama Program Kerja</th>
-                <th>Jabatan Pengecek</th>
+                <th>Nama Organisasi</th>
+                <th>File</th>
                 <th>Catatan</th>
                 <th>Status</th>
                 <th>Tanda Tangan</th>
@@ -23,17 +24,37 @@
               </tr>
             </thead>
             <tbody>
-              {{-- @foreach ($listproker as $proker) --}}
-              <tr>
-                {{-- <td>{{ $proker->id }}</td>
-                <td>{{ $proker->organisasi ? $proker->organisasi->nama_organisasi : 'Tidak ada organisasi' }}</td>
-                <td>{{ $proker->nama_proker }}</td>
-                <td>{{ $proker->nama_ketupel }}</td>
-                <td>{{ $proker->tanggal }}</td>
-                <td>{{ $proker->tempat }}</td>
-                <td>{{ $proker->dana_diajukan }}</td> --}}              
-              </tr> 
-              {{-- @endforeach --}}
+              @foreach ($listproker as $proker)
+                <tr>
+                    <td>{{ $proker->id }}</td>
+                    <td>{{ $proker->nama_proker }}</td>
+                    <td>{{ $proker->organisasi->nama_organisasi }}</td>
+                    <td>
+                      @if ($proker->proposal)
+                          <a href="{{ asset('path/to/proposals/' . $proker->proposal->file_proposal) }}" target="_blank">
+                              {{ $proker->proposal->file_proposal }}</a>
+                      @else
+                          Tidak ada file proposal
+                      @endif
+                  </td>
+                  <td>
+                    @if ($proker->proposal)
+                        {{ $proker->proposal->catatan }}
+                    @else
+                        Tidak Ada Catatan
+                    @endif
+                  </td>                
+                  <td>
+                    @if($proker->proposal)
+                        {{ $proker->proposal->status }}
+                    @else
+                        Pending
+                    @endif
+                  </td>                
+                    <td>{{-- Kolom untuk menampilkan tanda tangan --}}</td>
+                    <td>{{-- Kolom untuk menampilkan aksi --}}</td>
+                </tr>
+              @endforeach
             </tbody>
           </table>
         </div>
