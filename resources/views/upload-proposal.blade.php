@@ -27,7 +27,7 @@
                                 $lastWord = end($jabatanWords);
                                 $wordCount = count($jabatanWords);
                             @endphp
-                            @if ($wordCount > 2 || ($proker->organisasi && stripos($proker->organisasi->nama_organisasi, $lastWord) !== false) || $jabatan == 'Ketua BPM')
+                            @if ($wordCount > 2 || ($proker->organisasi && stripos($proker->organisasi->nama_organisasi, $lastWord) !== false) || $jabatan == 'Ketua BEM')
                                 <tr>
                                     <td>{{ $proker->id }}</td>
                                     <td>{{ $proker->organisasi ? $proker->organisasi->nama_organisasi : 'Tidak ada organisasi' }}</td>

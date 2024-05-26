@@ -13,7 +13,8 @@ class ProkerController extends Controller
     {
         $organisasi = Organisasi::all();
         $listproker = Proker::all();
-        return view('proker', ['listproker' => $listproker, 'organisasi' => $organisasi]);
+        $jabatan = Session::get('jabatan')['jabatan'];
+        return view('proker', ['listproker' => $listproker, 'organisasi' => $organisasi, 'jabatan' => $jabatan]);
     }
 
     public function tampil()
