@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Organisasi;
 use App\Models\Proker;
 use Illuminate\Http\Request;
+use Session;
 
 class ProkerController extends Controller
 {
@@ -19,7 +20,8 @@ class ProkerController extends Controller
     {
         $organisasi = Organisasi::all();
         $listproker = Proker::all();
-        return view('proker-create', ['listproker' => $listproker, 'organisasi' => $organisasi]);
+        $jabatan = Session::get('jabatan')['jabatan'];
+        return view('proker-create', ['listproker' => $listproker, 'organisasi' => $organisasi, 'jabatan' => $jabatan]);
     }
 
     public function store(Request $request)

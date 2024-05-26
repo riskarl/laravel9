@@ -6,14 +6,16 @@ use App\Models\Proker;
 use Illuminate\Http\Request;
 use App\Models\Proposal;
 use DB;
+use Session;
 
 class ProposalController extends Controller
 {
     public function index()
     {
         $proker = Proker::with(['organisasi', 'proposal'])->get();
+        $jabatan = Session::get('jabatan')['jabatan'];
         // Mengirim data pengguna ke view 'upload-proposal'
-        return view('upload-proposal', ['listproker' => $proker]);
+        return view('upload-proposal', ['listproker' => $proker, 'jabatan' => $jabatan]);
     }
 
 

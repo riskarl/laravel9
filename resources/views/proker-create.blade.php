@@ -8,11 +8,23 @@
     <div class="form-group">
       <label for="exampleInputEmail1">Nama Organisasi</label>
       <select name="nama_organisasi" id="selectOrganisasi" required>
-      <option value="">Pilih Organisasi</option>
-      @foreach($organisasi as $organisasi)
-      <option value="{{ $organisasi->id }}">{{ $organisasi->nama_organisasi }}</option>
-      @endforeach
-      </select>
+        <option value="">Pilih Organisasi</option>
+    
+        @foreach($organisasi as $org)
+            @php
+                $jabatanWords = explode(' ', $jabatan);
+                $lastWord = end($jabatanWords);
+                $wordCount = count($jabatanWords);
+            @endphp
+            @if($wordCount > 2)
+                <option value="{{ $org->id }}">{{ $org->nama_organisasi }}</option>
+            @elseif(stripos($org->nama_organisasi, $lastWord) !== false)
+                <option value="{{ $org->id }}">{{ $org->nama_organisasi }}</option>
+            @endif
+        @endforeach
+    </select>
+    
+    
     </div>
     <div class="form-group">
         <label for="exampleInputEmail1">Nama Program Kerja</label>
