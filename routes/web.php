@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\OrganisasiController;
 use App\Http\Controllers\UploadController;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -31,7 +32,7 @@ Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware('role:1');
 
-Route::get('/usermanajemen/create',[UsermanajemenController::class, 'createform']);
+Route::get('/usermanajemen/create', [UsermanajemenController::class, 'createform']);
 
 Route::post('/usermanajemen', [UsermanajemenController::class, 'store']);
 Route::get('/usermanajemen', [UsermanajemenController::class, 'create'])->middleware('role:1');

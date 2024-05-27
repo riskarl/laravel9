@@ -24,8 +24,11 @@
       <label for="exampleFormControlSelect1">Pilih Organisasi</label>
       <select class="form-control" name="organization" id="organization">
         <option {{ old('organization', $user->organization) == 'Kampus' ? 'selected' : '' }}>Kampus</option>
-        <option {{ old('organization', $user->organization) == 'Organisasi Kemahasiswaan' ? 'selected' : '' }}>Organisasi Kemahasiswaan</option>
-        <option {{ old('organization', $user->organization) == 'UKM' ? 'selected' : '' }}>UKM</option>
+        @foreach($organisasi as $org)
+        <option value="{{ $org->nama_organisasi }}" {{ $org->nama_organisasi == old('organization', $user->organization) ? 'selected' : '' }}>
+            {{ $org->nama_organisasi }}
+        </option>
+        @endforeach
       </select>
     </div> 
     <div class="form-group">

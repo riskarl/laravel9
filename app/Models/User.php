@@ -35,4 +35,11 @@ class User extends Authenticatable
     {
         return $this->belongsTo(Jabatan::class, 'jabatan_id');
     }
+
+    // User.php
+    public function organization()
+    {
+        return $this->belongsTo(Organisasi::class, 'id');
+    }
+
 }
