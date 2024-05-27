@@ -28,12 +28,7 @@
             </thead>
             <tbody>
               @foreach ($listproker as $proker)
-                  @php
-                      $jabatanWords = explode(' ', $jabatan);
-                      $lastWord = end($jabatanWords);
-                      $wordCount = count($jabatanWords);
-                  @endphp
-                  @if ($wordCount > 2 || ($proker->organisasi && stripos($proker->organisasi->nama_organisasi, $lastWord) !== false) || $jabatan == 'Ketua BEM')
+                @if (($proker->organisasi && $proker->organisasi->nama_organisasi == $orguser))
                       <tr>
                           <td>{{ $proker->id }}</td>
                           <td>{{ $proker->organisasi ? $proker->organisasi->nama_organisasi : 'Tidak ada organisasi' }}</td>

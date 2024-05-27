@@ -14,7 +14,8 @@ class ProkerController extends Controller
         $organisasi = Organisasi::all();
         $listproker = Proker::all();
         $jabatan = Session::get('jabatan')['jabatan'];
-        return view('proker', ['listproker' => $listproker, 'organisasi' => $organisasi, 'jabatan' => $jabatan]);
+        $organisasiUser = Session::get('user')['organization'];
+        return view('proker', ['listproker' => $listproker, 'organisasi' => $organisasi, 'jabatan' => $jabatan, 'orguser' => $organisasiUser]);
     }
 
     public function tampil()
