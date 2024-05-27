@@ -19,7 +19,6 @@ class UploadController extends Controller
             File::makeDirectory($directory, 0755, true);
         }
 
-
         $file->move($directory, $filename);
 
         $proposal = new Proposal();
