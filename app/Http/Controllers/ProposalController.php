@@ -29,9 +29,12 @@ class ProposalController extends Controller
     public function pengecekanproposal()
     {
         $proker = Proker::with(['organisasi', 'proposal'])->get();
+        $organisasiUser = Session::get('user')['organization'];
+
+        // var_dump($proker);die;
 
         // Mengirim data pengguna ke view 'pengecekan-proposal'
-        return view('pengecekan-proposal', ['listproker' => $proker]);
+        return view('pengecekan-proposal', ['listproker' => $proker, 'orguser' => $organisasiUser]);
     }
 
     public function pengecekanproposalbpm()

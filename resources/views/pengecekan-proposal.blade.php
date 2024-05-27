@@ -25,6 +25,7 @@
             </thead>
             <tbody>
               @foreach ($listproker as $proker)
+               @if(($proker->organisasi->nama_organisasi == $orguser) || $orguser == 'Ketua BEM')
                 <tr>
                     <td>{{ $proker->id }}</td>
                     <td>{{ $proker->nama_proker }}</td>
@@ -54,6 +55,7 @@
                     <td>{{-- Kolom untuk menampilkan tanda tangan --}}</td>
                     <td>{{-- Kolom untuk menampilkan aksi --}}</td>
                 </tr>
+                @endif
               @endforeach
             </tbody>
           </table>
