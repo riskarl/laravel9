@@ -18,8 +18,6 @@
               <tr>
                 <th>ID</th>
                 <th>Nama Organisasi</th>
-                <th>Nama Pembina</th>
-                <th>Nama Ketua</th>
                 <th>Periode</th>
                 <th>Aksi</th>
               </tr>
@@ -29,8 +27,6 @@
               <tr>
                 <td>{{ $organisasi->id }}</td>
                 <td>{{ $organisasi->nama_organisasi }}</td>
-                <td>{{ $organisasi->nama_pembina }}</td>
-                <td>{{ $organisasi->nama_ketua }}</td>
                 <td>{{ $organisasi->periode }}</td>
                 <td class="d-flex">
                   <a href="/organisasi/{{ $organisasi->id }}" type="button" class="btn btn-warning mr-2">Edit</a>

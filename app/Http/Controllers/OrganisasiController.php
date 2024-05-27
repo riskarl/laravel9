@@ -16,14 +16,10 @@ class OrganisasiController extends Controller
         // Validasi input
         $request->validate([
             'nama_organisasi' => 'required',
-            'nama_pembina' => 'required',
-            'nama_ketua' => 'required',
             'periode' => 'required',
         ]);
         Organisasi::create([
             'nama_organisasi' => $request->nama_organisasi,
-            'nama_pembina' => $request->nama_pembina,
-            'nama_ketua' => $request->nama_ketua,
             'periode' => $request->periode,
         ]);
         return redirect('/organisasi');
@@ -38,7 +34,7 @@ class OrganisasiController extends Controller
 
     function update(Request $request, Organisasi $organisasi)
     {
-        $result = $request->validate(['nama_organisasi' => "required", "nama_pembina" => "required", "nama_ketua" => "required", "periode" => "required"]);
+        $result = $request->validate(['nama_organisasi' => "required", "periode" => "required"]);
         Organisasi::where("id", $organisasi->id)->update($result);
         return redirect('/organisasi');
     }
