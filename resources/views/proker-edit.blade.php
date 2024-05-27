@@ -10,9 +10,11 @@
       <label for="nama_organisasi">Nama Organisasi</label>
       <select name="nama_organisasi" id="nama_organisasi" class="form-control" required>
           @foreach($organisasi as $org)
+            @if($org->nama_organisasi == $orguser)
               <option value="{{ $org->id }}" {{ $org->id == old('nama_organisasi', $proker->organisasi->id) ? 'selected' : '' }}>
-                  {{ $org->nama_organisasi }}
+                {{ $org->nama_organisasi }}
               </option>
+            @endif
           @endforeach
       </select>
     </div>

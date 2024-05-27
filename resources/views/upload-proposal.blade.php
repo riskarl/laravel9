@@ -22,12 +22,8 @@
                     </thead>
                     <tbody>
                         @foreach ($listproker as $proker)
-                            @php
-                                $jabatanWords = explode(' ', $jabatan);
-                                $lastWord = end($jabatanWords);
-                                $wordCount = count($jabatanWords);
-                            @endphp
-                            @if ($wordCount > 2 || ($proker->organisasi && stripos($proker->organisasi->nama_organisasi, $lastWord) !== false) || $jabatan == 'Ketua BEM')
+                            {{-- Hanya tampilkan jika organisasi cocok dengan orguser atau jika jabatan adalah Ketua BEM --}}
+                            @if (($proker->organisasi && $proker->organisasi->nama_organisasi == $orguser))
                                 <tr>
                                     <td>{{ $proker->id }}</td>
                                     <td>{{ $proker->organisasi ? $proker->organisasi->nama_organisasi : 'Tidak ada organisasi' }}</td>
@@ -41,7 +37,7 @@
                                             Tidak ada file
                                         @endif
                                     </td>
-                                    <td>{{ $proker->proposal ? $proker->proposal->status : 'Pending'}}</td>
+                                    <td>{{ $proker->proposal ? $proker->proposal->status : 'Pending' }}</td>
                                     <td>{{ $proker->proposal ? $proker->proposal->catatan : 'Tidak Ada Catatan' }}</td>
                                     <td>
                                         <button type="button" class="btn btn-primary mr-2 btnModal" data-toggle="modal" data-target="#uploadModal" data-id="{{ $proker->id }}">
@@ -51,7 +47,7 @@
                                 </tr>
                             @endif
                         @endforeach
-                    </tbody>                    
+                    </tbody>
                 </table>
             </div>
             <div class="card-footer"></div>

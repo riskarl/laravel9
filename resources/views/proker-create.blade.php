@@ -10,15 +10,8 @@
       <select name="nama_organisasi" id="selectOrganisasi" required>
         <option value="">Pilih Organisasi</option>
     
-        @foreach($organisasi as $org)
-            @php
-                $jabatanWords = explode(' ', $jabatan);
-                $lastWord = end($jabatanWords);
-                $wordCount = count($jabatanWords);
-            @endphp
-            @if($wordCount > 2)
-                <option value="{{ $org->id }}">{{ $org->nama_organisasi }}</option>
-            @elseif(stripos($org->nama_organisasi, $lastWord) !== false)
+        @foreach($organisasi as $org) 
+            @if($org->nama_organisasi == $orguser)
                 <option value="{{ $org->id }}">{{ $org->nama_organisasi }}</option>
             @endif
         @endforeach

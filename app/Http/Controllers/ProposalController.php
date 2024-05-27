@@ -14,8 +14,9 @@ class ProposalController extends Controller
     {
         $proker = Proker::with(['organisasi', 'proposal'])->get();
         $jabatan = Session::get('jabatan')['jabatan'];
+        $organisasiUser = Session::get('user')['organization'];
         // Mengirim data pengguna ke view 'upload-proposal'
-        return view('upload-proposal', ['listproker' => $proker, 'jabatan' => $jabatan]);
+        return view('upload-proposal', ['listproker' => $proker, 'jabatan' => $jabatan, 'orguser' => $organisasiUser]);
     }
 
 

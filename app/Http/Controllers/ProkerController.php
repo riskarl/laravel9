@@ -22,7 +22,8 @@ class ProkerController extends Controller
         $organisasi = Organisasi::all();
         $listproker = Proker::all();
         $jabatan = Session::get('jabatan')['jabatan'];
-        return view('proker-create', ['listproker' => $listproker, 'organisasi' => $organisasi, 'jabatan' => $jabatan]);
+        $organisasiUser = Session::get('user')['organization'];
+        return view('proker-create', ['listproker' => $listproker, 'organisasi' => $organisasi, 'jabatan' => $jabatan, 'orguser' => $organisasiUser]);
     }
 
     public function store(Request $request)
@@ -49,7 +50,8 @@ class ProkerController extends Controller
     public function edit(Proker $proker)
     {
         $organisasi = Organisasi::all();
-        return view('proker-edit', ['proker' => $proker, 'organisasi' => $organisasi]);
+        $organisasiUser = Session::get('user')['organization'];
+        return view('proker-edit', ['proker' => $proker, 'organisasi' => $organisasi, 'orguser' => $organisasiUser]);
     }
 
 
