@@ -18,7 +18,6 @@
                 <th>Jabatan Pengecek</th>
                 <th>Catatan</th>
                 <th>Status</th>
-                <th>Tanda Tangan</th>
                 <th>Aksi</th>
               </tr>
             </thead>

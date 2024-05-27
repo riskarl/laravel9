@@ -19,7 +19,6 @@
                 <th>File</th>
                 <th>Catatan</th>
                 <th>Status</th>
-                <th>Tanda Tangan</th>
                 <th>Aksi</th>
               </tr>
             </thead>
@@ -51,9 +50,12 @@
                     @else
                         Pending
                     @endif
-                  </td>                
-                    <td>{{-- Kolom untuk menampilkan tanda tangan --}}</td>
-                    <td>{{-- Kolom untuk menampilkan aksi --}}</td>
+                  </td>  
+                  <td>
+                  <button type="button" class="btn btn-warning">Revisi</button>
+                  <button type="submit" class="btn btn-success">Diterima</button>
+                  <button type="submit" class="btn btn-danger">Ditolak</button>
+                  </td>              
                 </tr>
                 @endif
               @endforeach
