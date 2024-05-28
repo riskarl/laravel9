@@ -53,7 +53,7 @@
                   </td>  
                   <td>
                   <button type="button" class="btn btn-warning">Revisi</button>
-                  <a href="{{ route('proposals.approve', ['proposalId' => $proposal->id]) }}"><button type="submit" class="btn btn-success">Diterima</button></a>
+                  <a href="{{ route('proposals.approve', ['proposalId' => $proker->proposal->id]) }}"><button type="submit" class="btn btn-success">Diterima</button></a>
                   <button type="submit" class="btn btn-danger">Ditolak</button>
                   </td>              
                 </tr>
