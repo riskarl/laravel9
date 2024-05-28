@@ -30,7 +30,9 @@ class MappingCheck extends Model
                 $proposal->status_flow = 3;
             } else {
                 $proposal->status_flow = 2;
+                
             }
+            $proposal->status = 'Approved by Ketua ' . $organisasi;
         } else {
             // Jika jabatan_id tidak sesuai, tidak perlu update
             return false;
