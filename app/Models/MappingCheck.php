@@ -18,27 +18,43 @@ class MappingCheck extends Model
     {
         // Mengambil proposal yang terkait dengan proposal_id
         $proposal = Proposal::find($proposal_id);
-
+    
         // Jika tidak ditemukan proposal, return false
         if (!$proposal) {
             return false;
         }
-
-        // Cek jabatan_id dan organisasi, kemudian update status_flow
-        if ($jabatan_id == 5) {
-            if ($organisasi === 'BEM') {
-                $proposal->status_flow = 3;
+    
+        // Cek status_flow saat ini harus 0, null, atau empty
+        if ($proposal->status_flow === null || $proposal->status_flow === 0 || $proposal->status_flow === '') {
+            // Cek jabatan_id dan organisasi, kemudian update status_flow
+            if ($jabatan_id == 5) {
+                if ($organisasi === 'BEM') {
+                    $proposal->status_flow = 3;
+                } else {
+                    $proposal->status_flow = 2;
+                }
+                $proposal->status = 'Approved by Ketua ' . $organisasi;
             } else {
-                $proposal->status_flow = 2;
-                
+                // Jika jabatan_id tidak sesuai, tidak perlu update
+                return false;
             }
-            $proposal->status = 'Approved by Ketua ' . $organisasi;
-        } else {
-            // Jika jabatan_id tidak sesuai, tidak perlu update
-            return false;
+    
+            // Simpan perubahan pada proposal
+            return $proposal->save();
         }
-
-        // Simpan perubahan pada proposal
-        return $proposal->save();
+    
+        // Kondisi tambahan untuk status_flow awalnya 2 dan organisasi bukan BEM
+        if ($proposal->status_flow === 2 && $organisasi !== 'BEM') {
+            // Update status_flow menjadi 3
+            $proposal->status_flow = 3;
+            $proposal->status = 'Aproved by Ketua ' . $organisasi;
+    
+            // Simpan perubahan pada proposal
+            return $proposal->save();
+        }
+    
+        return false;
     }
+    
+    
 }
