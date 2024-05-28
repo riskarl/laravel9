@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\Proposal;
 use DB;
 use Session;
+use App\Models\MappingCheck;
 
 class ProposalController extends Controller
 {
@@ -58,6 +59,25 @@ class ProposalController extends Controller
         ];
 
         return $this->generatePdfWithSignatures($signatures);
+    }
+
+    public function approvedProposal($proposalId)
+    {
+        $currentUser = $this->getCurrentUser();
+        $jabatanId = $currentUser['jabatan_id'];
+        $organisasi = $currentUser['organisasi'];
+
+        // Create a new instance of MappingCheck
+        $mappingCheck = new MappingCheck();
+
+        // Attempt to update the status flow
+        if ($mappingCheck->updateStatusFlow($proposalId, $jabatanId, $organisasi)) {
+            Session::flash('success', 'Proposal has been successfully approved.');
+        } else {
+            Session::flash('error', 'Failed to approve the proposal.');
+        }
+
+        return redirect()->back();
     }
 
 }
