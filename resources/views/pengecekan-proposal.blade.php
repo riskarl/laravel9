@@ -24,6 +24,7 @@
             </thead>
             <tbody>
               @foreach ($listproker as $proker)
+              @if($proker->proposal)
                @if(($proker->organisasi->nama_organisasi == $orguser) || ($proker->proposal->status_flow == 2))
                 <tr>
                     <td>{{ $proker->id }}</td>
@@ -57,6 +58,7 @@
                   <button type="submit" class="btn btn-danger">Ditolak</button>
                   </td>              
                 </tr>
+                @endif
                 @endif
               @endforeach
             </tbody>
