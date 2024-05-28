@@ -10,6 +10,8 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\DB;
 use Config;
 use Session;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\File;
 
 class UsermanajemenController extends Controller
 {
