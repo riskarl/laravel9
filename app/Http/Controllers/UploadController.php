@@ -26,6 +26,7 @@ class UploadController extends Controller
         $proposal->status = 'Pending';
         $proposal->catatan = 'Belum ada catatan';
         $proposal->id_proker = $request->id_proker;
+        $proposal->status_flow = 0;
         $proposal->save();
 
         return redirect()->back()->with('success', 'File berhasil diupload!');
