@@ -19,7 +19,6 @@ class ProposalController extends Controller
         $jabatan = $currentUser['jabatan'];
         $organisasiUser = $currentUser['organisasi'];
 
-        var_dump($proker[0]);die;
         // Mengirim data pengguna ke view 'upload-proposal'
         return view('upload-proposal', ['listproker' => $proker, 'jabatan' => $jabatan, 'orguser' => $organisasiUser]);
     }
