@@ -11,19 +11,21 @@ class ProkerController extends Controller
 {
     public function index()
     {
+        $currentUser = $this->getCurrentUser();
         $organisasi = Organisasi::all();
         $listproker = Proker::all();
-        $jabatan = Session::get('jabatan')['jabatan'];
-        $organisasiUser = Session::get('user')['organization'];
+        $jabatan = $currentUser['jabatan'];
+        $organisasiUser = $currentUser['organisasi'];
         return view('proker', ['listproker' => $listproker, 'organisasi' => $organisasi, 'jabatan' => $jabatan, 'orguser' => $organisasiUser]);
     }
 
     public function tampil()
     {
+        $currentUser = $this->getCurrentUser();
         $organisasi = Organisasi::all();
         $listproker = Proker::all();
-        $jabatan = Session::get('jabatan')['jabatan'];
-        $organisasiUser = Session::get('user')['organization'];
+        $jabatan = $currentUser['jabatan'];
+        $organisasiUser = $currentUser['organisasi'];
         return view('proker-create', ['listproker' => $listproker, 'organisasi' => $organisasi, 'jabatan' => $jabatan, 'orguser' => $organisasiUser]);
     }
 
@@ -50,8 +52,9 @@ class ProkerController extends Controller
     }
     public function edit(Proker $proker)
     {
+        $currentUser = $this->getCurrentUser();
         $organisasi = Organisasi::all();
-        $organisasiUser = Session::get('user')['organization'];
+        $organisasiUser = $currentUser['organisasi'];
         return view('proker-edit', ['proker' => $proker, 'organisasi' => $organisasi, 'orguser' => $organisasiUser]);
     }
 

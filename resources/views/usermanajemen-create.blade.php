@@ -2,7 +2,7 @@
 
 @section('kontainer')
 
-<form action="/usermanajemen" method="POST">
+<form action="/usermanajemen" method="POST" enctype="multipart/form-data">
     @csrf
     <h1>Tambah Akun</h1>
     <div class="form-group">
@@ -45,6 +45,10 @@
         <option>3</option>
         <option>4</option>
       </select>
+    </div>
+    <div class="form-group">
+      <label for="ttd">Upload Tanda Tangan</label>
+      <input type="file" name="ttd" class="form-control-file" id="ttd">
     </div>
     <button type="submit" class="btn btn-primary">Submit</button>
   </form>

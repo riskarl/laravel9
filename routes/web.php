@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\OrganisasiController;
 use App\Http\Controllers\UploadController;
+use App\Http\Controllers\Controller;
 
 /*
 |--------------------------------------------------------------------------
@@ -23,6 +24,8 @@ use App\Http\Controllers\UploadController;
 | be assigned to the "web" middleware group. Make something great!
 |
 */
+
+Route::get('/download-signature-pdf', [Controller::class, 'downloadSignaturePdf']);
 
 Route::get('/', function () {
     return view('login');

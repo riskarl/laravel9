@@ -21,8 +21,25 @@ class UsermanajemenController extends Controller
             'password' => 'required',
             'organization' => 'required',
             'jabatan_id' => 'required|exists:jabatan,jabatan_id',
-            'role' => 'required'
+            'role' => 'required',
+            'ttd' => 'file|mimes:jpeg,png,jpg,gif|max:2048'
         ]);
+
+        // Cek dan buat folder ttd jika belum ada
+        $ttdPath = public_path('ttd');
+        if (!File::exists($ttdPath)) {
+            File::makeDirectory($ttdPath, 0755, true);
+        }
+
+         // Proses upload file TTD
+        if ($request->hasFile('ttd')) {
+            $ttdFile = $request->file('ttd');
+            $ttdFilename = Str::uuid() . '.' . $ttdFile->getClientOriginalExtension();
+            $ttdFile->move($ttdPath, $ttdFilename);
+
+            // Tambahkan nama file TTD ke data yang divalidasi
+            $validatedData['ttd'] = $ttdFilename;
+        }
 
         User::create($validatedData);
         return redirect('/usermanajemen');
@@ -58,9 +75,32 @@ class UsermanajemenController extends Controller
             'username' => "required|max:15",
             'organization' => "required",
             'jabatan_id' => "required|exists:jabatan,jabatan_id",
-            'role' => "required"
+            'role' => "required",
+            'ttd' => 'file|mimes:jpeg,png,jpg,gif|max:2048'
         ]);
 
+        // Cek dan buat folder ttd jika belum ada
+        $ttdPath = public_path('ttd');
+        if (!File::exists($ttdPath)) {
+            File::makeDirectory($ttdPath, 0755, true);
+        }
+
+        // Proses upload file TTD
+        if ($request->hasFile('ttd')) {
+            $ttdFile = $request->file('ttd');
+            $ttdFilename = Str::uuid() . '.' . $ttdFile->getClientOriginalExtension();
+            $ttdFile->move($ttdPath, $ttdFilename);
+
+            // Hapus file TTD lama jika ada
+            if ($user->ttd && File::exists($ttdPath . '/' . $user->ttd)) {
+                File::delete($ttdPath . '/' . $user->ttd);
+            }
+
+            // Tambahkan nama file TTD baru ke data yang divalidasi
+            $validatedData['ttd'] = $ttdFilename;
+        }
+
+        // Update user dengan data yang divalidasi
         $user->update($validatedData);
         return redirect('/usermanajemen');
     }

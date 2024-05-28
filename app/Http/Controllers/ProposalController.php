@@ -12,9 +12,11 @@ class ProposalController extends Controller
 {
     public function index()
     {
+        $currentUser = $this->getCurrentUser();
+
         $proker = Proker::with(['organisasi', 'proposal'])->get();
-        $jabatan = Session::get('jabatan')['jabatan'];
-        $organisasiUser = Session::get('user')['organization'];
+        $jabatan = $currentUser['jabatan'];
+        $organisasiUser = $currentUser['organisasi'];
         // Mengirim data pengguna ke view 'upload-proposal'
         return view('upload-proposal', ['listproker' => $proker, 'jabatan' => $jabatan, 'orguser' => $organisasiUser]);
     }
@@ -28,8 +30,9 @@ class ProposalController extends Controller
 
     public function pengecekanproposal()
     {
+        $currentUser = $this->getCurrentUser();
         $proker = Proker::with(['organisasi', 'proposal'])->get();
-        $organisasiUser = Session::get('user')['organization'];
+        $organisasiUser = $currentUser['organisasi'];
 
         // var_dump($proker);die;
 
@@ -41,6 +44,20 @@ class ProposalController extends Controller
     {
         // Mengirim data pengguna ke view 'pengecekanproposal-bpm'
         return view('pengecekanproposal-bpm');
+    }
+
+    public function downloadSignaturePdf()
+    {
+        $signatures = [
+            'path/to/signature1.jpg',
+            'path/to/signature2.jpg',
+            'path/to/signature3.jpg',
+            'path/to/signature4.jpg',
+            'path/to/signature5.jpg',
+            // Tambahkan path tanda tangan lainnya jika ada
+        ];
+
+        return $this->generatePdfWithSignatures($signatures);
     }
 
 }
