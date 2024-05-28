@@ -44,7 +44,7 @@ class MappingCheck extends Model
         }
     
         // Kondisi tambahan untuk status_flow awalnya 2 dan organisasi bukan BEM
-        if ($proposal->status_flow === 2 && $organisasi !== 'BEM' && $jabatan_id == 5) {
+        if ($proposal->status_flow == 2 && $organisasi != 'BEM' && $jabatan_id == 5) {
             // Update status_flow menjadi 3
             $proposal->status_flow = 3;
             $proposal->status = 'Approved by Ketua ' . $organisasi;
@@ -54,7 +54,7 @@ class MappingCheck extends Model
         }
     
         // Kondisi tambahan jika jabatan_id nya 5, status_flow nya 3, dan organisasi nya BPM
-        if ($jabatan_id == 5 && $proposal->status_flow === 3 && $organisasi === 'BPM') {
+        if ($jabatan_id == 5 && $proposal->status_flow == 3 && $organisasi == 'BPM') {
             // Update status_flow menjadi 4
             $proposal->status_flow = 4;
             $proposal->status = 'Approved by Ketua ' . $organisasi;
