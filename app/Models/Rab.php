@@ -11,18 +11,18 @@ class Rab extends Model
 
     protected $table = 'tb_rab';
 
-    // Menetapkan primaryKey untuk model ini sesuai dengan kolom 'id' di database
-    // protected $primaryKey = 'id';
+    //Menetapkan primaryKey untuk model ini sesuai dengan kolom 'id' di database
+    protected $primaryKey = 'id';
 
-    // // Menentukan bahwa model ini memiliki timestamps
-    // public $timestamps = true;
+    // Menentukan bahwa model ini memiliki timestamps
+    public $timestamps = true;
 
-    // protected $fillable = [
-    //     'file_rab', 'id_proker', 'status_flow'
-    // ];
-    // public function proker()
-    // {
-    //     return $this->belongsTo(Proker::class, 'id_proker');
-    // }
+    protected $fillable = [
+        'file_rab', 'id_proker'
+    ];
+    public function proker()
+    {
+        return $this->belongsTo(Proker::class, 'id_proker');
+    }
 
 }

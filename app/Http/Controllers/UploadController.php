@@ -32,24 +32,23 @@ class UploadController extends Controller
 
         return redirect()->back()->with('success', 'File berhasil diupload!');
     }
-    // public function uploadrab(Request $request)
-    // {
-    //     $file = $request->file('file');
-    //     $filename = Str::uuid() . '.' . $file->getClientOriginalExtension();
-    //     $directory = public_path('rab');
+    public function uploadrab(Request $request)
+    {
+        $file = $request->file('file');
+        $filename = Str::uuid() . '.' . $file->getClientOriginalExtension();
+        $directory = public_path('rab');
 
-    //     if (!File::exists($directory)) {
-    //         File::makeDirectory($directory, 0755, true);
-    //     }
+        if (!File::exists($directory)) {
+            File::makeDirectory($directory, 0755, true);
+        }
 
-    //     $file->move($directory, $filename);
+        $file->move($directory, $filename);
 
-    //     $rab = new Rab();
-    //     $rab->file_proposal = $filename;
-    //     $rab->id_proker = $request->id_proker;
-    //     $rab->status_flow = 0;
-    //     $rab->save();
+        $rab = new Rab();
+        $rab->file_rab = $filename;
+        $rab->id_proker = $request->id_proker;
+        $rab->save();
 
-    //     return redirect()->back()->with('success', 'File berhasil diupload!');
-    // }
+        return redirect()->back()->with('success', 'File berhasil diupload!');
+    }
 }
