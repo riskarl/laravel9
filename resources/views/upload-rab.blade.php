@@ -17,17 +17,23 @@
                 <th>Nama Organisasi</th>
                 <th>Nama Program Kerja</th>
                 <th>File</th>
+                <th>Aksi</th>
               </tr>
             </thead>
             <tbody>
-              {{-- @foreach ($listproker as $proker) --}}
+              @foreach ($listproker as $proker)
               <tr>
-                {{-- <td>{{ $proker->id }}</td> 
+                <td>{{ $proker->id }}</td> 
                 <td>{{ $proker->organisasi ? $proker->organisasi->nama_organisasi : 'Tidak ada organisasi' }}</td>
                 <td>{{ $proker->nama_proker }}</td>
-                <td>{{ $proker->lpj ? $proker->lpj->file_lpj  : 'Tidak ada file' }}</td>       --}}
+                <td>{{ $proker->lpj ? $proker->proposal->file_rab  : 'Tidak ada file' }}</td>
+                <td>
+                  <button type="button" class="btn btn-primary mr-2 btnModal" data-toggle="modal" data-target="#uploadModal" data-id="{{ $proker->id }}">
+                    Upload File
+                </button>
+                </td>
               </tr> 
-              {{-- @endforeach --}}
+              @endforeach
             </tbody>
           </table>
         </div>

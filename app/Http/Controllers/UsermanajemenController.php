@@ -107,7 +107,6 @@ class UsermanajemenController extends Controller
         return redirect('/usermanajemen');
     }
 
-
     function delete($id)
     {
         $user = User::find($id);
