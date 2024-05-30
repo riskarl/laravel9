@@ -67,7 +67,7 @@ class ProposalController extends Controller
     public function approvedProposal($proposalId)
     {
         $currentUser = $this->getCurrentUser();
-        $jabatanId = $currentUser['jabatan_id'];
+        $jabatanId = $currentUser['code_jabatan'];
         $organisasi = $currentUser['organisasi'];
 
         // Create a new instance of MappingCheck

@@ -34,13 +34,11 @@ class MappingCheck extends Model
                     $proposal->status_flow = 2;
                 }
                 $proposal->status = 'Approved by Ketua ' . $organisasi;
-            } else {
-                // Jika jabatan_id tidak sesuai, tidak perlu update
-                return false;
+
+                // Simpan perubahan pada proposal
+                return $proposal->save();
             }
-    
-            // Simpan perubahan pada proposal
-            return $proposal->save();
+            
         }
     
         // Kondisi tambahan untuk status_flow awalnya 2 dan organisasi bukan BEM
@@ -65,7 +63,5 @@ class MappingCheck extends Model
     
         return false;
     }
-    
-    
     
 }
