@@ -30,7 +30,7 @@ class LoginController extends Controller
 
             //user disimpan hanya dengan atribut tertentu = id, name, username, role, organization
             session(['user' => $user->only(['id', 'name', 'username', 'role', 'organization'])]);
-            session(['jabatan' => $jabatan ? $jabatan->only(['jabatan_id', 'jabatan', 'code_jabatan']) : null]);
+            session(['jabatan' => $jabatan->only(['jabatan_id', 'jabatan', 'code_jabatan'])]);
 
             //mengalihkan peran berdasarkan role
             switch ($user->role) {

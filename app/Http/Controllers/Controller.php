@@ -24,9 +24,11 @@ class Controller extends BaseController
         if ($jabatan) {
             $user['jabatan'] = $jabatan['jabatan'];
             $user['jabatan_id'] = $jabatan['jabatan_id'];
+            $user['code_jabatan'] = $jabatan['code_jabatan'];
         } else {
             $user['jabatan'] = null;
             $user['jabatan_id'] = null;
+            $user['code_jabatan'] = null;
         }
 
         //mengubah nama kunci organization menjadi organisasi dan menghapus nama kunci organization
