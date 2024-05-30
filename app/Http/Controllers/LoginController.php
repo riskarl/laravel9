@@ -23,7 +23,7 @@ class LoginController extends Controller
             $jabatan = $user->jabatan()->first();
 
             session(['user' => $user->only(['id', 'name', 'username', 'role', 'organization'])]);
-            session(['jabatan' => $jabatan ? $jabatan->only(['jabatan_id', 'jabatan']) : null]);
+            session(['jabatan' => $jabatan ? $jabatan->only(['jabatan_id', 'jabatan', 'code_jabatan']) : null]);
 
             switch ($user->role) {
                 case 1:

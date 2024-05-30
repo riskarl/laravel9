@@ -35,11 +35,12 @@ class ProposalController extends Controller
         $currentUser = $this->getCurrentUser();
         $proker = Proker::with(['organisasi', 'proposal'])->get();
         $organisasiUser = $currentUser['organisasi'];
+        $codeJabatan = $currentUser['code_jabatan'];
 
         // var_dump($proker);die;
 
         // Mengirim data pengguna ke view 'pengecekan-proposal'
-        return view('pengecekan-proposal', ['listproker' => $proker, 'orguser' => $organisasiUser]);
+        return view('pengecekan-proposal', ['listproker' => $proker, 'orguser' => $organisasiUser, 'codeJabatan' => $codeJabatan]);
     }
 
     public function pengecekanproposalbpm()

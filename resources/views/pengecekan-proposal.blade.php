@@ -26,8 +26,9 @@
               @foreach ($listproker as $proker)
               @if($proker->proposal)
                @if(($proker->organisasi->nama_organisasi == $orguser && $proker->proposal->status_flow != 3 ) 
-               || ($proker->proposal->status_flow == 2 && $orguser == 'BEM') 
-               || ($proker->proposal->status_flow == 3 && $orguser == 'BPM'))
+               || ($proker->proposal->status_flow == 2 && $orguser == 'BEM')
+               || ($proker->proposal->status_flow == 3 && $orguser == 'BPM')
+               || ($proker->proposal->status_flow == 4 && $codeJabatan == 4))
                 <tr>
                     <td>{{ $proker->id }}</td>
                     <td>{{ $proker->nama_proker }}</td>
