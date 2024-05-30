@@ -26,11 +26,11 @@ class Proker extends Model
 
     public function rab()
     {
-        return $this->hasOne(Proposal::class, 'id_proker');
+        return $this->hasOne(Rab::class, 'id_proker');
     }
 
     public function lpj()
     {
-        return $this->hasOne(Proposal::class, 'id_proker');
+        return $this->hasOne(Lpj::class, 'id_proker');
     }
 }

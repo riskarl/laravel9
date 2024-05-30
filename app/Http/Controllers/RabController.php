@@ -9,7 +9,11 @@ class RabController extends Controller
 {
     public function index()
     {
-        $proker = Proker::all();
+        $proker = Proker::with('rab')->get();
+
+        // var_dump($proker);
+        // die;
+        
         // Mengirim data pengguna ke view 'upload-rab'
         return view('upload-rab', ['listproker' => $proker]);
     }

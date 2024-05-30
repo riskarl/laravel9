@@ -22,10 +22,14 @@
             </thead>
             <tbody>
               @foreach ($listproker as $proker)
+              @php
+                  $rab = $proker->rab ?? null;
+              @endphp
               <tr>
                   <td>{{ $proker->id }}</td>
                   <td>{{ $proker->organisasi ? $proker->organisasi->nama_organisasi : 'Tidak ada organisasi' }}</td>
                   <td>{{ $proker->nama_proker }}</td>
+               
                   <td> 
                     @if ($proker->rab && $proker->rab->file_rab)
                         <a href="{{ asset('files/' . $proker->rab->file_rab) }}" target="_blank">
