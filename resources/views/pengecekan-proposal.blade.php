@@ -25,10 +25,10 @@
             <tbody>
               @foreach ($listproker as $proker)
               @if($proker->proposal)
-                @if(($codeJabatan == 4 && $proker->proposal->status_flow == 4 && $proker->organisasi->nama_organisasi == $orguser)
-                || ($proker->organisasi->nama_organisasi == $orguser && $proker->proposal->status_flow != 3 && $codeJabatan != 4) 
-                || ($proker->proposal->status_flow == 2 && $orguser == 'BEM' && $codeJabatan == 5)
-                || ($proker->proposal->status_flow == 3 && $orguser == 'BPM' && $codeJabatan == 5))
+               @if(($proker->proposal->status_flow != 3 && $proker->organisasi->nama_organisasi == $orguser && $codeJabatan == 6) 
+               || ($proker->proposal->status_flow == 2 && $orguser == 'BEM' && $codeJabatan == 5)
+               || ($proker->proposal->status_flow == 3 && $orguser == 'BPM' && $codeJabatan == 5)
+               || ($proker->proposal->status_flow == 4 && $proker->organisasi->nama_organisasi == $orguser && $codeJabatan == 4))
                 <tr>
                     <td>{{ $proker->id }}</td>
                     <td>{{ $proker->nama_proker }}</td>
