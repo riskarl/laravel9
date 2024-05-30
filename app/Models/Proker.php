@@ -24,8 +24,13 @@ class Proker extends Model
         return $this->hasOne(Proposal::class, 'id_proker');
     }
 
+    public function rab()
+    {
+        return $this->hasOne(Proposal::class, 'id_proker');
+    }
+
     public function lpj()
     {
-        return $this->belongsTo(Lpj::class, 'lpj');
+        return $this->hasOne(Proposal::class, 'id_proker');
     }
 }

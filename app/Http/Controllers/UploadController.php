@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Rab;
 use Illuminate\Http\Request;
 use App\Models\Proposal;
 use Illuminate\Support\Str;
@@ -28,6 +29,25 @@ class UploadController extends Controller
         $proposal->id_proker = $request->id_proker;
         $proposal->status_flow = 0;
         $proposal->save();
+
+        return redirect()->back()->with('success', 'File berhasil diupload!');
+    }
+    public function uploadrab(Request $request)
+    {
+        $file = $request->file('file');
+        $filename = Str::uuid() . '.' . $file->getClientOriginalExtension();
+        $directory = public_path('rab');
+
+        if (!File::exists($directory)) {
+            File::makeDirectory($directory, 0755, true);
+        }
+
+        $file->move($directory, $filename);
+
+        $rab = new Rab();
+        $rab->file_rab = $filename;
+        $rab->id_proker = $request->id_proker;
+        $rab->save();
 
         return redirect()->back()->with('success', 'File berhasil diupload!');
     }

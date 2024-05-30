@@ -91,3 +91,4 @@ Route::get('/pengecekanrab', [RabController::class, 'uploadsrpd'])->middleware('
 
 
 Route::post('/upload-file', [UploadController::class, 'store'])->name('file.upload');
+Route::post('/uploadrab-file', [UploadController::class, 'uploadrab'])->name('filerab.upload');

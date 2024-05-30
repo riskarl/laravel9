@@ -9,22 +9,30 @@ use Session;
 
 class LoginController extends Controller
 {
+    //fungsi memiliki parameter $request dr laravel yang mewakili permintaan http masuk
     function signin(Request $request)
     {
+        //memvalidasi username dan password
         $credentials = $request->validate([
             'username' => 'required',
             'password' => 'required'
         ]);
 
+        //fungsi Auth::attempt autentikasi pengguna dengan kredensial yang divalidasi
+        //jika autentikasi berhasil maka kode if akan dijalankan
         if (Auth::attempt($credentials)) {
+            //jika autentikasi berhasil maka session akan diregenerasi untuk mencegah fixation session
             $request->session()->regenerate();
 
+            //mengambil data pengguna yang sedang diautentikasi dan mengambil data jabatan pertama yg terkait dgn pengguna tsb
             $user = Auth::user();
             $jabatan = $user->jabatan()->first();
 
+            //user disimpan hanya dengan atribut tertentu = id, name, username, role, organization
             session(['user' => $user->only(['id', 'name', 'username', 'role', 'organization'])]);
             session(['jabatan' => $jabatan ? $jabatan->only(['jabatan_id', 'jabatan', 'code_jabatan']) : null]);
 
+            //mengalihkan peran berdasarkan role
             switch ($user->role) {
                 case 1:
                     return redirect()->intended('/dashboard');
@@ -38,14 +46,18 @@ class LoginController extends Controller
                     return redirect('/'); // default redirection
             }
         }
-
-        return back()->with('loginError', 'Login Failed!');
+        //jika kredensial salah dan autentikasi gagal, akan diarahkan ke halaman login lagi dan ada pesan 
+        //dengan nama kunci loginError
+        return back()->with('loginError', 'Username atau Password Anda Salah!');
     }
 
     function logout()
     {
+        //menghapus semua data dari sesi
         Session::flush();
+        //mengeluarkan pengguna yang sedang login dari sistem autentikasi
         Auth::logout();
-        return redirect('/'); // Redirect ke halaman login setelah logout
+        // Redirect ke halaman login setelah logout
+        return redirect('/');
     }
 }

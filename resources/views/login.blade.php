@@ -37,11 +37,11 @@
                   <div class="text-center">
                     <h1 class="h4 text-gray-900 mb-4">Login SIPROKER</h1>
                   </div>
-                  @error('username')
-                  <div class="alert alert-danger" role="alert">
-                    Username atau Password Anda Salah!
-                  </div>
-                  @enderror
+                  @if (session('loginError'))
+                  <div class="alert alert-danger">
+                  {{ session('loginError') }}
+                 </div>
+                  @endif
                   <form class="user" method="POST" action="{{ url('login') }}">
                     @csrf 
                     <div class="form-group">
