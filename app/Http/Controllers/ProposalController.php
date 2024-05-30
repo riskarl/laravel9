@@ -34,7 +34,6 @@ class ProposalController extends Controller
     {
         $currentUser = $this->getCurrentUser();
 
-        var_dump($currentUser);die;
         $proker = Proker::with(['organisasi', 'proposal'])->get();
         $organisasiUser = $currentUser['organisasi'];
         $codeJabatan = $currentUser['code_jabatan'];
