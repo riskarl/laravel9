@@ -17,14 +17,13 @@ class MappingCheck extends Model
     public function updateStatusFlow($proposal_id, $jabatan_id, $organisasi, $jabatan = null)
     {
         // Mengambil proposal yang terkait dengan proposal_id
-        $proposal = Proposal::with('proker')->find($proposal_id);
+        $proposal = Proposal::with('proker.organisasi')->find($proposal_id);
 
         // Jika tidak ditemukan proposal, return false
         if (!$proposal) {
             return false;
         }
 
-        var_dump($proposal->proker);die;
         // Cek status_flow saat ini harus 0, null, atau empty
         if ($proposal->status_flow == null || $proposal->status_flow == 0 || $proposal->status_flow == '') {
             // Cek jabatan_id dan organisasi, kemudian update status_flow
@@ -70,7 +69,7 @@ class MappingCheck extends Model
             return $proposal->save();
         }
 
-        $containsHima = strpos($proposal->proker->nama_organisasi, 'HIMA') !== false;
+        $containsHima = strpos($proposal->proker->organisasi->nama_organisasi, 'HIMA') !== false;
 
         if ($jabatan_id == 8 && $proposal->status_flow == 5 && $containsHima) {
             $proposal->status_flow = 6;

@@ -16,7 +16,7 @@ class Proker extends Model
 
     public function organisasi()
     {
-        return $this->belongsTo(Organisasi::class, 'nama_organisasi');
+        return $this->belongsTo(Organisasi::class, 'nama_organisasi', 'id');
     }
 
     public function proposal()
