@@ -84,4 +84,26 @@ class ProposalController extends Controller
         return redirect()->back();
     }
 
+    public function updateRevisi(Request $request)
+    {
+        $currentUser = $this->getCurrentUser();
+        $jabatanId = $currentUser['code_jabatan'];
+        $jabatan = $currentUser['jabatan'];
+        $organisasi = $currentUser['organisasi'];
+        $proposalId = $request->input('proposal_id');
+        $catatan = $request->input('catatan');
+
+        // Create a new instance of MappingCheck
+        $mappingCheck = new MappingCheck();
+
+        // Attempt to update the status flow
+        if ($mappingCheck->updateRevisi($proposalId, $jabatanId, $organisasi, $jabatan, $catatan)) {
+            Session::flash('success', 'Proposal has been successfully approved.');
+        } else {
+            Session::flash('error', 'Failed to approve the proposal.');
+        }
+
+        return redirect()->back();
+    }
+
 }

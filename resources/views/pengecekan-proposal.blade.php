@@ -62,12 +62,8 @@
                     @endif
                   </td>  
                   <td>
-                  @if($codeJabatan == 1)
-                    <button type="button" class="btn btn-info">Luncurkan Pengesahan</button>
-                  @else
-                    <button type="button" class="btn btn-warning">Revisi</button>
+                    <button type="button" class="btn btn-warning" onclick="openRevisiModal({{ $proker->proposal->id }})">Revisi</button>
                     <a href="{{ route('proposals.approve', ['proposalId' => $proker->proposal->id]) }}"><button type="submit" class="btn btn-success">Diterima</button></a>
-                  @endif
                 </td>              
                 </tr>
                 @endif
@@ -80,5 +76,44 @@
       </div>
     </div>
   </div>
+
+  <!-- Modal untuk Revisi Proposal -->
+<div class="modal fade" id="revisiModal" tabindex="-1" role="dialog" aria-labelledby="revisiModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="revisiModalLabel">Catatan Revisi</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form action="{{ route('proposals.revisi') }}" method="POST">
+          @csrf
+          <input type="hidden" name="proposal_id" id="proposalId" value="">
+          <div class="form-group">
+            <label for="catatan">Catatan:</label>
+            <textarea class="form-control" id="catatan" name="catatan" required></textarea>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <button type="submit" class="btn btn-primary">Submit Revisi</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<script>
+  function openRevisiModal(proposalId) {
+    // Mengatur nilai proposal_id ke dalam input tersembunyi di modal
+    document.getElementById('proposalId').value = proposalId;
+  
+    // Menampilkan modal
+    var revisiModal = new bootstrap.Modal(document.getElementById('revisiModal'));
+    revisiModal.show();
+  }
+  </script>
+  
   
 @endsection

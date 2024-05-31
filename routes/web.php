@@ -25,6 +25,7 @@ use App\Http\Controllers\Controller;
 |
 */
 Route::get('/proposals/approve/{proposalId}', [ProposalController::class, 'approvedProposal'])->name('proposals.approve');
+Route::post('/proposals/revisi', [ProposalController::class, 'updateRevisi'])->name('proposals.revisi');
 Route::get('/download-signature-pdf', [Controller::class, 'downloadSignaturePdf']);
 
 Route::get('/', function () {

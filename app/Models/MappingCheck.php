@@ -97,4 +97,39 @@ class MappingCheck extends Model
         return false;
     }
 
+    public function updateRevisi($proposal_id, $jabatan_id, $organisasi, $jabatan = null, $catatan = null){
+        $proposal = Proposal::with('proker.organisasi')->find($proposal_id);
+    
+        // Jika tidak ditemukan proposal, return false
+        if (!$proposal) {
+            return false;
+        }
+    
+        // Mengupdate status_flow menjadi 0
+        $proposal->status_flow = 0;
+    
+        // Mengupdate catatan jika catatan disediakan
+        if ($catatan) {
+            $proposal->catatan = $catatan;
+        }
+    
+        // Mengganti 'approve by' menjadi 'revisi by' dan menambahkan jabatan dan organisasi
+        if ($jabatan_id == 5) {
+            if ($organisasi === 'BEM') {
+                $proposal->status = 'Revisi by Ketua ' . $organisasi;
+            } else {
+                $proposal->status = 'Revisi by Ketua ' . $organisasi;
+            }
+        } else if ($jabatan_id == 4) {
+            $proposal->status = 'Revisi by Pembina ' . $organisasi;
+        } else {
+            // Mengganti status berdasarkan jabatan dan jabatan_id
+            $proposal->status = 'Revisi by ' . $jabatan;
+        }
+    
+        // Simpan perubahan pada proposal
+        return $proposal->save();
+    }
+    
+
 }
