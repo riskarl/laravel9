@@ -29,7 +29,8 @@
                 || ($codeJabatan == 5 && $orguser == 'BEM' && $proker->organisasi->nama_organisasi != 'BEM' && $proker->proposal->status_flow == 2)
                 || ($codeJabatan == 5 && $orguser == 'BPM' && $proker->proposal->status_flow == 3)
                 || ($codeJabatan == 4 && $proker->organisasi->nama_organisasi == $orguser && $proker->proposal->status_flow == 4)
-                || ($codeJabatan == 5 && ($proker->proposal->status_flow == 0 || $proker->proposal->status_flow == null || $proker->proposal->status_flow == "") && $proker->organisasi->nama_organisasi == $orguser))
+                || ($codeJabatan == 5 && ($proker->proposal->status_flow == 0 || $proker->proposal->status_flow == null || $proker->proposal->status_flow == "") && $proker->organisasi->nama_organisasi == $orguser)
+                || ($codeJabatan == 2 && ($orguser == 'BEM' || $orguser == 'BPM') && $proker->organisasi->nama_organisasi == $orguser && $proker->proposal->status_flow == 5))
                 <tr>
                     <td>{{ $proker->id }}</td>
                     <td>{{ $proker->nama_proker }}</td>
@@ -59,7 +60,6 @@
                   <td>
                   <button type="button" class="btn btn-warning">Revisi</button>
                   <a href="{{ route('proposals.approve', ['proposalId' => $proker->proposal->id]) }}"><button type="submit" class="btn btn-success">Diterima</button></a>
-                  <button type="submit" class="btn btn-danger">Ditolak</button>
                   </td>              
                 </tr>
                 @endif
