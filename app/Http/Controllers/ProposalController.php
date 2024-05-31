@@ -68,13 +68,14 @@ class ProposalController extends Controller
     {
         $currentUser = $this->getCurrentUser();
         $jabatanId = $currentUser['code_jabatan'];
+        $jabatan = $currentUser['jabatan'];
         $organisasi = $currentUser['organisasi'];
 
         // Create a new instance of MappingCheck
         $mappingCheck = new MappingCheck();
 
         // Attempt to update the status flow
-        if ($mappingCheck->updateStatusFlow($proposalId, $jabatanId, $organisasi)) {
+        if ($mappingCheck->updateStatusFlow($proposalId, $jabatanId, $organisasi, $jabatan)) {
             Session::flash('success', 'Proposal has been successfully approved.');
         } else {
             Session::flash('error', 'Failed to approve the proposal.');

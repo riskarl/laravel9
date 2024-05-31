@@ -14,10 +14,10 @@ class MappingCheck extends Model
      * @param  string  $organisasi
      * @return bool
      */
-    public function updateStatusFlow($proposal_id, $jabatan_id, $organisasi)
+    public function updateStatusFlow($proposal_id, $jabatan_id, $organisasi, $jabatan = null)
     {
         // Mengambil proposal yang terkait dengan proposal_id
-        $proposal = Proposal::find($proposal_id);
+        $proposal = Proposal::with('proker')->find($proposal_id);
 
         // Jika tidak ditemukan proposal, return false
         if (!$proposal) {
@@ -65,6 +65,30 @@ class MappingCheck extends Model
         if ($jabatan_id == 4 && $proposal->status_flow == 4 ) {
             $proposal->status_flow = 5;
             $proposal->status = 'Approved by Pembina ' . $organisasi;
+
+            return $proposal->save();
+        }
+
+        if ($jabatan_id == 8 && $proposal->status_flow == 5 && (strpos($proposal->proker->nama_organisasi, 'HIMA') !== false)) {
+            $proposal->status_flow = 6;
+            $proposal->status = 'Approved by ' . $jabatan;
+
+            return $proposal->save();
+        }
+
+        if ($jabatan_id == 3 && $proposal->status_flow == 6 && (strpos($proposal->proker->nama_organisasi, 'HIMA') !== false)) {
+            $proposal->status_flow = 7;
+            $proposal->status = 'Approved by ' . $jabatan;
+
+            return $proposal->save();
+        }
+
+        $containsHima = strpos($proposal->proker->nama_organisasi, 'HIMA') !== false;
+
+        if ($jabatan_id == 2 && (($proposal->status_flow == 7 && $containsHima) || ($proposal->status_flow == 5 && !$containsHima))) {
+
+            $proposal->status_flow = 8;
+            $proposal->status = 'Approved by ' . $jabatan;
 
             return $proposal->save();
         }
