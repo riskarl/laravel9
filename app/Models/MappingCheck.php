@@ -24,7 +24,7 @@ class MappingCheck extends Model
             return false;
         }
 
-        var_dump($proposal->proker->nama_organisasi);die;
+        var_dump($proposal->proker);die;
         // Cek status_flow saat ini harus 0, null, atau empty
         if ($proposal->status_flow == null || $proposal->status_flow == 0 || $proposal->status_flow == '') {
             // Cek jabatan_id dan organisasi, kemudian update status_flow
