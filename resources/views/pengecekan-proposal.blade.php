@@ -30,7 +30,7 @@
                 || ($codeJabatan == 5 && $orguser == 'BPM' && $proker->proposal->status_flow == 3)
                 || ($codeJabatan == 4 && $proker->organisasi->nama_organisasi == $orguser && $proker->proposal->status_flow == 4)
                 || ($codeJabatan == 5 && ($proker->proposal->status_flow == 0 || $proker->proposal->status_flow == null || $proker->proposal->status_flow == "") && $proker->organisasi->nama_organisasi == $orguser)
-                || ($codeJabatan == 2 && ($proker->organisasi->nama_organisasi == 'BEM' || $proker->organisasi->nama_organisasi == 'UKM') && 'Kampus' == $orguser && $proker->proposal->status_flow == 5))
+                || ($codeJabatan == 2 && ($proker->organisasi->nama_organisasi == 'BEM' || strpos($proker->organisasi->nama_organisasi, 'UKM') !== false) && 'Kampus' == $orguser && $proker->proposal->status_flow == 5))
                 <tr>
                     <td>{{ $proker->id }}</td>
                     <td>{{ $proker->nama_proker }}</td>
