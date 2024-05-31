@@ -106,7 +106,7 @@ class MappingCheck extends Model
         }
     
         // Mengupdate status_flow menjadi 0
-        $proposal->status_flow = 0;
+        $proposal->status_flow = 1;
     
         // Mengupdate catatan jika catatan disediakan
         if ($catatan) {
