@@ -70,7 +70,7 @@ class MappingCheck extends Model
         }
 
         $containsHima = strpos($proposal->proker->nama_organisasi, 'HIMA') !== false;
-        var_dump('contain = '.$containsHima);
+        var_dump($proposal->proker->nama_organisasi);
 
         if ($jabatan_id == 8 && $proposal->status_flow == 5 && $containsHima) {
             $proposal->status_flow = 6;
