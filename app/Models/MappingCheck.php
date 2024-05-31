@@ -24,6 +24,7 @@ class MappingCheck extends Model
             return false;
         }
 
+        var_dump($proposal->proker->nama_organisasi);die;
         // Cek status_flow saat ini harus 0, null, atau empty
         if ($proposal->status_flow == null || $proposal->status_flow == 0 || $proposal->status_flow == '') {
             // Cek jabatan_id dan organisasi, kemudian update status_flow
@@ -70,16 +71,14 @@ class MappingCheck extends Model
         }
 
         $containsHima = strpos($proposal->proker->nama_organisasi, 'HIMA') !== false;
-        var_dump($proposal->proker->nama_organisasi);
 
         if ($jabatan_id == 8 && $proposal->status_flow == 5 && $containsHima) {
             $proposal->status_flow = 6;
             $proposal->status = 'Approved by ' . $jabatan;
-            var_dump('entered');die;
 
             return $proposal->save();
         }
-        die;
+        
 
         if ($jabatan_id == 3 && $proposal->status_flow == 6 && $containsHima) {
             $proposal->status_flow = 7;
