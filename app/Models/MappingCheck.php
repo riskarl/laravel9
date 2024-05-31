@@ -62,6 +62,13 @@ class MappingCheck extends Model
             return $proposal->save();
         }
 
+        if ($jabatan_id == 4 && $proposal->status_flow == 4 ) {
+            $proposal->status_flow = 5;
+            $proposal->status = 'Approved by Pembina ' . $organisasi;
+
+            return $proposal->save();
+        }
+
         return false;
     }
 
