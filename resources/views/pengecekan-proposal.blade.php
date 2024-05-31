@@ -62,9 +62,13 @@
                     @endif
                   </td>  
                   <td>
-                  <button type="button" class="btn btn-warning">Revisi</button>
-                  <a href="{{ route('proposals.approve', ['proposalId' => $proker->proposal->id]) }}"><button type="submit" class="btn btn-success">Diterima</button></a>
-                  </td>              
+                  @if($codeJabatan == 1)
+                    <button type="button" class="btn btn-warning">Luncurkan Pengesahan</button>
+                  @else
+                    <button type="button" class="btn btn-warning">Revisi</button>
+                    <a href="{{ route('proposals.approve', ['proposalId' => $proker->proposal->id]) }}"><button type="submit" class="btn btn-success">Diterima</button></a>
+                  @endif
+                </td>              
                 </tr>
                 @endif
                 @endif
