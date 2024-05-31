@@ -36,7 +36,7 @@
                     <td>{{ $proker->organisasi->nama_organisasi }}</td>
                     <td>
                       @if ($proker->proposal)
-                          <a href="{{ asset('path/to/proposals/' . $proker->proposal->file_proposal) }}" target="_blank">
+                          <a href="{{ asset('files/' . $proker->proposal->file_proposal) }}" target="_blank">
                               {{ $proker->proposal->file_proposal }}</a>
                       @else
                           Tidak ada file proposal
