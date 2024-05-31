@@ -40,7 +40,9 @@
                                     <td>{{ $proker->proposal ? $proker->proposal->status : 'Pending' }}</td>
                                     <td>{{ $proker->proposal ? $proker->proposal->catatan : 'Tidak Ada Catatan' }}</td>
                                     <td>
-                                        <button type="button" class="btn btn-primary mr-2 btnModal" data-toggle="modal" data-target="#uploadModal" data-id="{{ $proker->id }}">
+                                        <button type="button" class="btn btn-primary mr-2 btnModal" data-toggle="modal" data-target="#uploadModal" data-id="{{ $proker->id }}"
+                                            data-file="{{ $proker->proposal ? $proker->proposal->file_proposal : '' }}"
+                                            >
                                             Upload File
                                         </button>
                                     </td>
@@ -68,6 +70,7 @@
                 </div>
                 <div class="modal-body">
                     <input type="hidden" name="id_proker" id="prokerId">
+                    <input type="hidden" name="existing_file_name" id="existingFileName">
                     <input type="file" name="file" id="fileInput" class="form-control" required>
                 </div>
                 <div class="modal-footer">
@@ -80,19 +83,22 @@
 </div>
 
 <script>
-  document.addEventListener('DOMContentLoaded', function () {
-      var modal = document.getElementById('uploadModal');
-      var buttons = document.querySelectorAll('.btnModal');
-      var prokerIdInput = document.getElementById('prokerId');
-  
-      buttons.forEach(function (button) {
-          button.addEventListener('click', function () {
-              var idProker = this.getAttribute('data-id');
-              prokerIdInput.value = idProker;
-              console.log('idProker:', idProker);
-          });
-      });
-  });
-  </script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var modal = document.getElementById('uploadModal');
+        var buttons = document.querySelectorAll('.btnModal');
+        var prokerIdInput = document.getElementById('prokerId');
+        var existingFileNameInput = document.getElementById('existingFileName');
+    
+        buttons.forEach(function (button) {
+            button.addEventListener('click', function () {
+                var idProker = this.getAttribute('data-id');
+                var fileName = this.getAttribute('data-file');
+                prokerIdInput.value = idProker;
+                existingFileNameInput.value = fileName;  // Set the existing file name
+                console.log('idProker:', idProker, 'fileName:', fileName);
+            });
+        });
+    });
+    </script>    
 
 @endsection

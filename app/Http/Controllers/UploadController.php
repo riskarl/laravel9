@@ -16,22 +16,45 @@ class UploadController extends Controller
         $filename = Str::uuid() . '.' . $file->getClientOriginalExtension();
         $directory = public_path('files');
 
+        // Membuat direktori jika tidak ada
         if (!File::exists($directory)) {
             File::makeDirectory($directory, 0755, true);
         }
 
-        $file->move($directory, $filename);
+        // Handle file baru
+        if ($request->hasFile('file')) {
+            // Pindahkan file baru ke direktori
+            $file->move($directory, $filename);
+        }
 
-        $proposal = new Proposal();
-        $proposal->file_proposal = $filename;
-        $proposal->status = 'Pending';
-        $proposal->catatan = 'Belum ada catatan';
-        $proposal->id_proker = $request->id_proker;
-        $proposal->status_flow = 0;
+        // Cek apakah ini update atau penambahan baru
+        if (!empty($request->existing_file_name)) {
+            // Ini adalah update file, temukan proposal yang ada
+            $proposal = Proposal::where('id_proker', $request->id_proker)->first();
+            if ($proposal && File::exists($directory . '/' . $proposal->file_proposal)) {
+                // Hapus file lama
+                File::delete($directory . '/' . $proposal->file_proposal);
+            }
+            $proposal->file_proposal = $filename;
+            $proposal->status_flow = 0;
+            $proposal->status = 'Pending';
+            $proposal->catatan = 'Belum ada catatan';
+        } else {
+            // Ini adalah penambahan baru
+            $proposal = new Proposal();
+            $proposal->file_proposal = $filename;
+            $proposal->status = 'Pending';
+            $proposal->catatan = 'Belum ada catatan';
+            $proposal->id_proker = $request->id_proker;
+            $proposal->status_flow = 0;
+        }
+
+        // Simpan perubahan atau penambahan baru
         $proposal->save();
 
         return redirect()->back()->with('success', 'File berhasil diupload!');
     }
+
     public function uploadrab(Request $request)
     {
         $file = $request->file('file');
