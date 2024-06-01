@@ -58,18 +58,18 @@
     <div class="content">
         <table class="signatures-table">
             <tr>
-                <td>{{ $signatures[0]['jabatan'] }}</td>
-                <td>{{ $signatures[1]['jabatan'] }}</td>
+                <td>Ketua Badan Eksekutif Mahasiswa</td>
+                <td>Ketua Pelaksana</td>
             </tr>
             <tr class="spacer"></tr>
             <tr>
                 <td class="signature-block">
                     <img src="{{ $signatures[0]['ttd'] }}" alt="Signature" class="signature-image">
-                    <div>{{ $signatures[0]['nama'] }}</div>
+                     <div>{{ $signatures[0]['nama'] }}</div>
                 </td>
                 <td class="signature-block">
-                    <img src="{{ $signatures[1]['ttd'] }}" alt="Signature" class="signature-image">
-                    <div>{{ $signatures[1]['nama'] }}</div>
+                    <img src="" alt="Signature" class="signature-image">
+                    <div></div>
                 </td>
             </tr>
             <tr class="spacer"></tr>
@@ -78,8 +78,8 @@
                 <td></td>
             </tr>
             <tr>
-                <td>{{ $signatures[2]['jabatan'] }}</td>
-                <td>{{ $signatures[3]['jabatan'] }}</td>
+                <td>Pembina BEM</td>
+                <td>Ketua Badan Perwakilan Mahasiswa</td>
             </tr>
             <tr class="spacer"></tr>
             <tr>
@@ -88,8 +88,8 @@
                     <div>{{ $signatures[2]['nama'] }}</div>
                 </td>
                 <td class="signature-block">
-                    <img src="{{ $signatures[3]['ttd'] }}" alt="Signature" class="signature-image">
-                    <div>{{ $signatures[3]['nama'] }}</div>
+                    <img src="{{ $signatures[1]['ttd'] }}" alt="Signature" class="signature-image">
+                    <div>{{ $signatures[1]['nama'] }}</div>
                 </td>
             </tr>
             <tr class="spacer"></tr>
@@ -97,8 +97,8 @@
                 <td colspan="2">Menyetujui,</td>
             </tr>
             <tr>
-                <td>{{ $signatures[4]['jabatan'] }}</td>
-                <td>{{ $signatures[3]['jabatan'] }}</td> <!-- Assuming the last signature is repeated for the second column -->
+                <td>Wakil Direktur Bagian Kemahasiswaan dan Alumni</td>
+                <td>Koordinator Subbagian Akademik dan Kemahasiswaan</td>
             </tr>
             <tr class="spacer"></tr>
             <tr>
