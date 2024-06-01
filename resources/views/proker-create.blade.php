@@ -16,8 +16,6 @@
             @endif
         @endforeach
     </select>
-    
-    
     </div>
     <div class="form-group">
         <label for="exampleInputEmail1">Nama Program Kerja</label>
@@ -40,6 +38,10 @@
     <div class="form-group">
       <label for="exampleInputPassword1">Dana yang diajukan</label>
       <input type="number" name="dana_diajukan" class="form-control" id="dana_diajukan" placeholder="Masukkan Dana yang diajukan" required>
+    </div>
+    <div class="form-group">
+      <label for="ttd">Upload Tanda Tangan Ketua Pelaksana</label>
+      <input type="file" name="ttd" class="form-control-file" id="ttd">
     </div>
     <button type="submit" name="submit" class="btn btn-primary">Submit</button>
   </form>
