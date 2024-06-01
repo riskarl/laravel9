@@ -41,7 +41,7 @@
     </div>
     <div class="form-group">
       <label for="ttd">Upload Tanda Tangan Ketua Pelaksana</label>
-      <input type="file" name="ttd" class="form-control-file" id="ttd">
+      <input type="file" name="ttd_ketupel" class="form-control-file" id="ttd_ketupel">
     </div>
     <button type="submit" name="submit" class="btn btn-primary">Submit</button>
   </form>
