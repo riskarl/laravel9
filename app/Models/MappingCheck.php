@@ -112,16 +112,17 @@ class MappingCheck extends Model
                 $ttdList = [];
             
                 // Mendapatkan user berdasarkan jabatan dan organisasi
-                $user1 = User::where('jabatan_id', 5)->where('organization', 'BEM')->first();
-                $user2 = User::where('jabatan_id', 5)->where('organization', 'BPM')->first();
-                $user3 = User::where('jabatan_id', 4)->where('organization', 'BEM')->first();
-                $user4 = User::where('jabatan_id', 2)->first();
-                $user5 = User::where('jabatan_id', 1)->first();
+                $users = [
+                    User::where('jabatan_id', 5)->where('organization', 'BEM')->whereNotNull('ttd')->first(),
+                    User::where('jabatan_id', 5)->where('organization', 'BPM')->whereNotNull('ttd')->first(),
+                    User::where('jabatan_id', 4)->where('organization', 'BEM')->whereNotNull('ttd')->first(),
+                    User::where('jabatan_id', 2)->whereNotNull('ttd')->first(),
+                    User::where('jabatan_id', 1)->whereNotNull('ttd')->first(),
+                ];
             
                 $ttdFolderPath = public_path('ttd');
             
                 // Menambahkan pengguna ke daftar ttd jika mereka memiliki ttd yang valid atau null jika tidak
-                $users = [$user1, $user2, $user3, $user4, $user5];
                 foreach ($users as $user) {
                     if ($user) {
                         $ttdPath = $ttdFolderPath . '/' . $user->ttd;
