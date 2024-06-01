@@ -6,6 +6,8 @@ use App\Models\Organisasi;
 use App\Models\Proker;
 use Illuminate\Http\Request;
 use Session;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\File;
 
 class ProkerController extends Controller
 {
@@ -32,24 +34,37 @@ class ProkerController extends Controller
     public function store(Request $request)
     {
         // Validasi input
-        $request->validate([
+        $validatedData = $request->validate([
             'nama_organisasi' => 'required',
             'nama_proker' => 'required',
             'nama_ketupel' => 'required',
             'tanggal' => 'required',
             'tempat' => 'required',
             'dana_diajukan' => 'required',
+            'ttd' => 'file|mimes:jpeg,png,jpg,gif|max:2048' // Menambahkan validasi untuk file ttd
         ]);
-        Proker::create([
-            'nama_organisasi' => $request->nama_organisasi,
-            'nama_proker' => $request->nama_proker,
-            'nama_ketupel' => $request->nama_ketupel,
-            'tanggal' => $request->tanggal,
-            'tempat' => $request->tempat,
-            'dana_diajukan' => $request->dana_diajukan,
-        ]);
+
+        // Cek dan buat folder ttd jika belum ada
+        $ttdPath = public_path('ttd');
+        if (!File::exists($ttdPath)) {
+            File::makeDirectory($ttdPath, 0755, true);
+        }
+
+        // Proses upload file TTD
+        if ($request->hasFile('ttd')) {
+            $ttdFile = $request->file('ttd');
+            $ttdFilename = Str::uuid() . '.' . $ttdFile->getClientOriginalExtension();
+            $ttdFile->move($ttdPath, $ttdFilename);
+
+            // Tambahkan nama file TTD ke data yang divalidasi
+            $validatedData['ttd_ketupel'] = $ttdFilename;
+        }
+
+        // Simpan data ke database
+        Proker::create($validatedData);
         return redirect('/proker');
     }
+
     public function edit(Proker $proker)
     {
         $currentUser = $this->getCurrentUser();
@@ -58,21 +73,44 @@ class ProkerController extends Controller
         return view('proker-edit', ['proker' => $proker, 'organisasi' => $organisasi, 'orguser' => $organisasiUser]);
     }
 
-
     public function update(Request $request, Proker $proker)
     {
-        $result = $request->validate([
+        $validatedData = $request->validate([
             'nama_organisasi' => "required",
             "nama_proker" => "required",
             "nama_ketupel" => "required",
             "tanggal" => "required",
             "tempat" => "required",
-            "dana_diajukan" => "required"
+            "dana_diajukan" => "required",
+            'ttd' => 'file|mimes:jpeg,png,jpg,gif|max:2048' // Menambahkan validasi untuk file ttd
         ]);
 
-        $proker->update($result);
+        // Cek dan buat folder ttd jika belum ada
+        $ttdPath = public_path('ttd');
+        if (!File::exists($ttdPath)) {
+            File::makeDirectory($ttdPath, 0755, true);
+        }
+
+        // Proses upload file TTD
+        if ($request->hasFile('ttd')) {
+            $ttdFile = $request->file('ttd');
+            $ttdFilename = Str::uuid() . '.' . $ttdFile->getClientOriginalExtension();
+            $ttdFile->move($ttdPath, $ttdFilename);
+
+            // Hapus file TTD lama jika ada
+            if ($proker->ttd_ketupel && File::exists($ttdPath . '/' . $proker->ttd_ketupel)) {
+                File::delete($ttdPath . '/' . $proker->ttd_ketupel);
+            }
+
+            // Tambahkan nama file TTD baru ke data yang divalidasi
+            $validatedData['ttd_ketupel'] = $ttdFilename;
+        }
+
+        // Update proker dengan data yang divalidasi
+        $proker->update($validatedData);
         return redirect('/proker');
     }
+
     function delete($id)
     {
         $proker = Proker::find($id);

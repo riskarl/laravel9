@@ -24,6 +24,8 @@ class UsermanajemenController extends Controller
             'organization' => 'required',
             'jabatan_id' => 'required|exists:jabatan,jabatan_id',
             'role' => 'required',
+            'jenis_id' => 'required', // Menambahkan validasi untuk jenis_id
+            'nomer_id' => 'required', // Menambahkan validasi untuk nomer_id
             'ttd' => 'file|mimes:jpeg,png,jpg,gif|max:2048'
         ]);
 
@@ -69,7 +71,6 @@ class UsermanajemenController extends Controller
         return view('usermanajemen-edit', ['user' => $user, 'jabatans' => $jabatans, 'organisasi' => $organisasi]);
     }
 
-
     function update(Request $request, User $user)
     {
         $validatedData = $request->validate([
@@ -78,6 +79,8 @@ class UsermanajemenController extends Controller
             'organization' => "required",
             'jabatan_id' => "required|exists:jabatan,jabatan_id",
             'role' => "required",
+            'jenis_id' => 'required', // Menambahkan validasi untuk jenis_id
+            'nomer_id' => 'required', // Menambahkan validasi untuk nomer_id
             'ttd' => 'file|mimes:jpeg,png,jpg,gif|max:2048'
         ]);
 

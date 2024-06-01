@@ -98,11 +98,28 @@ class ProposalController extends Controller
         $proposalId = $request->input('proposal_id');
         $jabatanId = $currentUser['jabatan_id'];
         $namaKegiatan = $request->input('proker'); // Pastikan parameter inputnya sesuai
+        $organisasi = $request->input('organisasi');
 
         $model = new MappingCheck();
         $signatures = $model->signatureCreate($jabatanId, $proposalId);
 
+        $proposal = Proposal::find($proposalId);
+        if (!$proposal) {
+            return redirect()->back()->with('error', 'Proposal not found');
+        }
+
+        // Ambil data Proker terkait dari Proposal
+        $proker = Proker::where('id', $proposal->id_proker)->first();
+        if (!$proker) {
+            return redirect()->back()->with('error', 'Proker not found');
+        }
+
+        $ketupel = [
+            'name' => $proker->nama_ketupel,
+            'ttd' => public_path('ttd') . '/' . $proker->ttd_ketupel
+        ];
+
         // Memasukkan nama kegiatan ke dalam array data yang dikirim ke fungsi pembuat PDF
-        return $this->generatePdfWithSignatures($signatures, $namaKegiatan);
+        return $this->generatePdfWithSignatures($signatures, $namaKegiatan, $organisasi, $ketupel);
     }
 }

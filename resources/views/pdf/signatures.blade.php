@@ -68,8 +68,8 @@
                      <div>{{ $signatures[0]['nama'] }}</div>
                 </td>
                 <td class="signature-block">
-                    <img src="" alt="Signature" class="signature-image">
-                    <div></div>
+                    <img src="{{ $ketupel['ttd'] ?? null }}" alt="Signature" class="signature-image">
+                    <div>{{ $ketupel['name'] ?? null }}</div>
                 </td>
             </tr>
             <tr class="spacer"></tr>

@@ -40,13 +40,20 @@ class Controller extends BaseController
     }
 
     //fungsi bersifat public dan menerima satu parameter berupa array $signatures
-    public function generatePdfWithSignatures(array $signatures, $namaKegiatan, $organisasi = null)
+    public function generatePdfWithSignatures(array $signatures, $namaKegiatan, $organisasi = null, array $ketupel = [] )
     {
         // Membuat tampilan HTML dengan template pdf.signatures dan data yang ada dalam array $signatures
         // compact('signatures', 'namaKegiatan') membuat array asosiatif dari variabel $signatures dan $namaKegiatan
         // render untuk mengubah view menjadi string HTML
-        $html = view('pdf.signatures', compact('signatures', 'namaKegiatan'))->render();
-    
+
+        if ($organisasi == 'BEM') {
+            $html = view('pdf.signatures', compact('signatures', 'namaKegiatan', 'ketupel'))->render();
+        }elseif ($organisasi == 'UKM') {
+            # code...
+        }else {
+            
+        }
+        
         // Memuat / konversi HTML yang telah dirender menjadi PDF, dengan ukuran kertas A4 dan orientasi portrait
         $pdf = Pdf::loadHTML($html)->setPaper('A4', 'portrait');
         // Mengirim PDF ke browser untuk ditampilkan maupun diunduh

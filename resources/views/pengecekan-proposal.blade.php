@@ -68,6 +68,7 @@
                         @csrf
                         <input type="hidden" name="proposal_id" value="{{ $proker->proposal->id }}">
                         <input type="hidden" name="proker" value="{{ $proker->nama_proker }}">
+                        <input type="hidden" name="organisasi" value="{{ $proker->organisasi->nama_organisasi }}">
                         <button type="submit" class="btn btn-success">Diterima</button>
                       </form>
                     @else

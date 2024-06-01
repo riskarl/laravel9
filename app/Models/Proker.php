@@ -12,7 +12,15 @@ class Proker extends Model
     use HasFactory;
     protected $table = 'tb_proker';
     protected $primaryKey = 'id';
-    protected $fillable = ['nama_organisasi', 'nama_proker', 'nama_ketupel', 'tanggal', 'tempat', 'dana_diajukan'];
+    protected $fillable = [
+        'nama_organisasi',
+        'nama_proker',
+        'nama_ketupel',
+        'tanggal',
+        'tempat',
+        'dana_diajukan',
+        'ttd_ketupel',
+    ];
 
     public function organisasi()
     {
