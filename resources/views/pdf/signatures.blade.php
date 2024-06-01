@@ -58,8 +58,8 @@
     <div class="content">
         <table class="signatures-table">
             <tr>
-                <td>Ketua Badan Eksekutif Mahasiswa</td>
-                <td>Ketua Pelaksana</td>
+                <td>{{ $signatures[0]['jabatan'] }}</td>
+                <td>{{ $signatures[1]['jabatan'] }}</td>
             </tr>
             <tr class="spacer"></tr>
             <tr>
@@ -78,8 +78,8 @@
                 <td></td>
             </tr>
             <tr>
-                <td>Pembina BEM</td>
-                <td>Ketua Badan Perwakilan Mahasiswa</td>
+                <td>{{ $signatures[2]['jabatan'] }}</td>
+                <td>{{ $signatures[3]['jabatan'] }}</td>
             </tr>
             <tr class="spacer"></tr>
             <tr>
@@ -97,8 +97,8 @@
                 <td colspan="2">Menyetujui,</td>
             </tr>
             <tr>
-                <td>Wakil Direktur Bagian Kemahasiswaan dan Alumni</td>
-                <td>Koordinator Subbagian Akademik dan Kemahasiswaan</td>
+                <td>{{ $signatures[4]['jabatan'] }}</td>
+                <td>{{ $signatures[3]['jabatan'] }}</td> <!-- Assuming the last signature is repeated for the second column -->
             </tr>
             <tr class="spacer"></tr>
             <tr>
