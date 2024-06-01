@@ -14,7 +14,8 @@
                             <th>ID</th>
                             <th>Nama Organisasi</th>
                             <th>Nama Program Kerja</th>
-                            <th>File</th>
+                            <th>File Proposal</th>
+                            <th>Lembar Pengesahan</th>
                             <th>Status</th>
                             <th>Catatan</th>
                             <th>Aksi</th>
@@ -37,6 +38,7 @@
                                             Tidak ada file
                                         @endif
                                     </td>
+                                    <td></td>
                                     <td>{{ $proker->proposal ? $proker->proposal->status : 'Pending' }}</td>
                                     <td>{{ $proker->proposal ? $proker->proposal->catatan : 'Tidak Ada Catatan' }}</td>
                                     <td>
