@@ -97,6 +97,135 @@ class MappingCheck extends Model
         return false;
     }
 
+    public function signatureCreate($jabatan_id, $proposal_id)
+    {
+        $proposal = Proposal::with('proker.organisasi')->find($proposal_id);
+
+        // Jika tidak ditemukan proposal, return false
+        if (!$proposal) {
+            return false;
+        }
+
+        if ($jabatan_id == 1 && $proposal->status_flow == 8) {
+            
+            if ($proposal->proker->organisasi->nama_organisasi == 'BEM') {
+                $ttdList = [];
+
+                // jabatan_id 5 yang organisasi BEM
+                $user1 = User::where('jabatan_id', 5)->where('organization', 'BEM')->first();
+
+                // jabatan_id 5 yang organisasi BPM
+                $user2 = User::where('jabatan_id', 5)->where('organization', 'BPM')->first();
+
+                // jabatan_id 4 yang organisasi BEM
+                $user3 = User::where('jabatan_id', 4)->where('organization', 'BEM')->first();
+
+                // jabatan_id 2
+                $user4 = User::where('jabatan_id', 2)->first();
+
+                // jabatan_id 1
+                $user5 = User::where('jabatan_id', 1)->first();
+
+                $ttdFolderPath = public_path('ttd');
+
+                if ($user1) $ttdList[] = [
+                    'nama' => $user1->name,
+                    'jabatan' => $user1->jabatan->jabatan,
+                    'ttd' => $ttdFolderPath . '/' . $user1->ttd,
+                ];
+
+                if ($user2) $ttdList[] = [
+                    'nama' => $user2->name,
+                    'jabatan' => $user2->jabatan->jabatan,
+                    'ttd' => $ttdFolderPath . '/' . $user2->ttd,
+                ];
+
+                if ($user3) $ttdList[] = [
+                    'nama' => $user3->name,
+                    'jabatan' => $user3->jabatan->jabatan,
+                    'ttd' => $ttdFolderPath . '/' . $user3->ttd,
+                ];
+
+                if ($user4) $ttdList[] = [
+                    'nama' => $user4->name,
+                    'jabatan' => $user4->jabatan->jabatan,
+                    'ttd' => $ttdFolderPath . '/' . $user4->ttd,
+                ];
+
+                if ($user5) $ttdList[] = [
+                    'nama' => $user5->name,
+                    'jabatan' => $user5->jabatan->jabatan,
+                    'ttd' => $ttdFolderPath . '/' . $user5->ttd,
+                ];
+
+                return $ttdList;
+            }
+
+            if ($proposal->proker->organisasi->nama_organisasi == 'UKM') {
+                $ttdList = [];
+
+                $user1 = User::where('jabatan_id', 5)->where('organization', 'UKM')->first();
+                // jabatan_id 5 yang organisasi BEM
+                $user2 = User::where('jabatan_id', 5)->where('organization', 'BEM')->first();
+
+                // jabatan_id 5 yang organisasi BPM
+                $user3 = User::where('jabatan_id', 5)->where('organization', 'BPM')->first();
+
+                // jabatan_id 4 yang organisasi BEM
+                $user4 = User::where('jabatan_id', 4)->where('organization', 'BEM')->first();
+
+                // jabatan_id 2
+                $user5 = User::where('jabatan_id', 2)->first();
+
+                // jabatan_id 1
+                $user6 = User::where('jabatan_id', 1)->first();
+
+                $ttdFolderPath = public_path('ttd');
+
+                if ($user1) $ttdList[] = [
+                    'nama' => $user1->name,
+                    'jabatan' => $user1->jabatan->jabatan,
+                    'ttd' => $ttdFolderPath . '/' . $user1->ttd,
+                ];
+
+                if ($user2) $ttdList[] = [
+                    'nama' => $user2->name,
+                    'jabatan' => $user2->jabatan->jabatan,
+                    'ttd' => $ttdFolderPath . '/' . $user2->ttd,
+                ];
+
+                if ($user3) $ttdList[] = [
+                    'nama' => $user3->name,
+                    'jabatan' => $user3->jabatan->jabatan,
+                    'ttd' => $ttdFolderPath . '/' . $user3->ttd,
+                ];
+
+                if ($user4) $ttdList[] = [
+                    'nama' => $user4->name,
+                    'jabatan' => $user4->jabatan->jabatan,
+                    'ttd' => $ttdFolderPath . '/' . $user4->ttd,
+                ];
+
+                if ($user5) $ttdList[] = [
+                    'nama' => $user5->name,
+                    'jabatan' => $user5->jabatan->jabatan,
+                    'ttd' => $ttdFolderPath . '/' . $user5->ttd,
+                ];
+
+                if ($user6) $ttdList[] = [
+                    'nama' => $user5->name,
+                    'jabatan' => $user5->jabatan->jabatan,
+                    'ttd' => $ttdFolderPath . '/' . $user6->ttd,
+                ];
+
+                return $ttdList;
+            }
+        }
+
+        return false;
+    
+    }
+
     public function updateRevisi($proposal_id, $jabatan_id, $organisasi, $jabatan = null, $catatan = null){
         $proposal = Proposal::with('proker.organisasi')->find($proposal_id);
     

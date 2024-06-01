@@ -18,7 +18,7 @@ class Proposal extends Model
     public $timestamps = true;
 
     protected $fillable = [
-        'file_proposal', 'status', 'catatan', 'id_proker', 'status_flow'
+        'file_proposal', 'status', 'catatan', 'id_proker', 'status_flow', 'pengesahan'
     ];
 
     public function proker()

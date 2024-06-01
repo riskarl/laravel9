@@ -63,8 +63,16 @@
                   </td>  
                   <td>
                     <button type="button" class="btn btn-warning" onclick="openRevisiModal({{ $proker->proposal->id }})">Revisi</button>
+                    @if($codeJabatan == 1)
+                      <form action="{{ route('createSignaturePdf') }}" method="POST" style="display:inline;">
+                        @csrf
+                        <input type="hidden" name="proposal_id" value="{{ $proker->proposal->id }}">
+                        <button type="submit" class="btn btn-success">Diterima</button>
+                      </form>
+                    @else
                     <a href="{{ route('proposals.approve', ['proposalId' => $proker->proposal->id]) }}"><button type="submit" class="btn btn-success">Diterima</button></a>
-                </td>              
+                    @endif
+                </td>
                 </tr>
                 @endif
                 @endif

@@ -24,6 +24,8 @@ use App\Http\Controllers\Controller;
 | be assigned to the "web" middleware group. Make something great!
 |
 */
+
+Route::post('/create-signature-pdf', [ProposalController::class, 'createSignaturePdf'])->name('createSignaturePdf');
 Route::get('/proposals/approve/{proposalId}', [ProposalController::class, 'approvedProposal'])->name('proposals.approve');
 Route::post('/proposals/revisi', [ProposalController::class, 'updateRevisi'])->name('proposals.revisi');
 Route::get('/download-signature-pdf', [Controller::class, 'downloadSignaturePdf']);

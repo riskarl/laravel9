@@ -50,20 +50,6 @@ class ProposalController extends Controller
         return view('pengecekanproposal-bpm');
     }
 
-    public function downloadSignaturePdf()
-    {
-        $signatures = [
-            'path/to/signature1.jpg',
-            'path/to/signature2.jpg',
-            'path/to/signature3.jpg',
-            'path/to/signature4.jpg',
-            'path/to/signature5.jpg',
-            // Tambahkan path tanda tangan lainnya jika ada
-        ];
-
-        return $this->generatePdfWithSignatures($signatures);
-    }
-
     public function approvedProposal($proposalId)
     {
         $currentUser = $this->getCurrentUser();
@@ -104,6 +90,20 @@ class ProposalController extends Controller
         }
 
         return redirect()->back();
+    }
+
+    public function createSignaturePdf(Request $request)
+    {
+        $currentUser = $this->getCurrentUser();
+        $proposalId = $request->input('proposal_id');
+        $jabatanId = $currentUser['jabatan_id'];
+
+        $model = new MappingCheck();
+        $signatures = $model->signatureCreate($jabatanId, $proposalId);
+
+
+        var_dump($signatures);
+        //return $this->generatePdfWithSignatures($signatures);
     }
 
 }
