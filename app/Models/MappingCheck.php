@@ -110,116 +110,76 @@ class MappingCheck extends Model
             
             if ($proposal->proker->organisasi->nama_organisasi == 'BEM') {
                 $ttdList = [];
-
-                // jabatan_id 5 yang organisasi BEM
+            
+                // Mendapatkan user berdasarkan jabatan dan organisasi
                 $user1 = User::where('jabatan_id', 5)->where('organization', 'BEM')->first();
-
-                // jabatan_id 5 yang organisasi BPM
                 $user2 = User::where('jabatan_id', 5)->where('organization', 'BPM')->first();
-
-                // jabatan_id 4 yang organisasi BEM
                 $user3 = User::where('jabatan_id', 4)->where('organization', 'BEM')->first();
-
-                // jabatan_id 2
                 $user4 = User::where('jabatan_id', 2)->first();
-
-                // jabatan_id 1
                 $user5 = User::where('jabatan_id', 1)->first();
-
+            
                 $ttdFolderPath = public_path('ttd');
-
-                if ($user1) $ttdList[] = [
-                    'nama' => $user1->name,
-                    'jabatan' => $user1->jabatan->jabatan,
-                    'ttd' => $ttdFolderPath . '/' . $user1->ttd,
-                ];
-
-                if ($user2) $ttdList[] = [
-                    'nama' => $user2->name,
-                    'jabatan' => $user2->jabatan->jabatan,
-                    'ttd' => $ttdFolderPath . '/' . $user2->ttd,
-                ];
-
-                if ($user3) $ttdList[] = [
-                    'nama' => $user3->name,
-                    'jabatan' => $user3->jabatan->jabatan,
-                    'ttd' => $ttdFolderPath . '/' . $user3->ttd,
-                ];
-
-                if ($user4) $ttdList[] = [
-                    'nama' => $user4->name,
-                    'jabatan' => $user4->jabatan->jabatan,
-                    'ttd' => $ttdFolderPath . '/' . $user4->ttd,
-                ];
-
-                if ($user5) $ttdList[] = [
-                    'nama' => $user5->name,
-                    'jabatan' => $user5->jabatan->jabatan,
-                    'ttd' => $ttdFolderPath . '/' . $user5->ttd,
-                ];
-
+            
+                // Menambahkan pengguna ke daftar ttd jika mereka memiliki ttd yang valid atau null jika tidak
+                $users = [$user1, $user2, $user3, $user4, $user5];
+                foreach ($users as $user) {
+                    if ($user) {
+                        $ttdPath = $ttdFolderPath . '/' . $user->ttd;
+                        if ($user->ttd && file_exists($ttdPath)) {
+                            $ttdList[] = [
+                                'nama' => $user->name,
+                                'jabatan' => $user->jabatan->jabatan,
+                                'ttd' => $ttdPath,
+                            ];
+                        } else {
+                            // Menambahkan null jika file ttd tidak ditemukan
+                            $ttdList[] = [
+                                'nama' => $user->name,
+                                'jabatan' => $user->jabatan->jabatan,
+                                'ttd' => null,
+                            ];
+                        }
+                    }
+                }
+            
                 return $ttdList;
             }
+            
 
             if ($proposal->proker->organisasi->nama_organisasi == 'UKM') {
                 $ttdList = [];
-
-                $user1 = User::where('jabatan_id', 5)->where('organization', 'UKM')->first();
-                // jabatan_id 5 yang organisasi BEM
-                $user2 = User::where('jabatan_id', 5)->where('organization', 'BEM')->first();
-
-                // jabatan_id 5 yang organisasi BPM
-                $user3 = User::where('jabatan_id', 5)->where('organization', 'BPM')->first();
-
-                // jabatan_id 4 yang organisasi BEM
-                $user4 = User::where('jabatan_id', 4)->where('organization', 'BEM')->first();
-
-                // jabatan_id 2
-                $user5 = User::where('jabatan_id', 2)->first();
-
-                // jabatan_id 1
-                $user6 = User::where('jabatan_id', 1)->first();
-
+            
+                // Mendapatkan semua user yang dibutuhkan dalam satu query
+                $users = User::whereIn('jabatan_id', [1, 2, 4, 5])
+                             ->whereIn('organization', ['UKM', 'BEM', 'BPM'])
+                             ->whereNotNull('ttd') // Hanya mengambil pengguna dengan ttd tidak null
+                             ->get();
+            
                 $ttdFolderPath = public_path('ttd');
-
-                if ($user1) $ttdList[] = [
-                    'nama' => $user1->name,
-                    'jabatan' => $user1->jabatan->jabatan,
-                    'ttd' => $ttdFolderPath . '/' . $user1->ttd,
-                ];
-
-                if ($user2) $ttdList[] = [
-                    'nama' => $user2->name,
-                    'jabatan' => $user2->jabatan->jabatan,
-                    'ttd' => $ttdFolderPath . '/' . $user2->ttd,
-                ];
-
-                if ($user3) $ttdList[] = [
-                    'nama' => $user3->name,
-                    'jabatan' => $user3->jabatan->jabatan,
-                    'ttd' => $ttdFolderPath . '/' . $user3->ttd,
-                ];
-
-                if ($user4) $ttdList[] = [
-                    'nama' => $user4->name,
-                    'jabatan' => $user4->jabatan->jabatan,
-                    'ttd' => $ttdFolderPath . '/' . $user4->ttd,
-                ];
-
-                if ($user5) $ttdList[] = [
-                    'nama' => $user5->name,
-                    'jabatan' => $user5->jabatan->jabatan,
-                    'ttd' => $ttdFolderPath . '/' . $user5->ttd,
-                ];
-
-                if ($user6) $ttdList[] = [
-                    'nama' => $user5->name,
-                    'jabatan' => $user5->jabatan->jabatan,
-                    'ttd' => $ttdFolderPath . '/' . $user6->ttd,
-                ];
-
+            
+                // Memilah user berdasarkan jabatan dan organisasi
+                foreach ($users as $user) {
+                    $ttdPath = $ttdFolderPath . '/' . $user->ttd;
+                    if (file_exists($ttdPath)) {
+                        // Tambahkan user ke daftar jika file ttd ada
+                        $ttdList[] = [
+                            'nama' => $user->name,
+                            'jabatan' => $user->jabatan->jabatan,
+                            'ttd' => $ttdPath,
+                        ];
+                    } else {
+                        // Tetap tambahkan user ke daftar dengan ttd sebagai null jika file ttd tidak ditemukan
+                        $ttdList[] = [
+                            'nama' => $user->name,
+                            'jabatan' => $user->jabatan->jabatan,
+                            'ttd' => null,
+                        ];
+                    }
+                }
+            
                 return $ttdList;
             }
+            
         }
 
         return false;
