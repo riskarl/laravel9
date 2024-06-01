@@ -2,7 +2,7 @@
 
 @section('content')
 
-<form action="/proker/{{ $proker->id }}"  method="POST">
+<form action="/proker/{{ $proker->id }}"  method="POST" enctype="multipart/form-data">
     @method ('put')
     @csrf
     <h1>Edit Program Kerja</h1>

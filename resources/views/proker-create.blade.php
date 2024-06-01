@@ -2,7 +2,7 @@
 
 @section('content')
 
-<form action="/proker" method="POST">
+<form action="/proker" method="POST" enctype="multipart/form-data">
     @csrf
     <h1>Tambah Program Kerja</h1>
     <div class="form-group">
