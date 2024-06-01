@@ -111,6 +111,7 @@ class ProkerController extends Controller
         return redirect('/proker');
     }
 
+
     function delete($id)
     {
         $proker = Proker::find($id);
