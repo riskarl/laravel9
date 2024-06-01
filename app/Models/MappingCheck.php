@@ -145,36 +145,40 @@ class MappingCheck extends Model
             
                 return $ttdList;
             }
-            
 
             if ($proposal->proker->organisasi->nama_organisasi == 'UKM') {
                 $ttdList = [];
             
-                // Mendapatkan semua user yang dibutuhkan dalam satu query
-                $users = User::whereIn('jabatan_id', [1, 2, 4, 5])
-                             ->whereIn('organization', ['UKM', 'BEM', 'BPM'])
-                             ->whereNotNull('ttd') // Hanya mengambil pengguna dengan ttd tidak null
-                             ->get();
+                // Mendapatkan user berdasarkan jabatan dan organisasi
+                $users = [
+                    User::where('jabatan_id', 5)->where('organization', 'UKM')->whereNotNull('ttd')->first(),
+                    User::where('jabatan_id', 5)->where('organization', 'BEM')->whereNotNull('ttd')->first(),
+                    User::where('jabatan_id', 5)->where('organization', 'BPM')->whereNotNull('ttd')->first(),
+                    User::where('jabatan_id', 4)->where('organization', 'BEM')->whereNotNull('ttd')->first(),
+                    User::where('jabatan_id', 2)->whereNotNull('ttd')->first(),
+                    User::where('jabatan_id', 1)->whereNotNull('ttd')->first(),
+                ];
             
                 $ttdFolderPath = public_path('ttd');
             
-                // Memilah user berdasarkan jabatan dan organisasi
+                // Menambahkan pengguna ke daftar ttd jika mereka memiliki ttd yang valid atau null jika tidak
                 foreach ($users as $user) {
-                    $ttdPath = $ttdFolderPath . '/' . $user->ttd;
-                    if (file_exists($ttdPath)) {
-                        // Tambahkan user ke daftar jika file ttd ada
-                        $ttdList[] = [
-                            'nama' => $user->name,
-                            'jabatan' => $user->jabatan->jabatan,
-                            'ttd' => $ttdPath,
-                        ];
-                    } else {
-                        // Tetap tambahkan user ke daftar dengan ttd sebagai null jika file ttd tidak ditemukan
-                        $ttdList[] = [
-                            'nama' => $user->name,
-                            'jabatan' => $user->jabatan->jabatan,
-                            'ttd' => null,
-                        ];
+                    if ($user) {
+                        $ttdPath = $ttdFolderPath . '/' . $user->ttd;
+                        if ($user->ttd && file_exists($ttdPath)) {
+                            $ttdList[] = [
+                                'nama' => $user->name,
+                                'jabatan' => $user->jabatan->jabatan,
+                                'ttd' => $ttdPath,
+                            ];
+                        } else {
+                            // Menambahkan null jika file ttd tidak ditemukan
+                            $ttdList[] = [
+                                'nama' => $user->name,
+                                'jabatan' => $user->jabatan->jabatan,
+                                'ttd' => null,
+                            ];
+                        }
                     }
                 }
             

@@ -102,8 +102,7 @@ class ProposalController extends Controller
         $signatures = $model->signatureCreate($jabatanId, $proposalId);
 
 
-        var_dump($signatures);
-        //return $this->generatePdfWithSignatures($signatures);
+        return $this->generatePdfWithSignatures($signatures);
     }
 
 }

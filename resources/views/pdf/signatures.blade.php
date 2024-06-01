@@ -3,50 +3,63 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lembar Pengesahan Proposal</title>
+    <title>Lembar Pengesahan</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 20px;
+            font-family: 'Arial', sans-serif;
+            padding: 40px;
+            box-sizing: border-box;
         }
-        h1 {
+        .header {
             text-align: center;
+            margin-bottom: 30px;
         }
-        .content {
-            text-align: justify;
-            margin-bottom: 50px;
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            table-layout: fixed;
         }
-        .row {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 20px;
+        th, td {
+            padding: 10px;
+            border-bottom: 1px solid #000;
+            vertical-align: bottom;
+            text-align: left;
         }
-        .row img {
-            width: 48%;
+        .title-row th {
+            border-bottom: none;
+            text-align: center;
+            font-weight: bold;
         }
-        .signature-container {
-            page-break-inside: avoid;
+        .signature-space img {
+            height: 80px;
+            width: auto;
+            display: block;
+        }
+        .text-center {
+            text-align: center;
         }
     </style>
 </head>
 <body>
-    <h1>Lembar Pengesahan Proposal</h1>
-    <div class="content">
-        <p>
-            Ini adalah lembar pengesahan untuk proposal yang diajukan. Lembar ini memuat tanda tangan dari pihak-pihak yang berwenang.
-        </p>
+    <div class="header">
+        <h1>FORMAT HIMA PRODI</h1>
+        <h2>LEMBAR PENGESAHAN</h2>
+        <h3>NAMA KEGIATAN</h3>
     </div>
-    <div class="signatures">
-        @foreach(array_chunk($signatures, 2) as $signaturePair)
-            <div class="row signature-container">
-                @foreach($signaturePair as $signature)
-                    <div class="signature">
-                        <img src="{{ $signature }}" alt="Signature">
-                    </div>
-                @endforeach
-            </div>
-        @endforeach
-    </div>
+    <table>
+        <?php foreach ($signatures as $signature): ?>
+        <tr>
+            <td class="text-center"><?php echo htmlspecialchars($signature['jabatan']); ?></td>
+        </tr>
+        <tr>
+            <td class="signature-space text-center">
+                <img src="<?php echo htmlspecialchars($signature['ttd']); ?>" alt="Signature">
+            </td>
+        </tr>
+        <tr>
+            <td class="text-center">Nama: <?php echo htmlspecialchars($signature['nama']); ?></td>
+        </tr>
+        <?php endforeach; ?>
+    </table>
 </body>
 </html>
