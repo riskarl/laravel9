@@ -43,6 +43,10 @@
         <input type="number" value="{{ old('dana_diajukan', $proker->dana_diajukan)}}"name="dana_diajukan" class="form-control" id="dana_diajukan" aria-describedby="emailHelp"
           placeholder="Masukkan Jumlah Dana yang diajukan" required>
     </div>
+    <div class="form-group">
+      <label for="ttd">Upload Tanda Tangan Ketua Pelaksana</label>
+      <input type="file" name="ttd_ketupel" class="form-control-file" id="ttd_ketupel">
+    </div>
     <button type="submit" class="btn btn-primary">Submit</button>
   </form>
 
