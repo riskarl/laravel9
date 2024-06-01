@@ -97,12 +97,12 @@ class ProposalController extends Controller
         $currentUser = $this->getCurrentUser();
         $proposalId = $request->input('proposal_id');
         $jabatanId = $currentUser['jabatan_id'];
+        $namaKegiatan = $request->input('proker'); // Pastikan parameter inputnya sesuai
 
         $model = new MappingCheck();
         $signatures = $model->signatureCreate($jabatanId, $proposalId);
 
-
-        return $this->generatePdfWithSignatures($signatures);
+        // Memasukkan nama kegiatan ke dalam array data yang dikirim ke fungsi pembuat PDF
+        return $this->generatePdfWithSignatures($signatures, $namaKegiatan);
     }
-
 }

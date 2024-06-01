@@ -67,6 +67,7 @@
                       <form action="{{ route('createSignaturePdf') }}" method="POST" style="display:inline;">
                         @csrf
                         <input type="hidden" name="proposal_id" value="{{ $proker->proposal->id }}">
+                        <input type="hidden" name="proker" value="{{ $proker->nama_proker }}">
                         <button type="submit" class="btn btn-success">Diterima</button>
                       </form>
                     @else
