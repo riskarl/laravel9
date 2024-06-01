@@ -51,8 +51,8 @@ class ProkerController extends Controller
         }
 
         // Proses upload file TTD
-        if ($request->hasFile('ttd')) {
-            $ttdFile = $request->file('ttd');
+        if ($request->hasFile('ttd_ketupel')) {
+            $ttdFile = $request->file('ttd_ketupel');
             $ttdFilename = Str::uuid() . '.' . $ttdFile->getClientOriginalExtension();
             $ttdFile->move($ttdPath, $ttdFilename);
 
@@ -82,7 +82,7 @@ class ProkerController extends Controller
             "tanggal" => "required",
             "tempat" => "required",
             "dana_diajukan" => "required",
-            "ttd_ketupel" => "required" // Menambahkan validasi untuk file ttd
+            "ttd_ketupel" => "file|mimes:jpeg,png,jpg,gif|max:2048" // Menambahkan validasi untuk file ttd
         ]);
 
         // Cek dan buat folder ttd jika belum ada
@@ -92,8 +92,8 @@ class ProkerController extends Controller
         }
 
         // Proses upload file TTD
-        if ($request->hasFile('ttd')) {
-            $ttdFile = $request->file('ttd');
+        if ($request->hasFile('ttd_ketupel')) {
+            $ttdFile = $request->file('ttd_ketupel');
             $ttdFilename = Str::uuid() . '.' . $ttdFile->getClientOriginalExtension();
             $ttdFile->move($ttdPath, $ttdFilename);
 
