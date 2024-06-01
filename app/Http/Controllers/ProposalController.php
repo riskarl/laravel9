@@ -119,8 +119,6 @@ class ProposalController extends Controller
             'ttd' => public_path('ttd') . '/' . $proker->ttd_ketupel
         ];
 
-        var_dump($ketupel);die;
-
         // Memasukkan nama kegiatan ke dalam array data yang dikirim ke fungsi pembuat PDF
         return $this->generatePdfWithSignatures($signatures, $namaKegiatan, $organisasi, $ketupel);
     }
