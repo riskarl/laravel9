@@ -66,10 +66,12 @@
                 <td class="signature-block">
                     <img src="{{ $signatures[0]['ttd'] }}" alt="Signature" class="signature-image">
                      <div>{{ $signatures[0]['nama'] }}</div>
+                     <div>{{ $signatures[0]['code_id'] }}. {{ $signatures[0]['number_id'] }}</div>
                 </td>
                 <td class="signature-block">
                     <img src="{{ $ketupel['ttd'] }}" alt="Signature" class="signature-image">
                     <div>{{ $ketupel['name'] ?? null }}</div>
+                    <div>NIM. {{ $ketupel['nim'] ?? null }}</div>
                 </td>
             </tr>
             <tr class="spacer"></tr>
@@ -86,10 +88,12 @@
                 <td class="signature-block">
                     <img src="{{ $signatures[2]['ttd'] }}" alt="Signature" class="signature-image">
                     <div>{{ $signatures[2]['nama'] }}</div>
+                    <div>{{ $signatures[2]['code_id'] }}. {{ $signatures[2]['number_id'] }}</div>
                 </td>
                 <td class="signature-block">
                     <img src="{{ $signatures[1]['ttd'] }}" alt="Signature" class="signature-image">
                     <div>{{ $signatures[1]['nama'] }}</div>
+                    <div>{{ $signatures[1]['code_id'] }}. {{ $signatures[1]['number_id'] }}</div>
                 </td>
             </tr>
             <tr class="spacer"></tr>
@@ -105,10 +109,12 @@
                 <td class="signature-block">
                     <img src="{{ $signatures[4]['ttd'] }}" alt="Signature" class="signature-image">
                     <div>{{ $signatures[4]['nama'] }}</div>
+                    <div>{{ $signatures[4]['code_id'] }}. {{ $signatures[4]['number_id'] }}</div>
                 </td>
                 <td class="signature-block">
                     <img src="{{ $signatures[3]['ttd'] }}" alt="Signature" class="signature-image">
                     <div>{{ $signatures[3]['nama'] }}</div>
+                    <div>{{ $signatures[3]['code_id'] }}. {{ $signatures[3]['number_id'] }}</div>
                 </td>
             </tr>
         </table>

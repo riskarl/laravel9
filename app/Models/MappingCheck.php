@@ -130,6 +130,8 @@ class MappingCheck extends Model
                             $ttdList[] = [
                                 'nama' => $user->name,
                                 'jabatan' => $user->jabatan->jabatan,
+                                'code_id' => $user->code_id,
+                                'number_id' => $user->number_id,
                                 'ttd' => $ttdPath,
                             ];
                         } else {
@@ -137,6 +139,8 @@ class MappingCheck extends Model
                             $ttdList[] = [
                                 'nama' => $user->name,
                                 'jabatan' => $user->jabatan->jabatan,
+                                'code_id' => $user->code_id,
+                                'number_id' => $user->number_id,
                                 'ttd' => null,
                             ];
                         }

@@ -116,6 +116,7 @@ class ProposalController extends Controller
 
         $ketupel = [
             'name' => $proker->nama_ketupel,
+            'nim' => $proker->nim_ketupel,
             'ttd' => public_path('ttd') . '/' . $proker->ttd_ketupel
         ];
 
