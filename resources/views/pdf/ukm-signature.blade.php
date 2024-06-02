@@ -113,6 +113,21 @@
                     <div>{{ $signatures[4]['code_id'] }}. {{ $signatures[4]['number_id'] }}</div>
                 </td>
             </tr>
+            <tr class="spacer"></tr>
+            <tr>
+                <td colspan="2">Menyetujui,</td>
+            </tr>
+            <tr>
+                <td>Wakil Direktur Bagian Kemahasiswaan dan Alumni</td>
+            </tr>
+            <tr class="spacer"></tr>
+            <tr>
+                <td class="signature-block" colspan="2">
+                    <img src="{{ $signatures[5]['ttd'] }}" alt="Signature" class="signature-image">
+                    <div>{{ $signatures[5]['nama'] }}</div>
+                    <div>{{ $signatures[5]['code_id'] }}. {{ $signatures[5]['number_id'] }}</div>
+                </td>
+            </tr>
         </table>
     </div>
 </body>
