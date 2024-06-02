@@ -16,6 +16,7 @@ class Proker extends Model
         'nama_organisasi',
         'nama_proker',
         'nama_ketupel',
+        'nim_ketupel',
         'tanggal',
         'tempat',
         'dana_diajukan',

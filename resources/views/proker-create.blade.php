@@ -27,6 +27,10 @@
       <input type="text" name="nama_ketupel" class="form-control" id="nama_ketupel" placeholder="Masukkan Nama Ketua Pelaksana" required>
     </div>
     <div class="form-group">
+      <label for="exampleInputPassword1">NIM Ketua Pelaksana</label>
+      <input type="text" name="nim_ketupel" class="form-control" id="nim_ketupel" placeholder="Masukkan NIM Ketua Pelaksana" required>
+    </div>
+    <div class="form-group">
         <label for="exampleInputEmail1">Tanggal</label>
         <input type="date" name="tanggal" class="form-control" id="tanggal" aria-describedby="emailHelp"
           placeholder="Masukkan Tanggal" required>

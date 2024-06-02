@@ -29,6 +29,11 @@
           placeholder="Masukkan Nama Ketua Pelaksana" required>
     </div>
     <div class="form-group">
+      <label for="exampleInputEmail1">NIM Ketua Pelaksana</label>
+      <input type="text" value="{{ old('nim_ketupel', $proker->nim_ketupel ) }}" name="nim_ketupel" class="form-control" id="nim_ketupel" aria-describedby="emailHelp"
+        placeholder="Masukkan NIM Ketua Pelaksana" required>
+  </div>
+    <div class="form-group">
         <label for="exampleInputEmail1">Tanggal</label>
         <input type="date" value="{{ old('tanggal', $proker->tanggal)}}"name="tanggal" class="form-control" id="tanggal" aria-describedby="emailHelp"
           placeholder="Masukkan Tanggal" required>
