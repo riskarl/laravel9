@@ -56,6 +56,8 @@
                                             >
                                             Upload File
                                         </button>
+                                        @elseif ($proker->proposal?->status_flow == 9)
+                                        Disetujui
                                         @else
                                         Diproses
                                         @endif
