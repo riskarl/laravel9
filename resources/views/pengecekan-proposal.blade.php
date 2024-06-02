@@ -62,6 +62,7 @@
                     @endif
                   </td>  
                   <td>
+                    @if($proker->proposal->status_flow == 9)
                     <button type="button" class="btn btn-warning" onclick="openRevisiModal({{ $proker->proposal->id }})">Revisi</button>
                     @if($codeJabatan == 1)
                       <form action="{{ route('createSignaturePdf') }}" method="POST" style="display:inline;">
@@ -73,6 +74,9 @@
                       </form>
                     @else
                     <a href="{{ route('proposals.approve', ['proposalId' => $proker->proposal->id]) }}"><button type="submit" class="btn btn-success">Diterima</button></a>
+                    @endif
+                    @else
+                    Selesai
                     @endif
                 </td>
                 </tr>

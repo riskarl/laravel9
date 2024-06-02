@@ -97,7 +97,7 @@ class MappingCheck extends Model
         return false;
     }
 
-    public function signatureCreate($jabatan_id, $proposal_id)
+    public function signatureCreate($jabatan_id, $proposal_id, $jabatan)
     {
         $proposal = Proposal::with('proker.organisasi')->find($proposal_id);
 
@@ -107,7 +107,11 @@ class MappingCheck extends Model
         }
         
         if ($jabatan_id == 1 && $proposal->status_flow == 8) {
-            
+
+            $proposal->status_flow = 9;
+            $proposal->status = 'Approved by ' . $jabatan;
+    
+            $proposal->save();
             
             if ($proposal->proker->organisasi->nama_organisasi == 'BEM') {
                 $ttdList = [];

@@ -101,11 +101,12 @@ class ProposalController extends Controller
         $currentUser = $this->getCurrentUser();
         $proposalId = $request->input('proposal_id');
         $jabatanId = $currentUser['jabatan_id'];
+        $jabatan = $currentUser['jabatan'];
         $namaKegiatan = $request->input('proker'); // Pastikan parameter inputnya sesuai
         $organisasi = $request->input('organisasi');
     
         $model = new MappingCheck();
-        $signatures = $model->signatureCreate($jabatanId, $proposalId);
+        $signatures = $model->signatureCreate($jabatanId, $proposalId, $jabatan);
     
         $proposal = Proposal::find($proposalId);
         if (!$proposal) {
