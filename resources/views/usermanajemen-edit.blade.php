@@ -38,9 +38,9 @@
     <div class="form-group">
         <label for="exampleFormControlSelect1">Jenis ID</label>
         <select class="form-control" name="code_id" id="code_id">
-            <option value="NIM" {{ old('code_id', $user->code_id) == 'NIM' ? 'selected' : '' }}>1</option>
-            <option value="NIDN" {{ old('code_id', $user->code_id) == 'NIDN' ? 'selected' : '' }}>2</option>
-            <option value="NIP" {{ old('code_id', $user->code_id) == 'NIP' ? 'selected' : '' }}>3</option>
+            <option value="NIM" {{ old('code_id', $user->code_id) == 'NIM' ? 'selected' : '' }}>NIM</option>
+            <option value="NIDN" {{ old('code_id', $user->code_id) == 'NIDN' ? 'selected' : '' }}>NIDN</option>
+            <option value="NIP" {{ old('code_id', $user->code_id) == 'NIP' ? 'selected' : '' }}>NIP</option>
         </select>
     </div>
     <div class="form-group">
