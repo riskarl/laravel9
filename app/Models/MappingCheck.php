@@ -159,7 +159,7 @@ class MappingCheck extends Model
                     User::where('jabatan_id', 5)->where('organization', $proposal->proker->organisasi->nama_organisasi)->whereNotNull('ttd')->first(),
                     User::where('jabatan_id', 5)->where('organization', 'BEM')->whereNotNull('ttd')->first(),
                     User::where('jabatan_id', 5)->where('organization', 'BPM')->whereNotNull('ttd')->first(),
-                    User::where('jabatan_id', 4)->where('organization', 'BEM')->whereNotNull('ttd')->first(),
+                    User::where('jabatan_id', 4)->where('organization', $proposal->proker->organisasi->nama_organisasi)->whereNotNull('ttd')->first(),
                     User::where('jabatan_id', 2)->whereNotNull('ttd')->first(),
                     User::where('jabatan_id', 1)->whereNotNull('ttd')->first(),
                 ];
