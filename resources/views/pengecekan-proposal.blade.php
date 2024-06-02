@@ -62,7 +62,7 @@
                     @endif
                   </td>  
                   <td>
-                    @if($proker->proposal->status_flow == 9)
+                    @if($proker->proposal->status_flow != 9)
                     <button type="button" class="btn btn-warning" onclick="openRevisiModal({{ $proker->proposal->id }})">Revisi</button>
                     @if($codeJabatan == 1)
                       <form action="{{ route('createSignaturePdf') }}" method="POST" style="display:inline;">
