@@ -105,9 +105,6 @@ class ProposalController extends Controller
         $namaKegiatan = $request->input('proker'); // Pastikan parameter inputnya sesuai
         $organisasi = $request->input('organisasi');
     
-        $model = new MappingCheck();
-        $signatures = $model->signatureCreate($jabatanId, $proposalId, $jabatan);
-    
         $proposal = Proposal::find($proposalId);
         if (!$proposal) {
             return redirect()->back()->with('error', 'Proposal not found');
@@ -122,6 +119,9 @@ class ProposalController extends Controller
         if (empty($proker->ttd_ketupel)) {
             return redirect()->back()->with('error', 'TTD Ketupel tidak lengkap');
         }
+
+        $model = new MappingCheck();
+        $signatures = $model->signatureCreate($jabatanId, $proposalId, $jabatan);
     
         $ketupel = [
             'name' => $proker->nama_ketupel,
