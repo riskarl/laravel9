@@ -48,7 +48,7 @@ class Controller extends BaseController
 
         if ($organisasi == 'BEM') {
             $html = view('pdf.signatures', compact('signatures', 'namaKegiatan', 'ketupel'))->render();
-        }elseif ($organisasi == 'UKM') {
+        }elseif (strpos($organisasi, 'UKM') !== false) {
             $html = view('pdf.ukm-signature', compact('signatures', 'namaKegiatan', 'ketupel'))->render();
         }else {
             
