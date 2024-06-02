@@ -52,7 +52,7 @@
 </head>
 <body>
     <div class="header">
-        <h1>LEMBAR PENGESAHAN KEGIATAN UKM</h1>
+        <h1>LEMBAR PENGESAHAN</h1>
         <h2>{{ $namaKegiatan }}</h2>
     </div>
     <div class="content">
@@ -60,61 +60,58 @@
             <tr>
                 <td>Ketua UKM</td>
                 <td>Ketua Pelaksana</td>
-                <td>Ketua Badan Perwakilan Mahasiswa</td>
-                <td>Ketua Badan Eksekutif Mahasiswa</td>
             </tr>
             <tr class="spacer"></tr>
             <tr>
                 <td class="signature-block">
                     <img src="{{ $signatures[0]['ttd'] }}" alt="Signature" class="signature-image">
-                     <div>{{ $signatures[0]['nama'] }}</div>
-                     <div>{{ $signatures[0]['code_id'] }}. {{ $signatures[0]['number_id'] }}</div>
+                    <div>{{ $signatures[0]['nama'] }}</div>
+                    <div>{{ $signatures[0]['code_id'] }}. {{ $signatures[0]['number_id'] }}</div>
                 </td>
                 <td class="signature-block">
                     <img src="{{ $ketupel['ttd'] }}" alt="Signature" class="signature-image">
                     <div>{{ $ketupel['name'] ?? null }}</div>
                     <div>NIM. {{ $ketupel['nim'] ?? null }}</div>
                 </td>
-                <td class="signature-block">
-                    <img src="{{ $signatures[2]['ttd'] }}" alt="Signature" class="signature-image">
-                     <div>{{ $signatures[2]['nama'] }}</div>
-                     <div>{{ $signatures[2]['code_id'] }}. {{ $signatures[2]['number_id'] }}</div>
-                </td>
+            </tr>
+            <tr class="spacer"></tr>
+            <tr>
+                <td>Ketua Badan Perwakilan Mahasiswa</td>
+                <td>Ketua Badan Eksekutif Mahasiswa</td>
+            </tr>
+            <tr class="spacer"></tr>
+            <tr>
                 <td class="signature-block">
                     <img src="{{ $signatures[1]['ttd'] }}" alt="Signature" class="signature-image">
-                     <div>{{ $signatures[1]['nama'] }}</div>
-                     <div>{{ $signatures[1]['code_id'] }}. {{ $signatures[1]['number_id'] }}</div>
+                    <div>{{ $signatures[1]['nama'] }}</div>
+                    <div>{{ $signatures[1]['code_id'] }}. {{ $signatures[1]['number_id'] }}</div>
+                </td>
+                <td class="signature-block">
+                    <img src="{{ $signatures[2]['ttd'] }}" alt="Signature" class="signature-image">
+                    <div>{{ $signatures[2]['nama'] }}</div>
+                    <div>{{ $signatures[2]['code_id'] }}. {{ $signatures[2]['number_id'] }}</div>
                 </td>
             </tr>
             <tr class="spacer"></tr>
             <tr>
                 <td colspan="2">Mengetahui,</td>
-                <td colspan="2">Menyetujui,</td>
             </tr>
             <tr>
                 <td>Pembina UKM</td>
                 <td>Koordinator Subbagian Akademik dan Kemahasiswaan</td>
-                <td>Wakil Direktur Bagian Kemahasiswaan dan Alumni</td>
-                <td></td>
             </tr>
             <tr class="spacer"></tr>
             <tr>
                 <td class="signature-block">
                     <img src="{{ $signatures[3]['ttd'] }}" alt="Signature" class="signature-image">
-                     <div>{{ $signatures[3]['nama'] }}</div>
-                     <div>{{ $signatures[3]['code_id'] }}. {{ $signatures[3]['number_id'] }}</div>
+                    <div>{{ $signatures[3]['nama'] }}</div>
+                    <div>{{ $signatures[3]['code_id'] }}. {{ $signatures[3]['number_id'] }}</div>
                 </td>
                 <td class="signature-block">
                     <img src="{{ $signatures[4]['ttd'] }}" alt="Signature" class="signature-image">
-                     <div>{{ $signatures[4]['nama'] }}</div>
-                     <div>{{ $signatures[4]['code_id'] }}. {{ $signatures[4]['number_id'] }}</div>
+                    <div>{{ $signatures[4]['nama'] }}</div>
+                    <div>{{ $signatures[4]['code_id'] }}. {{ $signatures[4]['number_id'] }}</div>
                 </td>
-                <td class="signature-block">
-                    <img src="{{ $signatures[5]['ttd'] }}" alt="Signature" class="signature-image">
-                     <div>{{ $signatures[5]['nama'] }}</div>
-                     <div>{{ $signatures[5]['code_id'] }}. {{ $signatures[5]['number_id'] }}</div>
-                </td>
-                <td></td>
             </tr>
         </table>
     </div>
