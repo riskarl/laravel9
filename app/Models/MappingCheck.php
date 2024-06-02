@@ -193,6 +193,51 @@ class MappingCheck extends Model
             
                 return $ttdList;
             }
+
+            if (strpos($proposal->proker->organisasi->nama_organisasi, 'HIMA') !== false) {
+                $ttdList = [];
+
+                // Mendapatkan user berdasarkan jabatan dan organisasi
+                $users = [
+                    User::where('jabatan_id', 5)->where('organization', $proposal->proker->organisasi->nama_organisasi)->whereNotNull('ttd')->first(),
+                    User::where('jabatan_id', 5)->where('organization', 'BEM')->whereNotNull('ttd')->first(),
+                    User::where('jabatan_id', 5)->where('organization', 'BPM')->whereNotNull('ttd')->first(),
+                    User::where('jabatan_id', 4)->where('organization', $proposal->proker->organisasi->nama_organisasi)->whereNotNull('ttd')->first(),
+                    User::where('jabatan_id', 15)->whereNotNull('ttd')->first(),
+                    User::where('jabatan_id', 3)->whereNotNull('ttd')->first(),
+                    User::where('jabatan_id', 2)->whereNotNull('ttd')->first(),
+                    User::where('jabatan_id', 1)->whereNotNull('ttd')->first(),
+                ];
+            
+                $ttdFolderPath = public_path('ttd');
+            
+                // Menambahkan pengguna ke daftar ttd jika mereka memiliki ttd yang valid atau null jika tidak
+                foreach ($users as $user) {
+                    if ($user) {
+                        $ttdPath = $ttdFolderPath . '/' . $user->ttd;
+                        if ($user->ttd && file_exists($ttdPath)) {
+                            $ttdList[] = [
+                                'nama' => $user->name,
+                                'jabatan' => $user->jabatan->jabatan,
+                                'code_id' => $user->code_id,
+                                'number_id' => $user->number_id,
+                                'ttd' => $ttdPath,
+                            ];
+                        } else {
+                            // Menambahkan null jika file ttd tidak ditemukan
+                            $ttdList[] = [
+                                'nama' => $user->name,
+                                'jabatan' => $user->jabatan->jabatan,
+                                'code_id' => $user->code_id,
+                                'number_id' => $user->number_id,
+                                'ttd' => null,
+                            ];
+                        }
+                    }
+                }
+            
+                return $ttdList;
+            }
             
         }
 
