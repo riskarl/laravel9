@@ -48,6 +48,11 @@
         .spacer {
             height: 30px;
         }
+        .center-align {
+            text-align: center;
+            margin: 0 auto;
+            width: 100%;
+        }
     </style>
 </head>
 <body>
@@ -136,7 +141,7 @@
                 <td colspan="2">Menyetujui,</td>
             </tr>
             <tr>
-                <td>Wakil Direktur Bagian Kemahasiswaan dan Alumni</td>
+                <td colspan="2" class="center-align">Wakil Direktur Bagian Kemahasiswaan dan Alumni</td>
             </tr>
             <tr class="spacer"></tr>
             <tr>

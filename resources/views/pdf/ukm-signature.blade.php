@@ -48,12 +48,17 @@
         .spacer {
             height: 30px;
         }
+        .center-align {
+            text-align: center;
+            margin: 0 auto;
+            width: 100%;
+        }
     </style>
 </head>
 <body>
     <div class="header">
-        <h2>LEMBAR PENGESAHAN</h1>
-        <h4>{{ $namaKegiatan }}</h2>
+        <h2>LEMBAR PENGESAHAN</h2>
+        <h4>{{ $namaKegiatan }}</h4>
     </div>
     <div class="content">
         <table class="signatures-table">
@@ -118,7 +123,7 @@
                 <td colspan="2">Menyetujui,</td>
             </tr>
             <tr>
-                <td>Wakil Direktur Bagian Kemahasiswaan dan Alumni</td>
+                <td colspan="2" class="center-align">Wakil Direktur Bagian Kemahasiswaan dan Alumni</td>
             </tr>
             <tr class="spacer"></tr>
             <tr>
