@@ -10,6 +10,7 @@ use Session;
 use App\Models\MappingCheck;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\File;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 
 class ProposalController extends Controller
