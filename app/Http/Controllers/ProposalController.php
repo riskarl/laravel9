@@ -103,6 +103,8 @@ class ProposalController extends Controller
         $model = new MappingCheck();
         $signatures = $model->signatureCreate($jabatanId, $proposalId);
 
+        var_dump($signatures);die;
+
         $proposal = Proposal::find($proposalId);
         if (!$proposal) {
             return redirect()->back()->with('error', 'Proposal not found');

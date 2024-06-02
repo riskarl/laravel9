@@ -105,8 +105,9 @@ class MappingCheck extends Model
         if (!$proposal) {
             return false;
         }
-
+        
         if ($jabatan_id == 1 && $proposal->status_flow == 8) {
+            
             
             if ($proposal->proker->organisasi->nama_organisasi == 'BEM') {
                 $ttdList = [];
@@ -150,9 +151,9 @@ class MappingCheck extends Model
                 return $ttdList;
             }
 
-            if ($proposal->proker->organisasi->nama_organisasi == 'UKM') {
+            if (strpos($proposal->proker->organisasi->nama_organisasi, 'UKM') !== false) {
                 $ttdList = [];
-            
+
                 // Mendapatkan user berdasarkan jabatan dan organisasi
                 $users = [
                     User::where('jabatan_id', 5)->where('organization', 'UKM')->whereNotNull('ttd')->first(),
