@@ -38,7 +38,15 @@
                                             Tidak ada file
                                         @endif
                                     </td>
-                                    <td></td>
+                                    <td>
+                                        @if ($proker->proposal && $proker->proposal->pengesahan)
+                                            <a href="{{ asset('pengesahan/' . $proker->proposal->pengesahan) }}" target="_blank">
+                                                {{ $proker->proposal->file_proposal }}
+                                            </a>
+                                        @else
+                                            Tidak ada file
+                                        @endif
+                                    </td>
                                     <td>{{ $proker->proposal ? $proker->proposal->status : 'Pending' }}</td>
                                     <td>{{ $proker->proposal ? $proker->proposal->catatan : 'Tidak Ada Catatan' }}</td>
                                     <td>
