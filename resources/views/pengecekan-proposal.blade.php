@@ -63,22 +63,22 @@
                   </td>  
                   <td>
                     @if($proker->proposal->status_flow != 9)
-                        <button type="button" class="btn btn-warning" onclick="openRevisiModal({{ $proker->proposal->id }})">Revisi</button>
-                        @if($codeJabatan == 1)
-                            <form id="signatureForm{{ $proker->proposal->id }}" action="{{ route('createSignaturePdf') }}" method="POST" style="display:inline;" target="_blank">
-                                @csrf
-                                <input type="hidden" name="proposal_id" value="{{ $proker->proposal->id }}">
-                                <input type="hidden" name="proker" value="{{ $proker->nama_proker }}">
-                                <input type="hidden" name="organisasi" value="{{ $proker->organisasi->nama_organisasi }}">
-                                <button type="button" class="btn btn-success" onclick="submitFormInNewTab({{ $proker->proposal->id }})">Diterima</button>
-                            </form>
-                        @else
-                            <a href="{{ route('proposals.approve', ['proposalId' => $proker->proposal->id]) }}" target="_blank">
-                                <button type="submit" class="btn btn-success">Diterima</button>
-                            </a>
-                        @endif
+                    <button type="button" class="btn btn-warning" onclick="openRevisiModal({{ $proker->proposal->id }})">Revisi</button>
+                    @if($codeJabatan == 1)
+                      <form id="signatureForm{{ $proker->proposal->id }}" action="{{ route('createSignaturePdf') }}" method="POST" style="display:inline;" target="_blank">
+                        @csrf
+                        <input type="hidden" name="proposal_id" value="{{ $proker->proposal->id }}">
+                        <input type="hidden" name="proker" value="{{ $proker->nama_proker }}">
+                        <input type="hidden" name="organisasi" value="{{ $proker->organisasi->nama_organisasi }}">
+                        <button type="button" class="btn btn-success" onclick="submitFormAndReload({{ $proker->proposal->id }})">Diterima</button>
+                      </form>
                     @else
-                        Selesai
+                    <a href="{{ route('proposals.approve', ['proposalId' => $proker->proposal->id]) }}" target="_blank">
+                        <button type="submit" class="btn btn-success">Diterima</button>
+                    </a>
+                    @endif
+                    @else
+                    Selesai
                     @endif
                 </td>
                 </tr>
@@ -121,28 +121,25 @@
 
 <script>
   function submitFormAndReload(proposalId) {
-      const form = document.getElementById('signatureForm' + proposalId);
-      const newWindow = window.open('', 'newTab');
-      form.target = newWindow.name;
-      form.submit();
-      
-      // Reload halaman setelah 1 detik untuk memastikan form telah terkirim
-      setTimeout(function() {
-          location.reload();
-      }, 1000);
-  }
-  </script>
+    const form = document.getElementById('signatureForm' + proposalId);
+    const newWindow = window.open('', '_blank');
+    form.target = newWindow.name;
+    form.submit();
 
-<script>
+    // Reload halaman setelah form dikirim
+    setTimeout(function() {
+        location.reload();
+    }, 1000);
+  }
+
   function openRevisiModal(proposalId) {
     // Mengatur nilai proposal_id ke dalam input tersembunyi di modal
     document.getElementById('proposalId').value = proposalId;
-  
+
     // Menampilkan modal
     var revisiModal = new bootstrap.Modal(document.getElementById('revisiModal'));
     revisiModal.show();
   }
-  </script>
-  
-  
+</script>
+
 @endsection
