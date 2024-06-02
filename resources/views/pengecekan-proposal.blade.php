@@ -34,7 +34,7 @@
                 || ($codeJabatan == 8 && (strpos($proker->organisasi->nama_organisasi, 'HIMA') !== false) && 'Kampus' == $orguser && $proker->proposal->status_flow == 5 && $proker->proposal->status_flow != 1)
                 || ($codeJabatan == 3 && (strpos($proker->organisasi->nama_organisasi, 'HIMA') !== false) && 'Kampus' == $orguser && $proker->proposal->status_flow == 6 && $proker->proposal->status_flow != 1)
                 || ($codeJabatan == 2 && (strpos($proker->organisasi->nama_organisasi, 'HIMA') !== false) && 'Kampus' == $orguser && $proker->proposal->status_flow == 7 && $proker->proposal->status_flow != 1)
-                || ($codeJabatan == 1 && 'Kampus' == $orguser && $proker->proposal->status_flow == 8))
+                || ($codeJabatan == 1 && 'Kampus' == $orguser && ($proker->proposal->status_flow == 8 || $proker->proposal->status_flow == 9 )))
                 <tr>
                     <td>{{ $proker->id }}</td>
                     <td>{{ $proker->nama_proker }}</td>
@@ -63,20 +63,22 @@
                   </td>  
                   <td>
                     @if($proker->proposal->status_flow != 9)
-                    <button type="button" class="btn btn-warning" onclick="openRevisiModal({{ $proker->proposal->id }})">Revisi</button>
-                    @if($codeJabatan == 1)
-                      <form action="{{ route('createSignaturePdf') }}" method="POST" style="display:inline;">
-                        @csrf
-                        <input type="hidden" name="proposal_id" value="{{ $proker->proposal->id }}">
-                        <input type="hidden" name="proker" value="{{ $proker->nama_proker }}">
-                        <input type="hidden" name="organisasi" value="{{ $proker->organisasi->nama_organisasi }}">
-                        <button type="submit" class="btn btn-success">Diterima</button>
-                      </form>
+                        <button type="button" class="btn btn-warning" onclick="openRevisiModal({{ $proker->proposal->id }})">Revisi</button>
+                        @if($codeJabatan == 1)
+                            <form id="signatureForm{{ $proker->proposal->id }}" action="{{ route('createSignaturePdf') }}" method="POST" style="display:inline;" target="_blank">
+                                @csrf
+                                <input type="hidden" name="proposal_id" value="{{ $proker->proposal->id }}">
+                                <input type="hidden" name="proker" value="{{ $proker->nama_proker }}">
+                                <input type="hidden" name="organisasi" value="{{ $proker->organisasi->nama_organisasi }}">
+                                <button type="button" class="btn btn-success" onclick="submitFormInNewTab({{ $proker->proposal->id }})">Diterima</button>
+                            </form>
+                        @else
+                            <a href="{{ route('proposals.approve', ['proposalId' => $proker->proposal->id]) }}" target="_blank">
+                                <button type="submit" class="btn btn-success">Diterima</button>
+                            </a>
+                        @endif
                     @else
-                    <a href="{{ route('proposals.approve', ['proposalId' => $proker->proposal->id]) }}"><button type="submit" class="btn btn-success">Diterima</button></a>
-                    @endif
-                    @else
-                    Selesai
+                        Selesai
                     @endif
                 </td>
                 </tr>
@@ -117,6 +119,19 @@
   </div>
 </div>
 
+<script>
+  function submitFormAndReload(proposalId) {
+      const form = document.getElementById('signatureForm' + proposalId);
+      const newWindow = window.open('', 'newTab');
+      form.target = newWindow.name;
+      form.submit();
+      
+      // Reload halaman setelah 1 detik untuk memastikan form telah terkirim
+      setTimeout(function() {
+          location.reload();
+      }, 1000);
+  }
+  </script>
 
 <script>
   function openRevisiModal(proposalId) {
