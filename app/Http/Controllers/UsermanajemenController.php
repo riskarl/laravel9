@@ -66,7 +66,6 @@ class UsermanajemenController extends Controller
 
     function edit(User $user)
     {
-        var_dump($user); die;
         $jabatans = Jabatan::all();
         $organisasi = Organisasi::all();
         return view('usermanajemen-edit', ['user' => $user, 'jabatans' => $jabatans, 'organisasi' => $organisasi]);
