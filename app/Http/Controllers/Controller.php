@@ -51,7 +51,7 @@ class Controller extends BaseController
         }elseif (strpos($organisasi, 'UKM') !== false) {
             $html = view('pdf.ukm-signature', compact('signatures', 'namaKegiatan', 'ketupel'))->render();
         }else {
-            
+            $html = view('pdf.hima-signature', compact('signatures', 'namaKegiatan', 'ketupel'))->render();
         }
         
         // Memuat / konversi HTML yang telah dirender menjadi PDF, dengan ukuran kertas A4 dan orientasi portrait
