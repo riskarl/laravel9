@@ -9,7 +9,7 @@ class LpjController extends Controller
 {
     public function index()
     {
-        $proker = Proker::all();
+        $proker = Proker::with('lpj')->get();
         // Mengirim data pengguna ke view 'upload-lpj'
         return view('upload-lpj', ['listproker' => $proker]);
     }

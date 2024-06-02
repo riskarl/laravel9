@@ -74,4 +74,23 @@ class UploadController extends Controller
 
         return redirect()->back()->with('success', 'File berhasil diupload!');
     }
+    // public function uploadlpj(Request $request)
+    // {
+    //     $file = $request->file('file');
+    //     $filename = Str::uuid() . '.' . $file->getClientOriginalExtension();
+    //     $directory = public_path('rab');
+
+    //     if (!File::exists($directory)) {
+    //         File::makeDirectory($directory, 0755, true);
+    //     }
+
+    //     $file->move($directory, $filename);
+
+    //     $rab = new Rab();
+    //     $rab->file_rab = $filename;
+    //     $rab->id_proker = $request->id_proker;
+    //     $rab->save();
+
+    //     return redirect()->back()->with('success', 'File berhasil diupload!');
+    // }
 }
