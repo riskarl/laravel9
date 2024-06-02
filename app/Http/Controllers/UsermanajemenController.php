@@ -24,8 +24,8 @@ class UsermanajemenController extends Controller
             'organization' => 'required',
             'jabatan_id' => 'required|exists:jabatan,jabatan_id',
             'role' => 'required',
-            'jenis_id' => 'required', // Menambahkan validasi untuk jenis_id
-            'nomer_id' => 'required', // Menambahkan validasi untuk nomer_id
+            'code_id' => 'required', // Menambahkan validasi untuk jenis_id
+            'number_id' => 'required', // Menambahkan validasi untuk nomer_id
             'ttd' => 'file|mimes:jpeg,png,jpg,gif|max:2048'
         ]);
 
@@ -35,7 +35,7 @@ class UsermanajemenController extends Controller
             File::makeDirectory($ttdPath, 0755, true);
         }
 
-         // Proses upload file TTD
+        // Proses upload file TTD
         if ($request->hasFile('ttd')) {
             $ttdFile = $request->file('ttd');
             $ttdFilename = Str::uuid() . '.' . $ttdFile->getClientOriginalExtension();
@@ -66,6 +66,7 @@ class UsermanajemenController extends Controller
 
     function edit(User $user)
     {
+        var_dump($user); die;
         $jabatans = Jabatan::all();
         $organisasi = Organisasi::all();
         return view('usermanajemen-edit', ['user' => $user, 'jabatans' => $jabatans, 'organisasi' => $organisasi]);
@@ -79,8 +80,8 @@ class UsermanajemenController extends Controller
             'organization' => "required",
             'jabatan_id' => "required|exists:jabatan,jabatan_id",
             'role' => "required",
-            'jenis_id' => 'required', // Menambahkan validasi untuk jenis_id
-            'nomer_id' => 'required', // Menambahkan validasi untuk nomer_id
+            'code_id' => 'required', // Menambahkan validasi untuk jenis_id
+            'number_id' => 'required', // Menambahkan validasi untuk nomer_id
             'ttd' => 'file|mimes:jpeg,png,jpg,gif|max:2048'
         ]);
 

@@ -36,6 +36,18 @@
         </select>
     </div>
     <div class="form-group">
+        <label for="exampleFormControlSelect1">Jenis ID</label>
+        <select class="form-control" name="code_id" id="code_id">
+            <option value="NIM" {{ old('code_id', $user->code_id) == 'NIM' ? 'selected' : '' }}>1</option>
+            <option value="NIDN" {{ old('code_id', $user->code_id) == 'NIDN' ? 'selected' : '' }}>2</option>
+            <option value="NIP" {{ old('code_id', $user->code_id) == 'NIP' ? 'selected' : '' }}>3</option>
+        </select>
+    </div>
+    <div class="form-group">
+        <label for="exampleInputEmail1">Nomer ID</label>
+        <input type="text" value="{{ old('number_id', $user->number_id) }}" name="number_id" class="form-control" id="number_id" aria-describedby="emailHelp" placeholder="Masukkan Nomer ID">
+    </div>
+    <div class="form-group">
         <label for="exampleFormControlSelect1">Pilih Role</label>
         <select class="form-control" name="role" id="role">
             <option value="1" {{ old('role', $user->role) == 1 ? 'selected' : '' }}>1</option>

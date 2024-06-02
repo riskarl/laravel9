@@ -38,7 +38,7 @@
     </div>
     <div class="form-group">
       <label for="exampleFormControlSelect1">Jenis ID</label>
-      <select class="form-control" name="jenis_id" id="jenis_id">
+      <select class="form-control" name="code_id" id="code_id">
         <option>NIM</option> 
         <option>NIDN</option>
         <option>NIP</option>
@@ -46,7 +46,7 @@
     </div>
     <div class="form-group">
       <label for="exampleInputPassword1">Nomer ID</label>
-      <input type="text" name="nomer_id" class="form-control" id="nomer_id" placeholder="Masukkan Nomer ID">
+      <input type="text" name="number_id" class="form-control" id="number_id" placeholder="Masukkan Nomer ID">
     </div>
     <div class="form-group">
       <label for="exampleFormControlSelect1">Pilih Role</label>
