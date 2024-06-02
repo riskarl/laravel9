@@ -118,6 +118,10 @@ class ProposalController extends Controller
         if (!$proker) {
             return redirect()->back()->with('error', 'Proker not found');
         }
+
+        if (empty($proker->ttd_ketupel)) {
+            return redirect()->back()->with('error', 'TTD Ketupel tidak lengkap');
+        }
     
         $ketupel = [
             'name' => $proker->nama_ketupel,
