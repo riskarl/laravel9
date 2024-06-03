@@ -26,8 +26,7 @@
                 <th>No</th>
                 <th>Nama Program Kerja</th>
                 <th>Nama Organisasi</th>
-                <th>File LPJ</th>
-                <th>File Pengesahan</th>
+                <th>File Lpj</th>
                 <th>Catatan</th>
                 <th>Status</th>
                 <th>Aksi</th>
@@ -57,13 +56,6 @@
                       @else
                           Tidak ada file LPJ
                       @endif
-                  </td>
-                  <td>
-                    @if ($proker->lpj && $proker->lpj->status_flow_lpj == 9 && $proker->proposal->pengesahan)
-                      <a href="{{ asset('pengesahan/' . $proker->proposal->pengesahan) }}" target="_blank">{{ $proker->proposal->pengesahan }}</a>
-                    @else
-                      File tidak ada
-                    @endif
                   </td>
                   <td>
                     @if ($proker->lpj)

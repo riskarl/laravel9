@@ -4,68 +4,75 @@
 
 <div class="row">
     <div class="col-lg-12 mb-4">
-      <!-- Simple Tables -->
-      <div class="card">
-        <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-          <h6 class="m-0 font-weight-bold text-primary">Manajemen Laporan Pertanggungjawaban</h6>
+        <!-- Simple Tables -->
+        <div class="card">
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary">Manajemen Laporan Pertanggungjawaban</h6>
+            </div>
+            <div class="table-responsive">
+                <table class="table align-items-center table-flush">
+                    <thead class="thead-light">
+                        <tr>
+                            <th>No</th>
+                            <th>Nama Organisasi</th>
+                            <th>Nama Program Kerja</th>
+                            <th>File LPJ</th>
+                            <th>File Pengesahan</th>
+                            <th>Status</th>
+                            <th>Catatan</th>
+                            <th>Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach ($listproker as $index => $proker)
+                        <tr>
+                            <td>{{ $index + 1 }}</td>
+                            <td>{{ $proker->organisasi ? $proker->organisasi->nama_organisasi : 'Tidak ada organisasi' }}</td>
+                            <td>{{ $proker->nama_proker }}</td>
+                            <td>
+                                @if ($proker->lpj)
+                                    <a href="{{ asset('lpj/' . $proker->lpj->file_lpj) }}" target="_blank">{{ $proker->lpj->file_lpj }}</a>
+                                @else
+                                    Tidak ada file
+                                @endif
+                            </td>
+                            <td>
+                                @if ($proker->lpj && $proker->lpj->status_flow_lpj == 9 && $proker->proposal && $proker->proposal->pengesahan)
+                                    <a href="{{ asset('pengesahan/' . $proker->proposal->pengesahan) }}" target="_blank">{{ $proker->proposal->pengesahan }}</a>
+                                @else
+                                    File tidak ada
+                                @endif
+                            </td>
+                            <td>{{ $proker->lpj ? $proker->lpj->status : 'Pending'}}</td>
+                            <td>{{ $proker->lpj ? $proker->lpj->catatan : 'Tidak Ada Catatan' }}</td> 
+                            <td>
+                                @if ($proker->lpj)
+                                    @if ($proker->lpj->status_flow_lpj == 0 || $proker->lpj->status_flow_lpj == 1)
+                                        <button type="button" class="btn btn-primary mr-2 btnModal" data-toggle="modal" data-target="#uploadModal" data-id="{{ $proker->id }}">
+                                            Upload File
+                                        </button>
+                                    @elseif ($proker->lpj->status_flow_lpj == 9)
+                                        Selesai
+                                    @else
+                                        Diproses
+                                    @endif
+                                @else
+                                    <button type="button" class="btn btn-primary mr-2 btnModal" data-toggle="modal" data-target="#uploadModal" data-id="{{ $proker->id }}">
+                                        Upload File
+                                    </button>
+                                @endif
+                            </td>        
+                        </tr> 
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+            <div class="card-footer"></div>
         </div>
-        <div class="table-responsive">
-          <table class="table align-items-center table-flush">
-            <thead class="thead-light">
-              <tr>
-                <th>No</th>
-                <th>Nama Organisasi</th>
-                <th>Nama Program Kerja</th>
-                <th>File</th>
-                <th>Status</th>
-                <th>Catatan</th>
-                <th>Aksi</th>
-              </tr>
-            </thead>
-            <tbody>
-              @foreach ($listproker as $index => $proker)
-              <tr>
-                  <td>{{ $index + 1 }}</td>
-                  <td>{{ $proker->organisasi ? $proker->organisasi->nama_organisasi : 'Tidak ada organisasi' }}</td>
-                  <td>{{ $proker->nama_proker }}</td>
-                  <td>
-                      @if ($proker->lpj)
-                          <a href="{{ asset('lpj/' . $proker->lpj->file_lpj) }}" target="_blank">{{ $proker->lpj->file_lpj }}</a>
-                      @else
-                          Tidak ada file
-                      @endif
-                  </td>
-                  <td>{{ $proker->lpj ? $proker->lpj->status : 'Pending'}}</td>
-                  <td>{{ $proker->lpj ? $proker->lpj->catatan : 'Tidak Ada Catatan' }}</td> 
-                  <td>
-                      @if ($proker->lpj)
-                          @if ($proker->lpj->status_flow_lpj == 0 || $proker->lpj->status_flow_lpj == 1)
-                              <button type="button" class="btn btn-primary mr-2 btnModal" data-toggle="modal" data-target="#uploadModal" data-id="{{ $proker->id }}">
-                                  Upload File
-                              </button>
-                          @elseif ($proker->lpj->status_flow_lpj == 9)
-                              Selesai
-                          @else
-                              Diproses
-                          @endif
-                      @else
-                        <button type="button" class="btn btn-primary mr-2 btnModal" data-toggle="modal" data-target="#uploadModal" data-id="{{ $proker->id }}">
-                          Upload File
-                        </button>
-                      @endif
-                  </td>        
-              </tr> 
-              @endforeach
-          </tbody>
-          
-          </table>
-        </div>
-        <div class="card-footer"></div>
-      </div>
     </div>
-  </div>
+</div>
 
-  <div class="modal fade" id="uploadModal" tabindex="-1" role="dialog" aria-labelledby="uploadModalLabel" aria-hidden="true">
+<div class="modal fade" id="uploadModal" tabindex="-1" role="dialog" aria-labelledby="uploadModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <form action="{{ route('filelpj.upload') }}" method="POST" enctype="multipart/form-data">
@@ -106,6 +113,6 @@
           });
       });
   });
-  </script> 
+</script>
 
 @endsection
