@@ -25,26 +25,37 @@
             <tbody>
               @foreach ($listproker as $index => $proker)
               <tr>
-                <td>{{ $index + 1 }}</td>
-                <td>{{ $proker->organisasi ? $proker->organisasi->nama_organisasi : 'Tidak ada organisasi' }}</td>
-                <td>{{ $proker->nama_proker }}</td>
-                <td>
-                  @if ($proker->lpj)
-                      <a href="{{ asset('lpj/' . $proker->lpj->file_lpj) }}" target="_blank">{{ $proker->lpj->file_lpj }}</a>
-                  @else
-                      Tidak ada file
-                  @endif
-                </td>
-                <td>{{ $proker->lpj ? $proker->lpj->status : 'Pending'}}</td>
-                <td>{{ $proker->lpj ? $proker->lpj->catatan : 'Tidak Ada Catatan' }}</td> 
-                <td>
-                  <button type="button" class="btn btn-primary mr-2 btnModal" data-toggle="modal" data-target="#uploadModal" data-id="{{ $proker->id }}">
-                      Upload File
-                  </button>
-              </td>        
+                  <td>{{ $index + 1 }}</td>
+                  <td>{{ $proker->organisasi ? $proker->organisasi->nama_organisasi : 'Tidak ada organisasi' }}</td>
+                  <td>{{ $proker->nama_proker }}</td>
+                  <td>
+                      @if ($proker->lpj)
+                          <a href="{{ asset('lpj/' . $proker->lpj->file_lpj) }}" target="_blank">{{ $proker->lpj->file_lpj }}</a>
+                      @else
+                          Tidak ada file
+                      @endif
+                  </td>
+                  <td>{{ $proker->lpj ? $proker->lpj->status : 'Pending'}}</td>
+                  <td>{{ $proker->lpj ? $proker->lpj->catatan : 'Tidak Ada Catatan' }}</td> 
+                  <td>
+                      @if ($proker->lpj)
+                          @if ($proker->lpj->status_flow_lpj == 0 || $proker->lpj->status_flow_lpj == 1)
+                              <button type="button" class="btn btn-primary mr-2 btnModal" data-toggle="modal" data-target="#uploadModal" data-id="{{ $proker->id }}">
+                                  Upload File
+                              </button>
+                          @elseif ($proker->lpj->status_flow_lpj == 9)
+                              Selesai
+                          @else
+                              Diproses
+                          @endif
+                      @else
+                          Tidak ada LPJ
+                      @endif
+                  </td>        
               </tr> 
               @endforeach
-            </tbody>
+          </tbody>
+          
           </table>
         </div>
         <div class="card-footer"></div>
