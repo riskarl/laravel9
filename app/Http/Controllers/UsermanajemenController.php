@@ -18,7 +18,7 @@ class UsermanajemenController extends Controller
     function store(Request $request)
     {
         $validatedData = $request->validate([
-            'name' => 'required|max:35',
+            'name' => 'required|max:30',
             'username' => 'required|max:15|unique:users,username',
             'password' => 'required',
             'organization' => 'required',

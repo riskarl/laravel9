@@ -30,7 +30,7 @@
             <tbody>
               @foreach ($listorganisasi as $index => $organisasi)
               <tr>
-                <td>{{ $organisasi->id }}</td>
+                <td>{{ $index + 1 }}</td>
                 <td>{{ $organisasi->nama_organisasi }}</td>
                 <td>{{ $organisasi->periode }}</td>
                 <td class="d-flex">

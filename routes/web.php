@@ -41,6 +41,8 @@ Route::get('/dashboard', function () {
 Route::get('/usermanajemen/create', [UsermanajemenController::class, 'createform'])->middleware('role:1');
 Route::post('/usermanajemen', [UsermanajemenController::class, 'store'])->middleware('role:1');
 Route::get('/usermanajemen', [UsermanajemenController::class, 'create'])->middleware('role:1');
+Route::get('/usermanajemen/{user}', [UsermanajemenController::class, 'edit'])->middleware('role:1');
+Route::put('/usermanajemen/{user}', [UsermanajemenController::class, 'update'])->middleware('role:1');
 
 Route::get('/dashboard/organisasi', function () {
     return view('dashboard-organisasi');
@@ -53,9 +55,6 @@ Route::get('/dashboard/pengecek', function () {
 Route::get('/dashboard/bpm', function () {
     return view('dashboard-bpm');
 })->middleware('role:4');
-
-Route::get('/usermanajemen/{user}', [UsermanajemenController::class, 'edit'])->middleware('role:1');
-Route::put('/usermanajemen/{user}', [UsermanajemenController::class, 'update'])->middleware('role:1');
 
 Route::get('/organisasi/create', function () {
     return view('organisasi-create');
