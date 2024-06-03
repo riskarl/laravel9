@@ -23,7 +23,7 @@
           <table class="table align-items-center table-flush">
             <thead class="thead-light">
               <tr>
-                <th>ID</th>
+                <th>No</th>
                 <th>Nama Program Kerja</th>
                 <th>Nama Organisasi</th>
                 <th>File</th>
@@ -33,7 +33,7 @@
               </tr>
             </thead>
             <tbody>
-              @foreach ($listproker as $proker)
+              @foreach ($listproker as $index => $proker)
               @if($proker->proposal)
                 @if(($codeJabatan == 6 && ($proker->proposal->status_flow == 1 || $proker->proposal->status_flow == 0 || $proker->proposal->status_flow == null || $proker->proposal->status_flow == "") && $proker->organisasi->nama_organisasi == $orguser)
                 || ($codeJabatan == 5 && $orguser == 'BEM' && $proker->organisasi->nama_organisasi != 'BEM' && $proker->proposal->status_flow == 2 && $proker->proposal->status_flow != 1)
@@ -46,7 +46,7 @@
                 || ($codeJabatan == 2 && (strpos($proker->organisasi->nama_organisasi, 'HIMA') !== false) && 'Kampus' == $orguser && $proker->proposal->status_flow == 7 && $proker->proposal->status_flow != 1)
                 || ($codeJabatan == 1 && 'Kampus' == $orguser && ($proker->proposal->status_flow == 8 || $proker->proposal->status_flow == 9)))
                 <tr>
-                    <td>{{ $proker->id }}</td>
+                    <td>{{ $index + 1 }}</td>
                     <td>{{ $proker->nama_proker }}</td>
                     <td>{{ $proker->organisasi->nama_organisasi }}</td>
                     <td>

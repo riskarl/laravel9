@@ -16,7 +16,7 @@
             </a>
             <thead class="thead-light">
               <tr>
-                <th>ID</th>
+                <th>NO</th>
                 <th>Nama Organisasi</th>
                 <th>Nama Program Kerja</th>
                 <th>Nama Ketua Pelaksana</th>
@@ -27,10 +27,10 @@
               </tr>
             </thead>
             <tbody>
-              @foreach ($listproker as $proker)
+              @foreach ($listproker as $index => $proker)
                 @if (($proker->organisasi && $proker->organisasi->nama_organisasi == $orguser))
                       <tr>
-                          <td>{{ $proker->id }}</td>
+                          <td>{{ $index + 1 }}</td>
                           <td>{{ $proker->organisasi ? $proker->organisasi->nama_organisasi : 'Tidak ada organisasi' }}</td>
                           <td>{{ $proker->nama_proker }}</td>
                           <td>{{ $proker->nama_ketupel }}</td>

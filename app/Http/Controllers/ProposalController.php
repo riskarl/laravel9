@@ -107,12 +107,12 @@ class ProposalController extends Controller
         $jabatan = $currentUser['jabatan'];
         $namaKegiatan = $request->input('proker'); // Pastikan parameter inputnya sesuai
         $organisasi = $request->input('organisasi');
-    
+
         $proposal = Proposal::find($proposalId);
         if (!$proposal) {
             return redirect()->back()->with('error', 'Proposal not found');
         }
-    
+
         // Ambil data Proker terkait dari Proposal
         $proker = Proker::where('id', $proposal->id_proker)->first();
         if (!$proker) {
@@ -125,13 +125,13 @@ class ProposalController extends Controller
 
         $model = new MappingCheck();
         $signatures = $model->signatureCreate($jabatanId, $proposalId, $jabatan);
-    
+
         $ketupel = [
             'name' => $proker->nama_ketupel,
             'nim' => $proker->nim_ketupel,
             'ttd' => public_path('ttd') . '/' . $proker->ttd_ketupel
         ];
-    
+
         if ($organisasi == 'BEM') {
             $html = view('pdf.signatures', compact('signatures', 'namaKegiatan', 'ketupel'))->render();
         } elseif (strpos($organisasi, 'UKM') !== false) {
@@ -139,28 +139,28 @@ class ProposalController extends Controller
         } else {
             $html = view('pdf.hima-signature', compact('signatures', 'namaKegiatan', 'ketupel'))->render();
         }
-    
+
         $pdf = Pdf::loadHTML($html)->setPaper('A4', 'portrait');
-    
+
         // Membuat direktori jika belum ada
         $path = public_path('pengesahan');
         if (!File::exists($path)) {
             File::makeDirectory($path, 0755, true);
         }
-    
+
         // Membuat nama file dengan UUID
         $fileName = Str::uuid() . '.pdf';
         $filePath = $path . '/' . $fileName;
-    
+
         // Menyimpan PDF ke direktori public/pengesahan
         $pdf->save($filePath);
-    
+
         // Menyimpan nama file di database
         $proposal->pengesahan = $fileName;
         $proposal->save();
-    
+
         // Mengirim PDF ke browser untuk ditampilkan maupun diunduh
         return $pdf->stream('document.pdf');
     }
-    
+
 }

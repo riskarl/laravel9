@@ -11,7 +11,7 @@
                 <table class="table align-items-center table-flush">
                     <thead class="thead-light">
                         <tr>
-                            <th>ID</th>
+                            <th>No</th>
                             <th>Nama Organisasi</th>
                             <th>Nama Program Kerja</th>
                             <th>File Proposal</th>
@@ -22,11 +22,11 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach ($listproker as $proker)
+                        @foreach ($listproker as $index => $proker)
                             {{-- Hanya tampilkan jika organisasi cocok dengan orguser atau jika jabatan adalah Ketua BEM --}}
                             @if (($proker->organisasi && $proker->organisasi->nama_organisasi == $orguser))
                                 <tr>
-                                    <td>{{ $proker->id }}</td>
+                                    <td>{{ $index + 1 }}</td>
                                     <td>{{ $proker->organisasi ? $proker->organisasi->nama_organisasi : 'Tidak ada organisasi' }}</td>
                                     <td>{{ $proker->nama_proker }}</td>
                                     <td> 

@@ -15,7 +15,7 @@
             </a>
             <thead class="thead-light">
               <tr>
-                <th>ID</th>
+                <th>NO</th>
                 <th>Nama</th>
                 <th>Username</th>
                 <th>Password</th>
@@ -26,9 +26,9 @@
               </tr>
             </thead>
             <tbody>
-              @foreach ($users as $user)
+              @foreach ($users as $index => $user)
               <tr>
-                <td>{{ $user->id }}</td>
+                <td>{{ $index + 1 }}</td>
                 <td>{{ $user->name }}</td>
                 <td>{{ $user->username }}</td>
                 <td>{{ $user->password }}</td> <!-- Consider hiding this for security -->

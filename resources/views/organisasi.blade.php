@@ -21,14 +21,14 @@
             </a>
             <thead class="thead-light">
               <tr>
-                <th>ID</th>
+                <th>NO</th>
                 <th>Nama Organisasi</th>
                 <th>Periode</th>
                 <th>Aksi</th>
               </tr>
             </thead>
             <tbody>
-              @foreach ($listorganisasi as $organisasi)
+              @foreach ($listorganisasi as $index => $organisasi)
               <tr>
                 <td>{{ $organisasi->id }}</td>
                 <td>{{ $organisasi->nama_organisasi }}</td>

@@ -13,7 +13,7 @@
           <table class="table align-items-center table-flush">
             <thead class="thead-light">
               <tr>
-                <th>ID</th>
+                <th>NO</th>
                 <th>Nama Program Kerja</th>
                 <th>File</th>
               </tr>
