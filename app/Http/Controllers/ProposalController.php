@@ -17,10 +17,13 @@ class ProposalController extends Controller
 {
     public function index()
     {
+        //mendapatkan informasi pengguna saat ini
         $currentUser = $this->getCurrentUser();
-
+        //mengambil data proker dengan organisasi dan proposal terkait
         $proker = Proker::with(['organisasi', 'proposal'])->get();
+        //mendapatkan data jabatan dari pengguna saat ini
         $jabatan = $currentUser['jabatan'];
+        //mendapatkan organisasi pengguna saat ini
         $organisasiUser = $currentUser['organisasi'];
 
         // Mengirim data pengguna ke view 'upload-proposal'
@@ -37,13 +40,9 @@ class ProposalController extends Controller
     public function pengecekanproposal()
     {
         $currentUser = $this->getCurrentUser();
-
         $proker = Proker::with(['organisasi', 'proposal'])->get();
         $organisasiUser = $currentUser['organisasi'];
         $codeJabatan = $currentUser['code_jabatan'];
-
-        // var_dump($proker);die;
-
         // Mengirim data pengguna ke view 'pengecekan-proposal'
         return view('pengecekan-proposal', ['listproker' => $proker, 'orguser' => $organisasiUser, 'codeJabatan' => $codeJabatan]);
     }
@@ -56,9 +55,13 @@ class ProposalController extends Controller
 
     public function approvedProposal($proposalId)
     {
+        //mendapatkan informasi pengguna saat ini
         $currentUser = $this->getCurrentUser();
+        //mendapatkan code_jabatan dari pengguna saat ini
         $jabatanId = $currentUser['code_jabatan'];
+        //mendapatkan jabatan dari pengguna saat ini
         $jabatan = $currentUser['jabatan'];
+        //mendapatkan organisasi dari pengguna saat ini
         $organisasi = $currentUser['organisasi'];
 
         // Create a new instance of MappingCheck

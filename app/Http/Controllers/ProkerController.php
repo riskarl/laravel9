@@ -11,22 +11,33 @@ use Illuminate\Support\Facades\File;
 
 class ProkerController extends Controller
 {
+    
     public function index()
     {
+        // Mendapatkan informasi pengguna saat ini
         $currentUser = $this->getCurrentUser();
+        //mengambil semua data organisasi
         $organisasi = Organisasi::all();
+        //mengambil semua data proker
         $listproker = Proker::all();
+        //mendapatkan jabatan dari pengguna saat ini
         $jabatan = $currentUser['jabatan'];
+        //mendapatkan organisasi dari pengguna saat ini
         $organisasiUser = $currentUser['organisasi'];
         return view('proker', ['listproker' => $listproker, 'organisasi' => $organisasi, 'jabatan' => $jabatan, 'orguser' => $organisasiUser]);
     }
 
     public function tampil()
     {
+        //mendapatkan informasi pengguna saat ini
         $currentUser = $this->getCurrentUser();
+        //mengambil semua data organisasi
         $organisasi = Organisasi::all();
+        //mengambil semua data proker
         $listproker = Proker::all();
+        //mendapatkan jabatan dari pengguna saat ini
         $jabatan = $currentUser['jabatan'];
+        //mendapatkan informasi dari pengguna saat ini
         $organisasiUser = $currentUser['organisasi'];
         return view('proker-create', ['listproker' => $listproker, 'organisasi' => $organisasi, 'jabatan' => $jabatan, 'orguser' => $organisasiUser]);
     }
@@ -68,8 +79,11 @@ class ProkerController extends Controller
 
     public function edit(Proker $proker)
     {
+        //mendapatkan informasi pengguna saat ini
         $currentUser = $this->getCurrentUser();
+        //mengambil semua data organisasi
         $organisasi = Organisasi::all();
+        //mendapatkan organisasi dari pengguna saat ini
         $organisasiUser = $currentUser['organisasi'];
         return view('proker-edit', ['proker' => $proker, 'organisasi' => $organisasi, 'orguser' => $organisasiUser]);
     }

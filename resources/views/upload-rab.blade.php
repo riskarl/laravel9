@@ -22,9 +22,6 @@
             </thead>
             <tbody>
               @foreach ($listproker as $proker)
-              @php
-                  $rab = $proker->rab ?? null;
-              @endphp
               <tr>
                   <td>{{ $proker->id }}</td>
                   <td>{{ $proker->organisasi ? $proker->organisasi->nama_organisasi : 'Tidak ada organisasi' }}</td>

@@ -10,6 +10,7 @@ use Barryvdh\DomPDF\Facade\Pdf;
 
 class Controller extends BaseController
 {
+    //melakukan tindakan tertentu dan memvalidasi input
     use AuthorizesRequests, ValidatesRequests;
 
     //deklarasi fungsi, protected hanya dapat diakses oleh kelasnya sendiri dan kelas turunannya
@@ -19,8 +20,8 @@ class Controller extends BaseController
         $user = Session::get('user');
         $jabatan = Session::get('jabatan');
 
-        //pengecekan data jabatan, jika ada data jabatan dan jabatan_id dimasukkan ke array $user. 
-        //jika tidak ada maka nilai jabatan dan jabatan_id di set null dalam array $user
+        //pengecekan data jabatan, jika ada data jabatan, jabatan_id, code_jabatan dimasukkan ke array $user. 
+        //jika tidak ada maka nilai jabatan, jabatan_id, code_jabatan di set null dalam array $user
         if ($jabatan) {
             $user['jabatan'] = $jabatan['jabatan'];
             $user['jabatan_id'] = $jabatan['jabatan_id'];
@@ -42,12 +43,12 @@ class Controller extends BaseController
     //fungsi bersifat public dan menerima satu parameter berupa array $signatures
     public function generatePdfWithSignatures(array $signatures, $namaKegiatan, $organisasi = null, array $ketupel = [] )
     {
-        // Membuat tampilan HTML dengan template pdf.signatures dan data yang ada dalam array $signatures
-        // compact('signatures', 'namaKegiatan') membuat array asosiatif dari variabel $signatures dan $namaKegiatan
-        // render untuk mengubah view menjadi string HTML
-
+        //mengecek apakah variabel organisasi bernilai bem, jika kondisi terpenuhi maka variabel html akan diisi dengan
+        //render hasil pdf.signatures dengan data sigantures, namaKegiatan, Ketupel
         if ($organisasi == 'BEM') {
             $html = view('pdf.signatures', compact('signatures', 'namaKegiatan', 'ketupel'))->render();
+        //mengecek ukm berada pada variabel organisasi dengan fungsi strpos mengembalikan posisi string 'ukm'
+        //pertama kali muncul dalam sorganisasi atau false jika tidak ditemukan
         }elseif (strpos($organisasi, 'UKM') !== false) {
             $html = view('pdf.ukm-signature', compact('signatures', 'namaKegiatan', 'ketupel'))->render();
         }else {

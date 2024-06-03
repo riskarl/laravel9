@@ -35,26 +35,32 @@
           Menu
         </div>
         <li class="nav-item">
+          <a class="nav-link" href="{{ url('') }}">
+            <i class="fas fa-fw fa-user"></i>
+            <span>Profile</span>
+          </a>
+        </li>
+        <li class="nav-item">
           <a class="nav-link" href="{{ url('/organisasi') }}">
-            <i class="fas fa-fw fa-palette"></i>
+            <i class="fas fa-fw fa-sitemap"></i>
             <span>Organisasi</span>
           </a>
         </li>
         <li class="nav-item">
           <a class="nav-link" href="{{ url('/usermanajemen') }}">
-            <i class="fas fa-fw fa-palette"></i>
+            <i class="fas fa-fw fa-user-circle"></i>
             <span>Akun</span>
           </a>
         </li>
         <li class="nav-item">
           <a class="nav-link" href="{{ url('/lihatproposal') }}">
-            <i class="fas fa-fw fa-palette"></i>
+            <i class="fas fa-fw fa-file-alt"></i>
             <span>Proposal</span>
           </a>
         </li>
         <li class="nav-item">
           <a class="nav-link" href="{{ url('/lihatlpj') }}">
-            <i class="fas fa-fw fa-palette"></i>
+            <i class="fas fa-fw fa-file-invoice"></i>
             <span>LPJ</span>
           </a>
         </li>
@@ -262,15 +268,7 @@
           <div class="container my-auto">
             <div class="copyright text-center my-auto">
               <span>copyright &copy; <script> document.write(new Date().getFullYear()); </script> - developed by
-                <b><a href="https://indrijunanda.gitlab.io/" target="_blank">indrijunanda</a></b>
-              </span>
-            </div>
-          </div>
-  
-          <div class="container my-auto py-2">
-            <div class="copyright text-center my-auto">
-              <span>copyright &copy; <script> document.write(new Date().getFullYear()); </script> - distributed by
-                <b><a href="https://themewagon.com/" target="_blank">themewagon</a></b>
+                <b><a>Riska Retno Larasati</a></b>
               </span>
             </div>
           </div>

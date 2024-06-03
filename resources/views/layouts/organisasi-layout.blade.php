@@ -35,32 +35,38 @@
           Menu
         </div>
         <li class="nav-item">
+          <a class="nav-link" href="{{ url('') }}">
+            <i class="fas fa-fw fa-user"></i>
+            <span>Profile</span>
+          </a>
+        </li>
+        <li class="nav-item">
           <a class="nav-link" href="{{ url('/proker') }}">
-            <i class="fas fa-fw fa-palette"></i>
+            <i class="fas fa-fw fa-tasks"></i>
             <span>Program Kerja</span>
           </a>
         </li>
         <li class="nav-item">
           <a class="nav-link" href="{{ url('/uploadproposal') }}">
-            <i class="fas fa-fw fa-palette"></i>
+            <i class="fas fa-fw fa-file-alt"></i>
             <span>Proposal</span>
           </a>
         </li>
         <li class="nav-item">
           <a class="nav-link" href="{{ url('/uploadlpj') }}">
-            <i class="fas fa-fw fa-palette"></i>
+            <i class="fas fa-fw fa-file-invoice"></i>
             <span>LPJ</span>
           </a>
         </li>
         <li class="nav-item">
           <a class="nav-link" href="{{ url('/uploadrab') }}">
-            <i class="fas fa-fw fa-palette"></i>
+            <i class="fas fa-fw fa-file-invoice-dollar"></i>
             <span>RAB</span>
           </a>
         </li>
         <li class="nav-item">
             <a class="nav-link" href="{{ url('/unduhsrpd') }}">
-              <i class="fas fa-fw fa-palette"></i>
+              <i class="fas fa-fw fa-file-signature"></i>
               <span>SRPD</span>
             </a>
           </li>
@@ -268,15 +274,7 @@
           <div class="container my-auto">
             <div class="copyright text-center my-auto">
               <span>copyright &copy; <script> document.write(new Date().getFullYear()); </script> - developed by
-                <b><a href="https://indrijunanda.gitlab.io/" target="_blank">indrijunanda</a></b>
-              </span>
-            </div>
-          </div>
-  
-          <div class="container my-auto py-2">
-            <div class="copyright text-center my-auto">
-              <span>copyright &copy; <script> document.write(new Date().getFullYear()); </script> - distributed by
-                <b><a href="https://themewagon.com/" target="_blank">themewagon</a></b>
+                <b><a>Riska Retno Larasati</a></b>
               </span>
             </div>
           </div>

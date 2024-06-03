@@ -9,6 +9,11 @@
         <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
           <h6 class="m-0 font-weight-bold text-primary">Manajemen Organisasi</h6>
         </div>
+        @if(session('success'))
+        <div class="alert alert-success">
+        {{ session('success') }}
+        </div>
+        @endif
         <div class="table-responsive">
           <table class="table align-items-center table-flush">
             <a href="{{ url('/organisasi/create') }}" class="btn btn-primary btn-sm" title="Tambah Organisasi">
@@ -30,13 +35,13 @@
                 <td>{{ $organisasi->periode }}</td>
                 <td class="d-flex">
                   <a href="/organisasi/{{ $organisasi->id }}" type="button" class="btn btn-warning mr-2">Edit</a>
-                  <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteModal" data-userid="{{ $organisasi->id }}">Hapus</button>
-                  <!-- Delete Confirmation Modal -->
-                  <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+                  <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteModal{{ $organisasi->id }}" data-userid="{{ $organisasi->id }}">Hapus</button>
+                   <!-- Delete Confirmation Modal -->
+                  <div class="modal fade" id="deleteModal{{ $organisasi->id }}" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel{{ $organisasi->id }}" aria-hidden="true">
                     <div class="modal-dialog" role="document">
                         <div class="modal-content">
                             <div class="modal-header">
-                                <h5 class="modal-title" id="deleteModalLabel">Konfirmasi Hapus Organisasi</h5>
+                                <h5 class="modal-title" id="deleteModalLabel{{ $organisasi->id }}">Konfirmasi Hapus Organisasi</h5>
                                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                     <span aria-hidden="true">&times;</span>
                                 </button>
@@ -45,9 +50,9 @@
                                 Apakah Anda yakin ingin menghapus data ini?
                             </div>
                             <div class="modal-footer">
-                                <form id="deleteForm" action="/organisasi/{{ $organisasi->id }}" method="POST">
-                                    @method('DELETE')
+                                <form id="deleteForm{{ $organisasi->id }}" action="/organisasi/{{ $organisasi->id }}" method="POST">
                                     @csrf
+                                    @method('DELETE')
                                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
                                     <button type="submit" class="btn btn-danger">Hapus</button>
                                 </form>

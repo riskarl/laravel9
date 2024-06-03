@@ -52,8 +52,7 @@
                                     <td>
                                         @if ($proker->proposal?->status_flow == 0 || $proker->proposal?->status_flow == 1 || $proker->proposal?->status_flow == "" || $proker->proposal?->status_flow === null)
                                         <button type="button" class="btn btn-primary mr-2 btnModal" data-toggle="modal" data-target="#uploadModal" data-id="{{ $proker->id }}"
-                                            data-file="{{ $proker->proposal ? $proker->proposal->file_proposal : '' }}"
-                                            >
+                                            data-file="{{ $proker->proposal ? $proker->proposal->file_proposal : '' }}">
                                             Upload File
                                         </button>
                                         @elseif ($proker->proposal?->status_flow == 9)
