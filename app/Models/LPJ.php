@@ -18,7 +18,6 @@ class LPJ extends Model
     public $timestamps = true;
 
     protected $fillable = [
-        'file_lpj',
         'id_proker',
         'file_lpj',
         'status',

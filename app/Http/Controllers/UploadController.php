@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Rab;
 use Illuminate\Http\Request;
+use App\Models\LPJ;
 use App\Models\Proposal;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\File;
@@ -74,23 +75,46 @@ class UploadController extends Controller
 
         return redirect()->back()->with('success', 'File berhasil diupload!');
     }
-    // public function uploadlpj(Request $request)
-    // {
-    //     $file = $request->file('file');
-    //     $filename = Str::uuid() . '.' . $file->getClientOriginalExtension();
-    //     $directory = public_path('rab');
+    
+    public function uploadlpj(Request $request)
+    {
+        $file = $request->file('file');
+        $filename = Str::uuid() . '.' . $file->getClientOriginalExtension();
+        $directory = public_path('lpj');
 
-    //     if (!File::exists($directory)) {
-    //         File::makeDirectory($directory, 0755, true);
-    //     }
+        if (!File::exists($directory)) {
+            File::makeDirectory($directory, 0755, true);
+        }
 
-    //     $file->move($directory, $filename);
+        // Handle file baru
+        if ($request->hasFile('file')) {
+            // Pindahkan file baru ke direktori
+            $file->move($directory, $filename);
+        }
 
-    //     $rab = new Rab();
-    //     $rab->file_rab = $filename;
-    //     $rab->id_proker = $request->id_proker;
-    //     $rab->save();
+        // Cek apakah ini update atau penambahan baru
+        if (!empty($request->existing_file_name)) {
+            // Ini adalah update file, temukan LPJ yang ada
+            $lpj = LPJ::where('id_proker', $request->id_proker)->first();
+            if ($lpj && File::exists($directory . '/' . $lpj->file_lpj)) {
+                // Hapus file lama
+                File::delete($directory . '/' . $lpj->file_lpj);
+            }
+            $lpj->file_lpj = $filename;
+            $lpj->status = 'Pending';
+            $lpj->catatan = 'Belum ada catatan';
+        } else {
+            // Ini adalah penambahan baru
+            $lpj = new LPJ();
+            $lpj->file_lpj = $filename;
+            $lpj->status = 'Pending';
+            $lpj->catatan = 'Belum ada catatan';
+            $lpj->id_proker = $request->id_proker;
+        }
 
-    //     return redirect()->back()->with('success', 'File berhasil diupload!');
-    // }
+        // Simpan perubahan atau penambahan baru
+        $lpj->save();
+
+        return redirect()->back()->with('success', 'File LPJ berhasil diupload!');
+    }
 }

@@ -9,8 +9,12 @@ class LpjController extends Controller
 {
     public function index()
     {
-        $proker = Proker::with('lpj')->get();
-        // Mengirim data pengguna ke view 'upload-lpj'
+        $proker = Proker::with(['lpj', 'proposal'])
+                    ->whereHas('organisasi', function($query) {
+                        $query->where('status_flow', 9);
+                    })
+                    ->get();
+
         return view('upload-lpj', ['listproker' => $proker]);
     }
 
