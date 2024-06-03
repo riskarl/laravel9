@@ -10,10 +10,10 @@ class LpjController extends Controller
     public function index()
     {
         $proker = Proker::with(['lpj', 'proposal'])
-                    ->whereHas('organisasi', function($query) {
-                        $query->where('status_flow', 9);
-                    })
-                    ->get();
+        ->whereHas('proposal', function($query) {
+            $query->where('status_flow', 9);
+        })
+        ->get();
 
         return view('upload-lpj', ['listproker' => $proker]);
     }
