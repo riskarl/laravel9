@@ -49,7 +49,9 @@
                               Diproses
                           @endif
                       @else
-                          Tidak ada LPJ
+                        <button type="button" class="btn btn-primary mr-2 btnModal" data-toggle="modal" data-target="#uploadModal" data-id="{{ $proker->id }}">
+                          Upload File
+                        </button>
                       @endif
                   </td>        
               </tr> 
