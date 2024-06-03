@@ -13,6 +13,7 @@ class Proker extends Model
     protected $table = 'tb_proker';
     protected $primaryKey = 'id';
     protected $fillable = [
+        'id_organisasi',
         'nama_organisasi',
         'nama_proker',
         'nama_ketupel',

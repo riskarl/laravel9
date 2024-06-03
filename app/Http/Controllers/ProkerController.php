@@ -71,6 +71,7 @@ class ProkerController extends Controller
             // Tambahkan nama file TTD ke data yang divalidasi
             $validatedData['ttd_ketupel'] = $ttdFilename;
         }
+        $validatedData['id_organisasi'] = $validatedData['nama_organisasi'];
 
         // Simpan data ke database
         Proker::create($validatedData);
@@ -121,6 +122,7 @@ class ProkerController extends Controller
             // Tambahkan nama file TTD baru ke data yang divalidasi
             $validatedData['ttd_ketupel'] = $ttdFilename;
         }
+        $validatedData['id_organisasi'] = $validatedData['nama_organisasi'];
 
         // Update proker dengan data yang divalidasi
         $proker->update($validatedData);
