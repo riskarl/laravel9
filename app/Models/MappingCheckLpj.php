@@ -108,7 +108,7 @@ class MappingCheckLpj extends Model
             $lpj->status = 'Approved by ' . $jabatan;
             $lpj->save();
 
-            return $this->getSignatureList($lpj->proker->organisasi->nama_organisasi);
+            return true;
         }
 
         return false;

@@ -22,8 +22,16 @@ class LpjController extends Controller
             })
             ->get();
 
+        // Iterasi melalui setiap proker untuk memodifikasi nilai pengesahan
+        foreach ($proker as $item) {
+            if ($item->lpj && $item->lpj->status_flow_lpj != 9) {
+                $item->proposal->pengesahan = 'File tidak ada';
+            }
+        }
+
         return view('upload-lpj', ['listproker' => $proker]);
     }
+
 
     public function indexlpj()
     {
@@ -126,31 +134,16 @@ class LpjController extends Controller
         }
 
         $mappingCheckLpj = new MappingCheckLpj();
-        $signatures = $mappingCheckLpj->signatureCreateLpj($jabatanId, $lpjId, $jabatan);
+        $result = $mappingCheckLpj->signatureCreateLpj($jabatanId, $lpjId, $jabatan);
 
-        $ketupel = [
-            'name' => $proker->nama_ketupel,
-            'nim' => $proker->nim_ketupel,
-            'ttd' => public_path('ttd') . '/' . $proker->ttd_ketupel
-        ];
-
-        $html = view('pdf.lpj-signature', compact('signatures', 'namaKegiatan', 'ketupel'))->render();
-        $pdf = Pdf::loadHTML($html)->setPaper('A4', 'portrait');
-
-        $path = public_path('pengesahan');
-        if (!File::exists($path)) {
-            File::makeDirectory($path, 0755, true);
+        if($result)
+        {
+            Session::flash('success', 'LPJ has been successfully Approve.');
+        } else {
+            Session::flash('error', 'Failed to Approve the LPJ.');
         }
 
-        $fileName = Str::uuid() . '.pdf';
-        $filePath = $path . '/' . $fileName;
-
-        $pdf->save($filePath);
-
-        $lpj->pengesahan = $fileName;
-        $lpj->save();
-
-        return $pdf->stream('document.pdf');
+        return redirect()->back();
     }
 
 }
