@@ -28,7 +28,13 @@
                 <td>{{ $index + 1 }}</td>
                 <td>{{ $proker->organisasi ? $proker->organisasi->nama_organisasi : 'Tidak ada organisasi' }}</td>
                 <td>{{ $proker->nama_proker }}</td>
-                <td>{{ $proker->lpj ? $proker->lpj->file_lpj  : 'Tidak ada file' }}</td>
+                <td>
+                  @if ($proker->lpj)
+                      <a href="{{ asset('lpj/' . $proker->lpj->file_lpj) }}" target="_blank">{{ $proker->lpj->file_lpj }}</a>
+                  @else
+                      Tidak ada file
+                  @endif
+                </td>
                 <td>{{ $proker->lpj ? $proker->lpj->status : 'Pending'}}</td>
                 <td>{{ $proker->lpj ? $proker->lpj->catatan : 'Tidak Ada Catatan' }}</td> 
                 <td>
