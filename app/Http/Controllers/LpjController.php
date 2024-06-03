@@ -52,6 +52,24 @@ class LpjController extends Controller
         $jabatan = $currentUser['jabatan'];
         $organisasi = $currentUser['organisasi'];
 
+        // Mendapatkan LPJ yang terkait dengan lpjId
+        $lpj = LPJ::find($lpjId);
+
+        // Jika tidak ditemukan LPJ, return false
+        if (!$lpj) {
+            Session::flash('error', 'LPJ not found.');
+            return redirect()->back();
+        }
+
+        // Mendapatkan path dari file LPJ
+        $filePath = public_path('lpj/' . $lpj->file_lpj);
+
+        // Memeriksa apakah file LPJ ada
+        if (!File::exists($filePath)) {
+            Session::flash('error', 'LPJ file not found.');
+            return redirect()->back();
+        }
+
         $mappingCheckLpj = new MappingCheckLpj();
 
         if ($mappingCheckLpj->updateStatusFlowLpj($lpjId, $jabatanId, $organisasi, $jabatan)) {
@@ -62,6 +80,7 @@ class LpjController extends Controller
 
         return redirect()->back();
     }
+
 
     public function updateRevisiLpj(Request $request)
     {

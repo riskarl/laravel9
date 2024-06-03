@@ -99,4 +99,4 @@ Route::post('/upload-lpj', [UploadController::class, 'uploadlpj'])->name('filelp
 Route::get('/pengecekan-lpj', [LpjController::class, 'pengecekanlpj'])->name('pengecekan-lpj.index');
 Route::match(['get', 'post'], '/lpj/approve/{lpjId}', [LpjController::class, 'approvedLpj'])->name('lpjs.approve');
 Route::post('/lpj/revisi', [LpjController::class, 'updateRevisiLpj'])->name('lpjs.revisi');
-Route::post('/lpj/signature', [LpjController::class, 'createSignaturePdf'])->name('createSignaturePdf');
+Route::post('/lpj/signature', [LpjController::class, 'createSignaturePdf'])->name('createSignaturePdfLpj');

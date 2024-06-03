@@ -55,14 +55,32 @@ class ProposalController extends Controller
 
     public function approvedProposal($proposalId)
     {
-        //mendapatkan informasi pengguna saat ini
+        // Mendapatkan informasi pengguna saat ini
         $currentUser = $this->getCurrentUser();
-        //mendapatkan code_jabatan dari pengguna saat ini
+        // Mendapatkan code_jabatan dari pengguna saat ini
         $jabatanId = $currentUser['code_jabatan'];
-        //mendapatkan jabatan dari pengguna saat ini
+        // Mendapatkan jabatan dari pengguna saat ini
         $jabatan = $currentUser['jabatan'];
-        //mendapatkan organisasi dari pengguna saat ini
+        // Mendapatkan organisasi dari pengguna saat ini
         $organisasi = $currentUser['organisasi'];
+
+        // Mendapatkan proposal yang terkait dengan proposalId
+        $proposal = Proposal::find($proposalId);
+
+        // Jika tidak ditemukan proposal, return false
+        if (!$proposal) {
+            Session::flash('error', 'Proposal not found.');
+            return redirect()->back();
+        }
+
+        // Mendapatkan path dari file proposal
+        $filePath = public_path('files/' . $proposal->file_proposal);
+
+        // Memeriksa apakah file proposal ada
+        if (!File::exists($filePath)) {
+            Session::flash('error', 'Proposal file not found.');
+            return redirect()->back();
+        }
 
         // Create a new instance of MappingCheck
         $mappingCheck = new MappingCheck();
@@ -76,6 +94,7 @@ class ProposalController extends Controller
 
         return redirect()->back();
     }
+
 
     public function updateRevisi(Request $request)
     {

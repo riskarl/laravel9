@@ -75,7 +75,7 @@
                     @if($proker->lpj->status_flow_lpj != 9)
                     <button type="button" class="btn btn-warning" onclick="openRevisiModal({{ $proker->lpj->id }})">Revisi</button>
                     @if($codeJabatan == 1)
-                      <form action="{{ route('createSignaturePdf') }}" method="POST" style="display:inline;">
+                      <form action="{{ route('createSignaturePdfLpj') }}" method="POST" style="display:inline;">
                         @csrf
                         <input type="hidden" name="lpj_id" value="{{ $proker->lpj->id }}">
                         <input type="hidden" name="proker" value="{{ $proker->nama_proker }}">
