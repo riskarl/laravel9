@@ -9,13 +9,11 @@ class RabController extends Controller
 {
     public function index()
     {
+        $currentUser = $this->getCurrentUser();
         $proker = Proker::with('rab')->get();
-
-        // var_dump($proker);
-        // die;
-        
+        $organisasiUser = $currentUser['organisasi'];
         // Mengirim data pengguna ke view 'upload-rab'
-        return view('upload-rab', ['listproker' => $proker]);
+        return view('upload-rab', ['listproker' => $proker, 'orguser' => $organisasiUser]);
     }
 
     public function unduhsrpd()
@@ -26,7 +24,8 @@ class RabController extends Controller
 
     public function uploadsrpd()
     {
+        $proker = Proker::with(['organisasi', 'rab'])->get();
         // Mengirim data pengguna ke view 'pengecekan-rab'
-        return view('pengecekan-rab');
+        return view('pengecekan-rab',['listproker' => $proker]);
     }
 }

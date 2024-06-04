@@ -16,20 +16,21 @@
                 <th>NO</th>
                 <th>Nama Organisasi</th>
                 <th>Nama Program Kerja</th>
-                <th>File</th>
+                <th>File RAB</th>
                 <th>Aksi</th>
               </tr>
             </thead>
             <tbody>
               @foreach ($listproker as $index => $proker)
               <tr>
+                @if (($proker->organisasi && $proker->organisasi->nama_organisasi == $orguser))
                   <td>{{ $index + 1 }}</td>
                   <td>{{ $proker->organisasi ? $proker->organisasi->nama_organisasi : 'Tidak ada organisasi' }}</td>
                   <td>{{ $proker->nama_proker }}</td>
                
                   <td> 
                     @if ($proker->rab && $proker->rab->file_rab)
-                        <a href="{{ asset('files/' . $proker->rab->file_rab) }}" target="_blank">
+                        <a href="{{ asset('rab/' . $proker->rab->file_rab) }}" target="_blank">
                             {{ $proker->rab->file_rab }}
                         </a>
                     @else
@@ -41,7 +42,8 @@
                           Upload File
                       </button>
                   </td>
-              </tr>
+                </tr>
+                @endif
               @endforeach
           </tbody>
           

@@ -23,7 +23,7 @@
                     </thead>
                     <tbody>
                         @foreach ($listproker as $index => $proker)
-                            {{-- Hanya tampilkan jika organisasi cocok dengan orguser atau jika jabatan adalah Ketua BEM --}}
+                            {{-- Hanya tampilkan jika organisasi cocok dengan orguser --}}
                             @if (($proker->organisasi && $proker->organisasi->nama_organisasi == $orguser))
                                 <tr>
                                     <td>{{ $index + 1 }}</td>
@@ -56,7 +56,7 @@
                                             Upload File
                                         </button>
                                         @elseif ($proker->proposal?->status_flow == 9)
-                                        Disetujui
+                                        <span style="background-color: lightgreen; color: black;">Disetujui</span>
                                         @else
                                         Diproses
                                         @endif

@@ -26,6 +26,7 @@
                     <tbody>
                         @foreach ($listproker as $index => $proker)
                         <tr>
+                            @if (($proker->organisasi && $proker->organisasi->nama_organisasi == $orguser))
                             <td>{{ $index + 1 }}</td>
                             <td>{{ $proker->organisasi ? $proker->organisasi->nama_organisasi : 'Tidak ada organisasi' }}</td>
                             <td>{{ $proker->nama_proker }}</td>
@@ -63,6 +64,7 @@
                                 @endif
                             </td>        
                         </tr> 
+                        @endif
                         @endforeach
                     </tbody>
                 </table>

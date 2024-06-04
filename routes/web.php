@@ -82,6 +82,7 @@ Route::delete('/proker/{id}', [ProkerController::class, 'delete'])->middleware('
 Route::get('/uploadlpj', [LpjController::class, 'index'])->middleware('role:2');
 Route::get('/lihatlpj', [LpjController::class, 'indexlpj'])->middleware('role:1');
 Route::get('/uploadrab', [RabController::class, 'index'])->middleware('role:2');
+Route::get('/pengecekanrab', [RabController::class, 'uploadsrpd'])->middleware('role:4');
 Route::get('/unduhsrpd', [RabController::class, 'unduhsrpd'])->middleware('role:2');
 Route::get('/uploadproposal', [ProposalController::class, 'index'])->middleware('role:2');
 Route::get('/lihatproposal', [ProposalController::class, 'indexproposal'])->middleware('role:1');
@@ -89,7 +90,7 @@ Route::get('/pengecekanproposal', [ProposalController::class, 'pengecekanproposa
 Route::get('/pengecekanproposalbpm', [ProposalController::class, 'pengecekanproposalbpm'])->middleware('role:4');
 Route::get('/pengecekanlpj', [LpjController::class, 'pengecekanlpj'])->middleware('role:3');
 Route::get('/pengecekanlpjbpm', [LpjController::class, 'pengecekanlpjbpm'])->middleware('role:4');
-Route::get('/pengecekanrab', [RabController::class, 'uploadsrpd'])->middleware('role:4');
+
 
 
 Route::post('/upload-file', [UploadController::class, 'store'])->name('file.upload');

@@ -53,7 +53,7 @@ class UploadController extends Controller
         // Simpan perubahan atau penambahan baru
         $proposal->save();
 
-        return redirect()->back()->with('success', 'File berhasil diupload!');
+        return redirect()->back()->with('success', 'File Proposal berhasil diupload!');
     }
 
     public function uploadrab(Request $request)
@@ -73,7 +73,7 @@ class UploadController extends Controller
         $rab->id_proker = $request->id_proker;
         $rab->save();
 
-        return redirect()->back()->with('success', 'File berhasil diupload!');
+        return redirect()->back()->with('success', 'File RAB berhasil diupload!');
     }
     
     public function uploadlpj(Request $request)

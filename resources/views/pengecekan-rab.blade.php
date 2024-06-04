@@ -14,25 +14,34 @@
             <thead class="thead-light">
               <tr>
                 <th>NO</th>
+                <th>Nama Organisasi</th>
                 <th>Nama Program Kerja</th>
-                <th>Nama Pengecek</th>
                 <th>File RAB</th>
-                <th>SRPD</th>
+                <th>File SRPD</th>
                 <th>Aksi</th>
               </tr>
             </thead>
             <tbody>
-              {{-- @foreach ($listproker as $proker) --}}
+              @foreach ($listproker as $index => $proker)
               <tr>
-                {{-- <td>{{ $proker->id }}</td>
+                @if ($proker->rab && $proker->rab->file_rab)
+                <td>{{ $index + 1 }}</td>
                 <td>{{ $proker->organisasi ? $proker->organisasi->nama_organisasi : 'Tidak ada organisasi' }}</td>
                 <td>{{ $proker->nama_proker }}</td>
-                <td>{{ $proker->nama_ketupel }}</td>
-                <td>{{ $proker->tanggal }}</td>
-                <td>{{ $proker->tempat }}</td>
-                <td>{{ $proker->dana_diajukan }}</td> --}}              
+                <td>
+                  <a href="{{ asset('rab/' . $proker->rab->file_rab) }}" target="_blank">
+                      {{ $proker->rab->file_rab }}
+                  </a>
+                </td>
+                <td></td>
+                <td>
+                  <button type="button" class="btn btn-primary mr-2 btnModal" data-toggle="modal" data-target="#uploadModal" data-id="{{ $proker->id }}">
+                    Upload File
+                </button>
+                </td>          
               </tr> 
-              {{-- @endforeach --}}
+              @endif
+              @endforeach
             </tbody>
           </table>
         </div>

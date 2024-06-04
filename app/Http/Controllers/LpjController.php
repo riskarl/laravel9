@@ -16,6 +16,8 @@ class LpjController extends Controller
 {
     public function index()
     {
+        $currentUser = $this->getCurrentUser();
+        $organisasiUser = $currentUser['organisasi'];
         $proker = Proker::with(['lpj', 'proposal'])
             ->whereHas('proposal', function($query) {
                 $query->where('status_flow', 9);
@@ -29,7 +31,7 @@ class LpjController extends Controller
             }
         }
 
-        return view('upload-lpj', ['listproker' => $proker]);
+        return view('upload-lpj', ['listproker' => $proker,'orguser' => $organisasiUser]);
     }
 
 

@@ -20,6 +20,7 @@
                 <th>Nama Organisasi</th>
                 <th>Nama Program Kerja</th>
                 <th>Nama Ketua Pelaksana</th>
+                <th>NIM Ketua Pelaksana</th>
                 <th>Tanggal</th>
                 <th>Tempat</th>
                 <th>Dana yang Diajukan</th>
@@ -34,6 +35,7 @@
                           <td>{{ $proker->organisasi ? $proker->organisasi->nama_organisasi : 'Tidak ada organisasi' }}</td>
                           <td>{{ $proker->nama_proker }}</td>
                           <td>{{ $proker->nama_ketupel }}</td>
+                          <td>{{ $proker->nim_ketupel }}</td>
                           <td>{{ $proker->tanggal }}</td>
                           <td>{{ $proker->tempat }}</td>
                           <td>{{ $proker->dana_diajukan }}</td>
