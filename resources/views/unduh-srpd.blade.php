@@ -14,22 +14,26 @@
             <thead class="thead-light">
               <tr>
                 <th>NO</th>
+                <th>Nama Organisasi</th>
                 <th>Nama Program Kerja</th>
                 <th>File</th>
               </tr>
             </thead>
             <tbody>
-              {{-- @foreach ($listproker as $proker) --}}
+              @foreach ($listproker as $index => $proker)
               <tr>
-                {{-- <td>{{ $proker->id }}</td>
+                @if (($proker->organisasi && $proker->organisasi->nama_organisasi == $orguser && $proker->rab && $proker->rab->file_srpd))
+                <td>{{ $index + 1 }}</td>
                 <td>{{ $proker->organisasi ? $proker->organisasi->nama_organisasi : 'Tidak ada organisasi' }}</td>
                 <td>{{ $proker->nama_proker }}</td>
-                <td>{{ $proker->nama_ketupel }}</td>
-                <td>{{ $proker->tanggal }}</td>
-                <td>{{ $proker->tempat }}</td>
-                <td>{{ $proker->dana_diajukan }}</td> --}}              
+                <td>
+                  <a href="{{ asset('srpd/' . $proker->rab->file_srpd) }}" target="_blank">
+                    {{ $proker->rab->file_srpd }}
+                </a>
+                </td>    
               </tr> 
-              {{-- @endforeach --}}
+              @endif
+              @endforeach
             </tbody>
           </table>
         </div>

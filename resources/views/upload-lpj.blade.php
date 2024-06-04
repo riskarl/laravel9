@@ -53,7 +53,7 @@
                                             Upload File
                                         </button>
                                     @elseif ($proker->lpj->status_flow_lpj == 9)
-                                        Selesai
+                                    <span style="background-color: lightgreen; color: black;">Selesai</span>
                                     @else
                                         Diproses
                                     @endif

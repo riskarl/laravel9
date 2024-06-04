@@ -91,11 +91,10 @@ Route::get('/pengecekanproposalbpm', [ProposalController::class, 'pengecekanprop
 Route::get('/pengecekanlpj', [LpjController::class, 'pengecekanlpj'])->middleware('role:3');
 Route::get('/pengecekanlpjbpm', [LpjController::class, 'pengecekanlpjbpm'])->middleware('role:4');
 
-
-
 Route::post('/upload-file', [UploadController::class, 'store'])->name('file.upload');
 Route::post('/uploadrab-file', [UploadController::class, 'uploadrab'])->name('filerab.upload');
 Route::post('/upload-lpj', [UploadController::class, 'uploadlpj'])->name('filelpj.upload');
+Route::post('/pengecekan-rab/{id}', [RabController::class, 'upsrpd'])->name('filesrpd.upload');
 
 Route::get('/pengecekan-lpj', [LpjController::class, 'pengecekanlpj'])->name('pengecekan-lpj.index');
 Route::match(['get', 'post'], '/lpj/approve/{lpjId}', [LpjController::class, 'approvedLpj'])->name('lpjs.approve');

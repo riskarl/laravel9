@@ -75,7 +75,41 @@ class UploadController extends Controller
 
         return redirect()->back()->with('success', 'File RAB berhasil diupload!');
     }
-    
+
+    public function upsrpd(Request $request, $id)
+    {
+        // Validasi file
+        $request->validate([
+            'file_srpd' => 'required|file|mimes:pdf,doc,docx|max:2048',
+        ]);
+
+        // Dapatkan file dari request
+        $file = $request->file('file');
+        $filename = Str::uuid() . '.' . $file->getClientOriginalExtension();
+        $directory = public_path('srpd');
+
+        // Cek dan buat direktori jika belum ada
+        if (!File::exists($directory)) {
+            File::makeDirectory($directory, 0755, true);
+        }
+
+        // Pindahkan file ke direktori yang ditentukan
+        $file->move($directory, $filename);
+
+        // Temukan entri Rab berdasarkan id
+        $srpd = Rab::find($id);
+
+        if (!$srpd) {
+            return redirect()->back()->with('error', 'Data tidak ditemukan');
+        }
+
+        // Update kolom file_srpd
+        $srpd->file_srpd = $filename;
+        $srpd->save();
+
+        return redirect()->back()->with('success', 'File SRPD berhasil diupload!');
+    }
+
     public function uploadlpj(Request $request)
     {
         $file = $request->file('file');

@@ -18,7 +18,9 @@ class Rab extends Model
     public $timestamps = true;
 
     protected $fillable = [
-        'file_rab', 'id_proker'
+        'file_rab',
+        'id_proker',
+        'file_srpd'
     ];
     public function proker()
     {

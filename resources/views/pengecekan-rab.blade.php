@@ -33,12 +33,40 @@
                       {{ $proker->rab->file_rab }}
                   </a>
                 </td>
-                <td></td>
                 <td>
-                  <button type="button" class="btn btn-primary mr-2 btnModal" data-toggle="modal" data-target="#uploadModal" data-id="{{ $proker->id }}">
+                  <a href="{{ asset('srpd/' . $proker->rab->file_srpd) }}" target="_blank">
+                    {{ $proker->rab->file_srpd }}
+                </a>
+                </td>
+                <td>
+                  <button type="button" class="btn btn-primary mr-2 btnModal" data-toggle="modal" data-target="#uploadModal{{ $proker->rab->id }}" data-id="{{ $proker->rab->id }}">
                     Upload File
                 </button>
-                </td>          
+                <div class="modal fade" id="uploadModal{{ $proker->rab->id }}" tabindex="-1" role="dialog" aria-labelledby="uploadModalLabel{{ $proker->rab->id }}" aria-hidden="true">
+                  <div class="modal-dialog" role="document">
+                      <div class="modal-content">
+                          <form action="{{ route('filesrpd.upload', ['id' => $proker->rab->id]) }}" method="POST" enctype="multipart/form-data">
+                           @csrf
+                              <div class="modal-header">
+                                  <h5 class="modal-title" id="uploadModalLabel{{ $proker->rab->id }}">Upload File</h5>
+                                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                      <span aria-hidden="true">&times;</span>
+                                  </button>
+                              </div>
+                              <div class="modal-body">
+                                  <input type="hidden" name="id" id="prokerId">
+                                  <input type="hidden" name="existing_file_name" id="existingFileName">
+                                  <input type="file" name="file_srpd" id="fileInput" class="form-control" required>
+                              </div>
+                              <div class="modal-footer">
+                                  <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                  <button type="submit" class="btn btn-primary">Upload File</button>
+                              </div>
+                          </form>
+                      </div>
+                  </div>
+              </div>   
+                </td>       
               </tr> 
               @endif
               @endforeach
@@ -49,5 +77,25 @@
       </div>
     </div>
   </div>
+
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var modal = document.getElementById('uploadModal');
+        var buttons = document.querySelectorAll('.btnModal');
+        var prokerIdInput = document.getElementById('prokerId');
+        var existingFileNameInput = document.getElementById('existingFileName');
+    
+        buttons.forEach(function (button) {
+            button.addEventListener('click', function () {
+                var idProker = this.getAttribute('data-id');
+                var fileName = this.getAttribute('data-file');
+                prokerIdInput.value = idProker;
+                existingFileNameInput.value = fileName;  // Set the existing file name
+                console.log('idProker:', idProker, 'fileName:', fileName);
+            });
+        });
+    });
+    </script>    
 
 @endsection
