@@ -13,6 +13,8 @@ use App\Http\Controllers\LoginController;
 use App\Http\Controllers\OrganisasiController;
 use App\Http\Controllers\UploadController;
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\Auth\ResetPasswordController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -100,3 +102,9 @@ Route::get('/pengecekan-lpj', [LpjController::class, 'pengecekanlpj'])->name('pe
 Route::match(['get', 'post'], '/lpj/approve/{lpjId}', [LpjController::class, 'approvedLpj'])->name('lpjs.approve');
 Route::post('/lpj/revisi', [LpjController::class, 'updateRevisiLpj'])->name('lpjs.revisi');
 Route::post('/lpj/signature', [LpjController::class, 'createSignaturePdf'])->name('createSignaturePdfLpj');
+
+Route::get('password/reset', [ResetPasswordController::class, 'showLinkRequestForm'])->name('password.request');
+Route::post('password/email', [ResetPasswordController::class, 'sendResetLinkEmail'])->name('password.email');
+Route::get('password/reset/{token}', [ResetPasswordController::class, 'showResetForm'])->name('password.reset');
+Route::post('password/reset', [ResetPasswordController::class, 'reset'])->name('password.update');
+Route::get('forgot-password', [ResetPasswordController::class, 'showreset']);

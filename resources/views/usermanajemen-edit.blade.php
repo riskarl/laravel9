@@ -15,6 +15,10 @@
         <input type="text" value="{{ old('username', $user->username) }}" name="username" class="form-control" id="username" aria-describedby="emailHelp" placeholder="Masukkan Username">
     </div>
     <div class="form-group">
+        <label for="exampleInputEmail1">Email</label>
+        <input type="email" value="{{ old('email', $user->email) }}" name="email" class="form-control" id="email" aria-describedby="emailHelp" placeholder="Masukkan Email">
+    </div>
+    <div class="form-group">
         <label for="exampleFormControlSelect1">Pilih Organisasi</label>
         <select class="form-control" name="organization" id="organization">
             <option {{ old('organization', $user->organization) == 'Kampus' ? 'selected' : '' }}>Kampus</option>

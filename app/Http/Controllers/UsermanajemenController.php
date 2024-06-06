@@ -20,6 +20,7 @@ class UsermanajemenController extends Controller
         $validatedData = $request->validate([
             'name' => 'required|max:30',
             'username' => 'required|max:15|unique:users,username',
+            'email' => 'required',
             'password' => 'required',
             'organization' => 'required',
             'jabatan_id' => 'required|exists:jabatan,jabatan_id',
@@ -76,6 +77,7 @@ class UsermanajemenController extends Controller
         $validatedData = $request->validate([
             'name' => "required|max:35",
             'username' => "required|max:15",
+            'email' => 'required',
             'organization' => "required",
             'jabatan_id' => "required|exists:jabatan,jabatan_id",
             'role' => "required",

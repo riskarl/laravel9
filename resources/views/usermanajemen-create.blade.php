@@ -16,6 +16,11 @@
           placeholder="Masukkan Username">
     </div>
     <div class="form-group">
+      <label for="exampleInputEmail1">Email</label>
+      <input type="email" name="email" class="form-control" id="email" aria-describedby="emailHelp"
+        placeholder="Masukkan Email">
+  </div>
+    <div class="form-group">
       <label for="exampleInputPassword1">Password</label>
       <input type="password" name="password" class="form-control" id="password" placeholder="Masukkan Password">
     </div>

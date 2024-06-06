@@ -62,7 +62,7 @@ class MappingCheck extends Model
             return $proposal->save();
         }
 
-        if ($jabatan_id == 4 && $proposal->status_flow == 4 ) {
+        if ($jabatan_id == 4 && $proposal->status_flow == 4) {
             $proposal->status_flow = 5;
             $proposal->status = 'Approved by Pembina ' . $organisasi;
 
@@ -77,7 +77,7 @@ class MappingCheck extends Model
 
             return $proposal->save();
         }
-        
+
 
         if ($jabatan_id == 3 && $proposal->status_flow == 6 && $containsHima) {
             $proposal->status_flow = 7;
@@ -105,18 +105,18 @@ class MappingCheck extends Model
         if (!$proposal) {
             return false;
         }
-        
+
         if ($jabatan_id == 1 && $proposal->status_flow == 8) {
 
             $proposal->status_flow = 9;
             $proposal->status = 'Approved by ' . $jabatan;
-            
-    
+
+
             $proposal->save();
-            
+
             if ($proposal->proker->organisasi->nama_organisasi == 'BEM') {
                 $ttdList = [];
-            
+
                 // Mendapatkan user berdasarkan jabatan dan organisasi
                 $users = [
                     User::where('jabatan_id', 5)->where('organization', 'BEM')->whereNotNull('ttd')->first(),
@@ -125,9 +125,9 @@ class MappingCheck extends Model
                     User::where('jabatan_id', 2)->whereNotNull('ttd')->first(),
                     User::where('jabatan_id', 1)->whereNotNull('ttd')->first(),
                 ];
-            
+
                 $ttdFolderPath = public_path('ttd');
-            
+
                 // Menambahkan pengguna ke daftar ttd jika mereka memiliki ttd yang valid atau null jika tidak
                 foreach ($users as $user) {
                     if ($user) {
@@ -152,7 +152,7 @@ class MappingCheck extends Model
                         }
                     }
                 }
-            
+
                 return $ttdList;
             }
 
@@ -168,9 +168,9 @@ class MappingCheck extends Model
                     User::where('jabatan_id', 2)->whereNotNull('ttd')->first(),
                     User::where('jabatan_id', 1)->whereNotNull('ttd')->first(),
                 ];
-            
+
                 $ttdFolderPath = public_path('ttd');
-            
+
                 // Menambahkan pengguna ke daftar ttd jika mereka memiliki ttd yang valid atau null jika tidak
                 foreach ($users as $user) {
                     if ($user) {
@@ -195,7 +195,7 @@ class MappingCheck extends Model
                         }
                     }
                 }
-            
+
                 return $ttdList;
             }
 
@@ -213,9 +213,9 @@ class MappingCheck extends Model
                     User::where('jabatan_id', 2)->whereNotNull('ttd')->first(),
                     User::where('jabatan_id', 1)->whereNotNull('ttd')->first(),
                 ];
-            
+
                 $ttdFolderPath = public_path('ttd');
-            
+
                 // Menambahkan pengguna ke daftar ttd jika mereka memiliki ttd yang valid atau null jika tidak
                 foreach ($users as $user) {
                     if ($user) {
@@ -240,32 +240,33 @@ class MappingCheck extends Model
                         }
                     }
                 }
-            
+
                 return $ttdList;
             }
-            
+
         }
 
         return false;
-    
+
     }
 
-    public function updateRevisi($proposal_id, $jabatan_id, $organisasi, $jabatan = null, $catatan = null){
+    public function updateRevisi($proposal_id, $jabatan_id, $organisasi, $jabatan = null, $catatan = null)
+    {
         $proposal = Proposal::with('proker.organisasi')->find($proposal_id);
-    
+
         // Jika tidak ditemukan proposal, return false
         if (!$proposal) {
             return false;
         }
-    
+
         // Mengupdate status_flow menjadi 0
         $proposal->status_flow = 1;
-    
+
         // Mengupdate catatan jika catatan disediakan
         if ($catatan) {
             $proposal->catatan = $catatan;
         }
-    
+
         // Mengganti 'approve by' menjadi 'revisi by' dan menambahkan jabatan dan organisasi
         if ($jabatan_id == 5) {
             if ($organisasi === 'BEM') {
@@ -279,10 +280,10 @@ class MappingCheck extends Model
             // Mengganti status berdasarkan jabatan dan jabatan_id
             $proposal->status = 'Revisi by ' . $jabatan;
         }
-    
+
         // Simpan perubahan pada proposal
         return $proposal->save();
     }
-    
+
 
 }

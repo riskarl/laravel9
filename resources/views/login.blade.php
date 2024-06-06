@@ -54,6 +54,7 @@
                     <div class="form-group">
                       <button type="submit" class="btn btn-primary btn-block">Login</button>
                     </div>
+                    <div class="right-align"><a href="{{ '/forgot-password' }}">Forget Password?</a></div>
                     <hr>
                   </form>
                   <hr>

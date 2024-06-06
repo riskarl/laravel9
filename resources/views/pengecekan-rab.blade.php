@@ -34,9 +34,13 @@
                   </a>
                 </td>
                 <td>
+                  @if(isset($proker->rab->file_srpd) && $proker->rab->file_srpd)
                   <a href="{{ asset('srpd/' . $proker->rab->file_srpd) }}" target="_blank">
                     {{ $proker->rab->file_srpd }}
-                </a>
+                  </a>
+                @else
+                  Tidak ada file
+                @endif                
                 </td>
                 <td>
                   <button type="button" class="btn btn-primary mr-2 btnModal" data-toggle="modal" data-target="#uploadModal{{ $proker->rab->id }}" data-id="{{ $proker->rab->id }}">
