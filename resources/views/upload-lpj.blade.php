@@ -20,6 +20,7 @@
                             <th>File Pengesahan</th>
                             <th>Status</th>
                             <th>Catatan</th>
+                            <th>Dana Disetujui</th>
                             <th>Aksi</th>
                         </tr>
                     </thead>
@@ -46,21 +47,38 @@
                             </td>
                             <td>{{ $proker->lpj ? $proker->lpj->status : 'Pending'}}</td>
                             <td>{{ $proker->lpj ? $proker->lpj->catatan : 'Tidak Ada Catatan' }}</td> 
+                            <td>{{ $proker->lpj ? $proker->lpj->dana_disetujui : 'Tidak ada dana' }}</td> 
                             <td>
                                 @if ($proker->lpj)
                                     @if ($proker->lpj->status_flow_lpj == 0 || $proker->lpj->status_flow_lpj == 1)
-                                        <button type="button" class="btn btn-primary mr-2 btnModal" data-toggle="modal" data-target="#uploadModal" data-id="{{ $proker->id }}">
-                                            Upload File
-                                        </button>
+                                    <div class="btn-group" role="group" aria-label="Basic example">
+                                            <button type="button" class="btn btn-primary mr-1" data-toggle="modal" data-target="#uploadModal" 
+                                                    data-id="{{ $proker->id }}" onclick="openAddModal(this)">
+                                                <i class="fas fa-upload"></i>
+                                            </button>
+                                            <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#uploadModal" 
+                                                    data-id="{{ $proker->id }}" data-dana="{{ $proker->lpj ? $proker->lpj->dana_disetujui : '' }}" 
+                                                    data-file="{{ $proker->lpj ? $proker->lpj->file_lpj : '' }}" onclick="openEditModal(this)">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                    </div>                                           
                                     @elseif ($proker->lpj->status_flow_lpj == 9)
                                     <span style="background-color: lightgreen; color: black;">Selesai</span>
                                     @else
                                         Diproses
                                     @endif
                                 @else
-                                    <button type="button" class="btn btn-primary mr-2 btnModal" data-toggle="modal" data-target="#uploadModal" data-id="{{ $proker->id }}">
-                                        Upload File
-                                    </button>
+                                <div class="btn-group" role="group" aria-label="Basic example">
+                                        <button type="button" class="btn btn-primary mr-1" data-toggle="modal" data-target="#uploadModal" 
+                                                data-id="{{ $proker->id }}" onclick="openAddModal(this)">
+                                            <i class="fas fa-upload"></i>
+                                        </button>
+                                        <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#uploadModal" 
+                                                data-id="{{ $proker->id }}" data-dana="{{ $proker->lpj ? $proker->lpj->dana_disetujui : '' }}" 
+                                                data-file="{{ $proker->lpj ? $proker->lpj->file_lpj : '' }}" onclick="openEditModal(this)">
+                                            <i class="fas fa-edit"></i>
+                                        </button>                                 
+                                </div> 
                                 @endif
                             </td>        
                         </tr> 
@@ -77,21 +95,36 @@
 <div class="modal fade" id="uploadModal" tabindex="-1" role="dialog" aria-labelledby="uploadModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
-            <form action="{{ route('filelpj.upload') }}" method="POST" enctype="multipart/form-data">
+            <form id="lpjForm" action="{{ route('filelpj.upload') }}" method="POST" enctype="multipart/form-data">
                 @csrf
+                <!-- Tambahkan input hidden untuk menentukan aksi -->
+                <input type="hidden" id="actionType" name="action_type" value="upload">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="uploadModalLabel">Upload File</h5>
+                    <!-- Ubah judul modal untuk menunjukkan aksi yang sedang dilakukan -->
+                    <h5 class="modal-title" id="uploadModalLabel">Upload File LPJ</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
                 <div class="modal-body">
+                    <div class="form-group mt-3">
+                        <label for="danaDisetujui">Dana Disetujui:</label>
+                        <input type="number" name="dana_disetujui" id="danaDisetujui" class="form-control" required>
+                    </div>
+                    <div class="form-group mt-3">
+                        <label for="currentFileLpj">Current File LPJ:</label>
+                        <span id="currentFileLpj"></span> <!-- Element to display the current file -->
+                    </div>
+                    <div class="form-group mt-3">
+                        <label for="fileInput">Upload New File:</label>
+                        <input type="file" name="file_lpj" id="fileInput" class="form-control" required>
+                    </div>
                     <input type="hidden" name="id_proker" id="prokerId">
-                    <input type="file" name="file" id="fileInput" class="form-control" required>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-primary">Upload File</button>
+                    <!-- Ubah label button untuk menunjukkan aksi yang sedang dilakukan -->
+                    <button type="submit" class="btn btn-primary" id="actionButton">Upload</button>
                 </div>
             </form>
         </div>
@@ -99,22 +132,47 @@
 </div>
 
 <script>
-  document.addEventListener('DOMContentLoaded', function () {
-      var modal = document.getElementById('uploadModal');
-      var buttons = document.querySelectorAll('.btnModal');
-      var prokerIdInput = document.getElementById('prokerId');
-      var existingFileNameInput = document.getElementById('existingFileName');
-  
-      buttons.forEach(function (button) {
-          button.addEventListener('click', function () {
-              var idProker = this.getAttribute('data-id');
-              var fileName = this.getAttribute('data-file');
-              prokerIdInput.value = idProker;
-              existingFileNameInput.value = fileName;  // Set the existing file name
-              console.log('idProker:', idProker, 'fileName:', fileName);
-          });
-      });
-  });
+    function openAddModal(button) {
+    // Set judul modal
+    document.getElementById('uploadModalLabel').innerText = 'Upload File LPJ';
+
+    // Reset form
+    document.getElementById('lpjForm').reset();
+
+    // Set aksi form menjadi upload
+    document.getElementById('actionType').value = 'upload';
+
+    // Set ID proker
+    document.getElementById('prokerId').value = button.getAttribute('data-id');
+
+    // Clear file input value
+    document.getElementById('fileInput').value = '';
+
+    // Tampilkan modal
+    $('#uploadModal').modal('show');
+}
+
+function openEditModal(button) {
+    // Set judul modal
+    document.getElementById('uploadModalLabel').innerText = 'Edit File LPJ';
+
+    // Set aksi form menjadi edit
+    document.getElementById('actionType').value = 'edit';
+
+    // Set ID proker
+    document.getElementById('prokerId').value = button.getAttribute('data-id');
+
+    // Set dana disetujui
+    document.getElementById('danaDisetujui').value = button.getAttribute('data-dana');
+
+    // Set nama file LPJ
+    var fileLPJ = button.getAttribute('data-file');
+    var currentFileLPJ = document.getElementById('currentFileLpj');
+    currentFileLPJ.textContent = fileLPJ ? fileLPJ : 'No file uploaded';
+
+    // Tampilkan modal
+    $('#uploadModal').modal('show');
+}
 </script>
 
 @endsection

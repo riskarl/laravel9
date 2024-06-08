@@ -36,6 +36,36 @@ class RabController extends Controller
         return view('pengecekan-rab', ['listproker' => $proker]);
     }
 
+    public function uploadrab(Request $request, $id)
+    {
+        $request->validate([
+            'file_rab' => 'required|file|mimes:pdf,doc,docx|max:2048',
+        ]);
+
+        $file = $request->file('file_rab');
+        $filename = Str::uuid() . '.' . $file->getClientOriginalExtension();
+        $directory = public_path('rab');
+
+        if (!File::exists($directory)) {
+            File::makeDirectory($directory, 0755, true);
+        }
+
+        $file->move($directory, $filename);
+
+        $rab = Rab::find($id);
+
+        if (!$rab) {
+            return redirect()->back()->with('error', 'Data tidak ditemukan');
+        }
+
+        // Update kolom file_rab
+        $rab->file_rab = $filename;
+        $rab->save();
+
+
+        return redirect()->back()->with('success', 'File RAB berhasil diupload!');
+    }
+
     public function upsrpd(Request $request, $id)
     {
         // Validasi file

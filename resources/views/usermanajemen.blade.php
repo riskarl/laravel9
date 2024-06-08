@@ -18,7 +18,7 @@
                 <th>NO</th>
                 <th>Nama</th>
                 <th>Username</th>
-                {{-- <th>Password</th> --}}
+                <th>Email</th>
                 <th>Jenis ID</th>
                 <th>Nomer ID</th>
                 <th>Organisasi</th>
@@ -33,9 +33,9 @@
                 <td>{{ $index + 1 }}</td>
                 <td>{{ $user->name }}</td>
                 <td>{{ $user->username }}</td>
+                <td>{{ $user->email }}</td>
                 <td>{{ $user->code_id }}</td>
                 <td>{{ $user->number_id }}</td>
-                {{-- <td>{{ $user->password }}</td>  --}}
                 <td>{{ $user->organization }}</td>
                 <td>{{ $user->jabatan->jabatan }}</td>
                 <td>{{ $user->role }}</td>

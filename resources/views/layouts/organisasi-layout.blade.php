@@ -47,6 +47,12 @@
           </a>
         </li>
         <li class="nav-item">
+          <a class="nav-link" href="{{ url('/file/format') }}">
+            <i class="fas fa-fw fa-folder"></i>
+            <span>Format</span>
+          </a>
+        </li>
+        <li class="nav-item">
           <a class="nav-link" href="{{ url('/uploadproposal') }}">
             <i class="fas fa-fw fa-file-alt"></i>
             <span>Proposal</span>

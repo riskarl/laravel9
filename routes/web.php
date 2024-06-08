@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\FormatController;
 use App\Http\Controllers\LpjController;
 use App\Http\Controllers\ProkerController;
 use App\Http\Controllers\ProposalController;
@@ -94,8 +95,8 @@ Route::get('/pengecekanlpj', [LpjController::class, 'pengecekanlpj'])->middlewar
 Route::get('/pengecekanlpjbpm', [LpjController::class, 'pengecekanlpjbpm'])->middleware('role:4');
 
 Route::post('/upload-file', [UploadController::class, 'store'])->name('file.upload');
-Route::post('/uploadrab-file', [UploadController::class, 'uploadrab'])->name('filerab.upload');
-Route::post('/upload-lpj', [UploadController::class, 'uploadlpj'])->name('filelpj.upload');
+Route::post('/uploadrab-file/{id}', [RabController::class, 'uploadrab'])->name('filerab.upload');
+Route::post('/upload-lpj', [LpjController::class, 'store'])->name('filelpj.upload');
 Route::post('/pengecekan-rab/{id}', [RabController::class, 'upsrpd'])->name('filesrpd.upload');
 
 Route::get('/pengecekan-lpj', [LpjController::class, 'pengecekanlpj'])->name('pengecekan-lpj.index');
@@ -108,3 +109,9 @@ Route::post('password/email', [ResetPasswordController::class, 'sendResetLinkEma
 Route::get('password/reset/{token}', [ResetPasswordController::class, 'showResetForm'])->name('password.reset');
 Route::post('password/reset', [ResetPasswordController::class, 'reset'])->name('password.update');
 Route::get('forgot-password', [ResetPasswordController::class, 'showreset']);
+
+Route::get('/file-format', [FormatController::class, 'index'])->middleware('role:4');
+Route::post('/file-format', [FormatController::class, 'store'])->name('format.store')->middleware('role:4');
+Route::post('/format/{id}', [FormatController::class, 'update'])->name('format.update')->middleware('role:4');
+Route::delete('/file-format/{id}', [FormatController::class, 'delete'])->name('file-format.delete')->middleware('role:4');
+Route::get('/file/format', [FormatController::class, 'indexformat'])->middleware('role:2');

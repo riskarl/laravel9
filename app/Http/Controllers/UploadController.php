@@ -56,9 +56,13 @@ class UploadController extends Controller
         return redirect()->back()->with('success', 'File Proposal berhasil diupload!');
     }
 
-    public function uploadrab(Request $request)
+    public function uploadrab(Request $request, $id)
     {
-        $file = $request->file('file');
+        $request->validate([
+            'file_rab' => 'required|file|mimes:pdf,doc,docx|max:2048',
+        ]);
+
+        $file = $request->file('file_rab');
         $filename = Str::uuid() . '.' . $file->getClientOriginalExtension();
         $directory = public_path('rab');
 
@@ -68,87 +72,18 @@ class UploadController extends Controller
 
         $file->move($directory, $filename);
 
-        $rab = new Rab();
+        $rab = Rab::find($id);
+
+        if (!$rab) {
+            return redirect()->back()->with('error', 'Data tidak ditemukan');
+        }
+
+        // Update kolom file_rab
         $rab->file_rab = $filename;
-        $rab->id_proker = $request->id_proker;
         $rab->save();
+
 
         return redirect()->back()->with('success', 'File RAB berhasil diupload!');
     }
 
-    public function upsrpd(Request $request, $id)
-    {
-        // Validasi file
-        $request->validate([
-            'file_srpd' => 'required|file|mimes:pdf,doc,docx|max:2048',
-        ]);
-
-        // Dapatkan file dari request
-        $file = $request->file('file');
-        $filename = Str::uuid() . '.' . $file->getClientOriginalExtension();
-        $directory = public_path('srpd');
-
-        // Cek dan buat direktori jika belum ada
-        if (!File::exists($directory)) {
-            File::makeDirectory($directory, 0755, true);
-        }
-
-        // Pindahkan file ke direktori yang ditentukan
-        $file->move($directory, $filename);
-
-        // Temukan entri Rab berdasarkan id
-        $srpd = Rab::find($id);
-
-        if (!$srpd) {
-            return redirect()->back()->with('error', 'Data tidak ditemukan');
-        }
-
-        // Update kolom file_srpd
-        $srpd->file_srpd = $filename;
-        $srpd->save();
-
-        return redirect()->back()->with('success', 'File SRPD berhasil diupload!');
-    }
-
-    public function uploadlpj(Request $request)
-    {
-        $file = $request->file('file');
-        $filename = Str::uuid() . '.' . $file->getClientOriginalExtension();
-        $directory = public_path('lpj');
-
-        if (!File::exists($directory)) {
-            File::makeDirectory($directory, 0755, true);
-        }
-
-        // Handle file baru
-        if ($request->hasFile('file')) {
-            // Pindahkan file baru ke direktori
-            $file->move($directory, $filename);
-        }
-
-        // Cek apakah ini update atau penambahan baru
-        if (!empty($request->existing_file_name)) {
-            // Ini adalah update file, temukan LPJ yang ada
-            $lpj = LPJ::where('id_proker', $request->id_proker)->first();
-            if ($lpj && File::exists($directory . '/' . $lpj->file_lpj)) {
-                // Hapus file lama
-                File::delete($directory . '/' . $lpj->file_lpj);
-            }
-            $lpj->file_lpj = $filename;
-            $lpj->status = 'Pending';
-            $lpj->catatan = 'Belum ada catatan';
-        } else {
-            // Ini adalah penambahan baru
-            $lpj = new LPJ();
-            $lpj->file_lpj = $filename;
-            $lpj->status = 'Pending';
-            $lpj->catatan = 'Belum ada catatan';
-            $lpj->id_proker = $request->id_proker;
-        }
-
-        // Simpan perubahan atau penambahan baru
-        $lpj->save();
-
-        return redirect()->back()->with('success', 'File LPJ berhasil diupload!');
-    }
 }

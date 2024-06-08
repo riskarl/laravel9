@@ -47,7 +47,7 @@
           </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="{{ url('/') }}">
+          <a class="nav-link" href="{{ url('/file-format') }}">
             <i class="fas fa-file-alt"></i>
             <span>Format</span>
           </a>
