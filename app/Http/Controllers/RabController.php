@@ -52,15 +52,33 @@ class RabController extends Controller
             File::makeDirectory($directory, 0755, true);
         }
 
-        $file->move($directory, $filename);
+        // Cek apakah RAB sudah ada berdasarkan id_proker
+        $existingRab = Rab::where('id_proker', $validatedData['id_proker'])->first();
 
-        $rab = new Rab();
-        $rab->id_proker = $validatedData['id_proker']; 
-        $rab->file_rab = $filename;
-        $rab->save();
+        if ($existingRab) {
+            // Jika ada, hapus file lama
+            $oldFile = $directory . '/' . $existingRab->file_rab;
+            if (File::exists($oldFile)) {
+                File::delete($oldFile);
+            }
+
+            // Update record dengan file baru
+            $existingRab->file_rab = $filename;
+            $existingRab->save();
+        } else {
+            // Jika tidak ada, buat record baru
+            $rab = new Rab();
+            $rab->id_proker = $validatedData['id_proker'];
+            $rab->file_rab = $filename;
+            $rab->save();
+        }
+
+        // Pindahkan file baru ke directory
+        $file->move($directory, $filename);
 
         return redirect()->back()->with('success', 'File RAB berhasil diupload!');
     }
+
 
 
     public function upsrpd(Request $request, $id)
