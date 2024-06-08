@@ -56,11 +56,6 @@
                                                     data-id="{{ $proker->id }}" onclick="openAddModal(this)">
                                                 <i class="fas fa-upload"></i>
                                             </button>
-                                            <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#uploadModal" 
-                                                    data-id="{{ $proker->id }}" data-dana="{{ $proker->lpj ? $proker->lpj->dana_disetujui : '' }}" 
-                                                    data-file="{{ $proker->lpj ? $proker->lpj->file_lpj : '' }}" onclick="openEditModal(this)">
-                                                <i class="fas fa-edit"></i>
-                                            </button>
                                     </div>                                           
                                     @elseif ($proker->lpj->status_flow_lpj == 9)
                                     <span style="background-color: lightgreen; color: black;">Selesai</span>

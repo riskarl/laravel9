@@ -62,7 +62,7 @@ class LpjController extends Controller
         $validatedData = $request->validate([
             'file_lpj' => 'required|file|mimes:pdf,doc,docx|max:2048',
             'dana_disetujui' => 'required|numeric',
-            'id_proker' => 'required|exists:prokers,id',
+            'id_proker' => 'required',
         ]);
     
         $file = $request->file('file_lpj');
