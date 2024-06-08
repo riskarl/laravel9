@@ -95,7 +95,7 @@ Route::get('/pengecekanlpj', [LpjController::class, 'pengecekanlpj'])->middlewar
 Route::get('/pengecekanlpjbpm', [LpjController::class, 'pengecekanlpjbpm'])->middleware('role:4');
 
 Route::post('/upload-file', [UploadController::class, 'store'])->name('file.upload');
-Route::post('/uploadrab-file/{id}', [RabController::class, 'uploadrab'])->name('filerab.upload');
+Route::post('/uploadrab-file', [RabController::class, 'uploadrab'])->name('filerab.upload');
 Route::post('/upload-lpj', [LpjController::class, 'store'])->name('filelpj.upload');
 Route::post('/pengecekan-rab/{id}', [RabController::class, 'upsrpd'])->name('filesrpd.upload');
 

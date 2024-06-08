@@ -7,6 +7,7 @@ use App\Models\Rab;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Validator;
 
 class RabController extends Controller
 {
@@ -36,10 +37,11 @@ class RabController extends Controller
         return view('pengecekan-rab', ['listproker' => $proker]);
     }
 
-    public function uploadrab(Request $request, $id)
+    public function uploadrab(Request $request)
     {
-        $request->validate([
+        $validatedData = $request->validate([
             'file_rab' => 'required|file|mimes:pdf,doc,docx|max:2048',
+            'id_proker' => 'required',
         ]);
 
         $file = $request->file('file_rab');
@@ -52,19 +54,14 @@ class RabController extends Controller
 
         $file->move($directory, $filename);
 
-        $rab = Rab::find($id);
-
-        if (!$rab) {
-            return redirect()->back()->with('error', 'Data tidak ditemukan');
-        }
-
-        // Update kolom file_rab
+        $rab = new Rab();
+        $rab->id_proker = $validatedData['id_proker']; 
         $rab->file_rab = $filename;
         $rab->save();
 
-
         return redirect()->back()->with('success', 'File RAB berhasil diupload!');
     }
+
 
     public function upsrpd(Request $request, $id)
     {

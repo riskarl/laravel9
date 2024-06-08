@@ -38,23 +38,22 @@
                     @endif
                   </td>
                   <td>
-                      <button type="button" class="btn btn-primary mr-2 btnModal" data-toggle="modal" data-target="#uploadModal{{ $proker->rab->id }}" data-id="{{ $proker->rab->id }}">
-                          Upload File
-                      </button>
-                      <div class="modal fade" id="uploadModal{{ $proker->rab->id }}" tabindex="-1" role="dialog" aria-labelledby="uploadModalLabel{{  $proker->rab->id }}" aria-hidden="true">
+                    <button type="button" class="btn btn-primary mr-2 btnModal" data-toggle="modal" data-target="#uploadModal{{ $proker->id }}" data-id="{{ $proker->id }}">
+                        Upload File
+                    </button>
+                    <div class="modal fade" id="uploadModal{{ $proker->id }}" tabindex="-1" role="dialog" aria-labelledby="uploadModalLabel{{  $proker->id }}" aria-hidden="true">
                         <div class="modal-dialog" role="document">
                             <div class="modal-content">
-                                <form action="{{ route('filerab.upload', ['id' =>  $proker->rab->id]) }}" method="POST" enctype="multipart/form-data">
+                                <form action="{{ route('filerab.upload')}}" method="POST" enctype="multipart/form-data">
                                     @csrf
                                     <div class="modal-header">
-                                        <h5 class="modal-title" id="uploadModalLabel{{  $proker->rab->id }}">Upload File</h5>
+                                        <h5 class="modal-title" id="uploadModalLabel{{  $proker->id }}">Upload File</h5>
                                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                             <span aria-hidden="true">&times;</span>
                                         </button>
                                     </div>
                                     <div class="modal-body">
-                                        <input type="hidden" name="id_proker" id="prokerId">
-                                        <input type="hidden" name="existing_file_name" id="existingFileName">
+                                        <input type="hidden" name="id_proker" value="{{ $proker->id }}">
                                         <input type="file" name="file_rab" id="fileInput" class="form-control" required>
                                     </div>
                                     <div class="modal-footer">
@@ -65,7 +64,7 @@
                             </div>
                         </div>
                     </div>
-                  </td>
+                </td>
                 </tr>
                 @endif
               @endforeach
@@ -91,7 +90,7 @@
               var idProker = this.getAttribute('data-id');
               var fileName = this.getAttribute('data-file');
               prokerIdInput.value = idProker;
-              existingFileNameInput.value = fileName;  // Set the existing file name
+              existingFileNameInput.value = fileName; 
               console.log('idProker:', idProker);
           });
       });
