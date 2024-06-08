@@ -58,99 +58,97 @@ class LpjController extends Controller
 
     public function store(Request $request)
     {
-    // Validasi input
-    $validatedData = $request->validate([
-        'file_lpj' => 'required|file|mimes:pdf,doc,docx',
-        'dana_disetujui' => 'required|numeric',
-    ]);
-    $file = $request->file('file_lpj');
-    $filename = Str::uuid() . '.' . $file->getClientOriginalExtension();
-    $directory = public_path('lpj');
-
-    if (!File::exists($directory)) {
-        File::makeDirectory($directory, 0755, true);
-    }
-
-    // Handle file baru
-    if ($request->hasFile('file_lpj')) {
-        // Pindahkan file baru ke direktori
-        $file->move($directory, $filename);
-    }
-
-    // Cek apakah ini update atau penambahan baru
-    if (!empty($request->existing_file_name)) {
-        // Ini adalah update file, temukan LPJ yang ada
-        $lpj = LPJ::where('id_proker', $request->id_proker)->first();
-        if ($lpj && File::exists($directory . '/' . $lpj->file_lpj)) {
-            // Hapus file lama
-            File::delete($directory . '/' . $lpj->file_lpj);
-        }
-        // Update nilai file_lpj, dana_disetujui, status, dan catatan
-        $lpj->file_lpj = $filename;
-        $lpj->status = 'Pending';
-        $lpj->catatan = 'Belum ada catatan';
-        $lpj->dana_disetujui = $validatedData['dana_disetujui'];
-    } else {
-        // Ini adalah penambahan baru
-        $lpj = new LPJ();
-        $lpj->file_lpj = $filename;
-        $lpj->status = 'Pending';
-        $lpj->catatan = 'Belum ada catatan';
-        $lpj->id_proker = $request->id_proker;
-        $lpj->dana_disetujui = $validatedData['dana_disetujui'];
-    }
-
-    // Simpan perubahan atau penambahan baru
-    $lpj->save();
-
-    return redirect('/uploadlpj')->with('success', 'File LPJ berhasil diupload!');
-    }
-
-    public function update(Request $request, $id_proker)
-{
-    // Validasi input
-    $validatedData = $request->validate([
-        'file_lpj' => 'nullable|file|mimes:pdf,doc,docx',
-        'dana_disetujui' => 'required|numeric',
-    ]);
-
-    // Temukan LPJ berdasarkan id_proker
-    $lpj = LPJ::where('id_proker', $id_proker)->first();
-
-    if (!$lpj) {
-        return redirect()->back()->with('error', 'Data tidak ditemukan');
-    }
-
-    // Jika ada file yang diunggah
-    if ($request->hasFile('file_lpj')) {
+        // Validasi input
+        $validatedData = $request->validate([
+            'file_lpj' => 'required|file|mimes:pdf,doc,docx|max:2048',
+            'dana_disetujui' => 'required|numeric',
+            'id_proker' => 'required|exists:prokers,id',
+        ]);
+    
         $file = $request->file('file_lpj');
         $filename = Str::uuid() . '.' . $file->getClientOriginalExtension();
         $directory = public_path('lpj');
-
+    
         if (!File::exists($directory)) {
             File::makeDirectory($directory, 0755, true);
         }
-
-        // Pindahkan file baru ke direktori
+    
+        // Cek apakah data LPJ untuk id_proker ini sudah ada
+        $lpj = LPJ::where('id_proker', $request->id_proker)->first();
+    
+        if ($lpj) {
+            // Jika ada, update file dan data lainnya
+            if (File::exists($directory . '/' . $lpj->file_lpj)) {
+                File::delete($directory . '/' . $lpj->file_lpj);
+            }
+            $lpj->file_lpj = $filename;
+            $lpj->dana_disetujui = $validatedData['dana_disetujui'];
+            $lpj->status = 'Pending';
+            $lpj->catatan = 'Belum ada catatan';
+        } else {
+            // Jika tidak ada, buat data baru
+            $lpj = new LPJ();
+            $lpj->file_lpj = $filename;
+            $lpj->dana_disetujui = $validatedData['dana_disetujui'];
+            $lpj->status = 'Pending';
+            $lpj->catatan = 'Belum ada catatan';
+            $lpj->id_proker = $request->id_proker;
+        }
+    
+        // Pindahkan file ke direktori yang ditentukan
         $file->move($directory, $filename);
+    
+        // Simpan perubahan atau data baru
+        $lpj->save();
+    
+        return redirect('/uploadlpj')->with('success', 'File LPJ berhasil diupload!');
+    }    
 
-        // Hapus file lama jika ada
-        if ($lpj->file_lpj && File::exists($directory . '/' . $lpj->file_lpj)) {
-            File::delete($directory . '/' . $lpj->file_lpj);
+    public function update(Request $request, $id_proker)
+    {
+        // Validasi input
+        $validatedData = $request->validate([
+            'file_lpj' => 'nullable|file|mimes:pdf,doc,docx',
+            'dana_disetujui' => 'required|numeric',
+        ]);
+
+        // Temukan LPJ berdasarkan id_proker
+        $lpj = LPJ::where('id_proker', $id_proker)->first();
+
+        if (!$lpj) {
+            return redirect()->back()->with('error', 'Data tidak ditemukan');
         }
 
-        // Perbarui kolom file_lpj dengan nama file baru
-        $lpj->file_lpj = $filename;
+        // Jika ada file yang diunggah
+        if ($request->hasFile('file_lpj')) {
+            $file = $request->file('file_lpj');
+            $filename = Str::uuid() . '.' . $file->getClientOriginalExtension();
+            $directory = public_path('lpj');
+
+            if (!File::exists($directory)) {
+                File::makeDirectory($directory, 0755, true);
+            }
+
+            // Pindahkan file baru ke direktori
+            $file->move($directory, $filename);
+
+            // Hapus file lama jika ada
+            if ($lpj->file_lpj && File::exists($directory . '/' . $lpj->file_lpj)) {
+                File::delete($directory . '/' . $lpj->file_lpj);
+            }
+
+            // Perbarui kolom file_lpj dengan nama file baru
+            $lpj->file_lpj = $filename;
+        }
+
+        // Perbarui kolom dana_disetujui
+        $lpj->dana_disetujui = $validatedData['dana_disetujui'];
+
+        // Simpan perubahan
+        $lpj->save();
+
+        return redirect('/uploadlpj')->with('success', 'File LPJ berhasil diperbarui!');
     }
-
-    // Perbarui kolom dana_disetujui
-    $lpj->dana_disetujui = $validatedData['dana_disetujui'];
-
-    // Simpan perubahan
-    $lpj->save();
-
-    return redirect('/uploadlpj')->with('success', 'File LPJ berhasil diperbarui!');
-}
 
 
     public function approvedLpj($lpjId)

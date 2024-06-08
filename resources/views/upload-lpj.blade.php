@@ -73,12 +73,6 @@
                                                 data-id="{{ $proker->id }}" onclick="openAddModal(this)">
                                             <i class="fas fa-upload"></i>
                                         </button>
-                                        <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#uploadModal" 
-                                                data-id="{{ $proker->id }}" data-dana="{{ $proker->lpj ? $proker->lpj->dana_disetujui : '' }}" 
-                                                data-file="{{ $proker->lpj ? $proker->lpj->file_lpj : '' }}" onclick="openEditModal(this)">
-                                            <i class="fas fa-edit"></i>
-                                        </button>                                 
-                                </div> 
                                 @endif
                             </td>        
                         </tr> 
@@ -147,28 +141,6 @@
 
     // Clear file input value
     document.getElementById('fileInput').value = '';
-
-    // Tampilkan modal
-    $('#uploadModal').modal('show');
-}
-
-function openEditModal(button) {
-    // Set judul modal
-    document.getElementById('uploadModalLabel').innerText = 'Edit File LPJ';
-
-    // Set aksi form menjadi edit
-    document.getElementById('actionType').value = 'edit';
-
-    // Set ID proker
-    document.getElementById('prokerId').value = button.getAttribute('data-id');
-
-    // Set dana disetujui
-    document.getElementById('danaDisetujui').value = button.getAttribute('data-dana');
-
-    // Set nama file LPJ
-    var fileLPJ = button.getAttribute('data-file');
-    var currentFileLPJ = document.getElementById('currentFileLpj');
-    currentFileLPJ.textContent = fileLPJ ? fileLPJ : 'No file uploaded';
 
     // Tampilkan modal
     $('#uploadModal').modal('show');
