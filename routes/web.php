@@ -124,4 +124,4 @@ Route::post('/anggaran/store', [AnggaranController::class, 'store'])->name('angg
 Route::post('/anggaran/update/{id}', [AnggaranController::class, 'update'])->name('anggaran.update')->middleware('role:4');
 Route::delete('/anggaran/delete/{id}', [AnggaranController::class, 'delete'])->name('anggaran.delete')->middleware('role:4');
 
-Route::get('/anggaran/organisasi', [AnggaranController::class, 'indexanggaranorganisasi'])->middleware('role:2');
+Route::get('/anggaran/organisasi', [AnggaranController::class, 'indexanggaranorganisasi'])->middleware('role:2,3');

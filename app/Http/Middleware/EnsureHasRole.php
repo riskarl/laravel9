@@ -13,11 +13,18 @@ class EnsureHasRole
      *
      * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
      */
-    public function handle(Request $request, Closure $next, $role): Response
+    public function handle(Request $request, Closure $next, ...$roles): Response
     {
-        if ($request->user()->role != $role) {
+        // Ambil role pengguna yang sedang login
+        $userRole = $request->user()->role;
+
+        // Cek apakah role pengguna ada di dalam array role yang diizinkan
+        if (!in_array($userRole, $roles)) {
+            // Jika role pengguna tidak ada dalam daftar yang diizinkan, redirect ke halaman lain
             return redirect('/');
         }
+
+        // Jika role pengguna ada dalam daftar yang diizinkan, lanjutkan request
         return $next($request);
     }
 }
