@@ -40,10 +40,10 @@
                 || ($codeJabatan == 5 && $orguser == 'BPM' && $proker->lpj->status_flow_lpj == 3 && $proker->lpj->status_flow_lpj != 1)
                 || ($codeJabatan == 4 && $proker->organisasi->nama_organisasi == $orguser && $proker->lpj->status_flow_lpj == 4 && $proker->lpj->status_flow_lpj != 1)
                 || ($codeJabatan == 5 && ($proker->lpj->status_flow_lpj == 0 || $proker->lpj->status_flow_lpj == null || $proker->lpj->status_flow_lpj == "") && $proker->organisasi->nama_organisasi == $orguser && $proker->lpj->status_flow_lpj != 1)
-                || ($codeJabatan == 2 && ($proker->organisasi->nama_organisasi == 'BEM' || strpos($proker->organisasi->nama_organisasi, 'UKM') !== false) && 'Kampus' == $orguser && $proker->lpj->status_flow_lpj == 5 && $proker->lpj->status_flow_lpj != 1)
-                || ($codeJabatan == 8 && (strpos($proker->organisasi->nama_organisasi, 'HIMA') !== false) && 'Kampus' == $orguser && $proker->lpj->status_flow_lpj == 5 && $proker->lpj->status_flow_lpj != 1)
-                || ($codeJabatan == 3 && (strpos($proker->organisasi->nama_organisasi, 'HIMA') !== false) && 'Kampus' == $orguser && $proker->lpj->status_flow_lpj == 6 && $proker->lpj->status_flow_lpj != 1)
-                || ($codeJabatan == 2 && (strpos($proker->organisasi->nama_organisasi, 'HIMA') !== false) && 'Kampus' == $orguser && $proker->lpj->status_flow_lpj == 7 && $proker->lpj->status_flow_lpj != 1)
+                || ($codeJabatan == 2 && ($proker->organisasi->nama_organisasi == 'BEM' || stripos($proker->organisasi->nama_organisasi, 'UKM') !== false) && 'Kampus' == $orguser && $proker->lpj->status_flow_lpj == 5 && $proker->lpj->status_flow_lpj != 1)
+                || ($codeJabatan == 8 && (stripos($proker->organisasi->nama_organisasi, 'HIMA') !== false) && 'Kampus' == $orguser && $proker->lpj->status_flow_lpj == 5 && $proker->lpj->status_flow_lpj != 1)
+                || ($codeJabatan == 3 && (stripos($proker->organisasi->nama_organisasi, 'HIMA') !== false) && 'Kampus' == $orguser && $proker->lpj->status_flow_lpj == 6 && $proker->lpj->status_flow_lpj != 1)
+                || ($codeJabatan == 2 && (stripos($proker->organisasi->nama_organisasi, 'HIMA') !== false) && 'Kampus' == $orguser && $proker->lpj->status_flow_lpj == 7 && $proker->lpj->status_flow_lpj != 1)
                 || ($codeJabatan == 1 && 'Kampus' == $orguser && ($proker->lpj->status_flow_lpj == 8 || $proker->lpj->status_flow_lpj == 9)))
                 <tr>
                     <td>{{ $index + 1 }}</td>

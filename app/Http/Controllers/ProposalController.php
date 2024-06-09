@@ -153,7 +153,7 @@ class ProposalController extends Controller
 
         if ($organisasi == 'BEM') {
             $html = view('pdf.signatures', compact('signatures', 'namaKegiatan', 'ketupel'))->render();
-        } elseif (strpos($organisasi, 'UKM') !== false) {
+        } elseif (stripos($organisasi, 'UKM') !== false) {
             $html = view('pdf.ukm-signature', compact('signatures', 'namaKegiatan', 'ketupel'))->render();
         } else {
             $html = view('pdf.hima-signature', compact('signatures', 'namaKegiatan', 'ketupel'))->render();

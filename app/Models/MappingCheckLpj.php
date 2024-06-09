@@ -68,7 +68,7 @@ class MappingCheckLpj extends Model
             return $lpj->save();
         }
 
-        $containsHima = strpos($lpj->proker->organisasi->nama_organisasi, 'HIMA') !== false;
+        $containsHima = stripos($lpj->proker->organisasi->nama_organisasi, 'HIMA') !== false;
 
         if ($jabatan_id == 8 && $lpj->status_flow_lpj == 5 && $containsHima) {
             $lpj->status_flow_lpj = 6;
@@ -155,7 +155,7 @@ class MappingCheckLpj extends Model
                 User::where('jabatan_id', 2)->whereNotNull('ttd')->first(),
                 User::where('jabatan_id', 1)->whereNotNull('ttd')->first(),
             ];
-        } else if (strpos($organisasiName, 'UKM') !== false) {
+        } else if (stripos($organisasiName, 'UKM') !== false) {
             $users = [
                 User::where('jabatan_id', 5)->where('organization', $organisasiName)->whereNotNull('ttd')->first(),
                 User::where('jabatan_id', 5)->where('organization', 'BEM')->whereNotNull('ttd')->first(),
@@ -164,7 +164,7 @@ class MappingCheckLpj extends Model
                 User::where('jabatan_id', 2)->whereNotNull('ttd')->first(),
                 User::where('jabatan_id', 1)->whereNotNull('ttd')->first(),
             ];
-        } else if (strpos($organisasiName, 'HIMA') !== false) {
+        } else if (stripos($organisasiName, 'HIMA') !== false) {
             $users = [
                 User::where('jabatan_id', 5)->where('organization', $organisasiName)->whereNotNull('ttd')->first(),
                 User::where('jabatan_id', 5)->where('organization', 'BEM')->whereNotNull('ttd')->first(),

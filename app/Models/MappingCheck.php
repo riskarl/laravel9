@@ -69,7 +69,7 @@ class MappingCheck extends Model
             return $proposal->save();
         }
 
-        $containsHima = strpos($proposal->proker->organisasi->nama_organisasi, 'HIMA') !== false;
+        $containsHima = stripos($proposal->proker->organisasi->nama_organisasi, 'HIMA') !== false;
 
         if ($jabatan_id == 8 && $proposal->status_flow == 5 && $containsHima) {
             $proposal->status_flow = 6;
@@ -156,7 +156,7 @@ class MappingCheck extends Model
                 return $ttdList;
             }
 
-            if (strpos($proposal->proker->organisasi->nama_organisasi, 'UKM') !== false) {
+            if (stripos($proposal->proker->organisasi->nama_organisasi, 'UKM') !== false) {
                 $ttdList = [];
 
                 // Mendapatkan user berdasarkan jabatan dan organisasi
@@ -199,7 +199,7 @@ class MappingCheck extends Model
                 return $ttdList;
             }
 
-            if (strpos($proposal->proker->organisasi->nama_organisasi, 'HIMA') !== false) {
+            if (stripos($proposal->proker->organisasi->nama_organisasi, 'HIMA') !== false) {
                 $ttdList = [];
 
                 // Mendapatkan user berdasarkan jabatan dan organisasi

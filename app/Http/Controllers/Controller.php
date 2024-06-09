@@ -47,9 +47,9 @@ class Controller extends BaseController
         //render hasil pdf.signatures dengan data sigantures, namaKegiatan, Ketupel
         if ($organisasi == 'BEM') {
             $html = view('pdf.signatures', compact('signatures', 'namaKegiatan', 'ketupel'))->render();
-        //mengecek ukm berada pada variabel organisasi dengan fungsi strpos mengembalikan posisi string 'ukm'
+        //mengecek ukm berada pada variabel organisasi dengan fungsi stripos mengembalikan posisi string 'ukm'
         //pertama kali muncul dalam sorganisasi atau false jika tidak ditemukan
-        }elseif (strpos($organisasi, 'UKM') !== false) {
+        }elseif (stripos($organisasi, 'UKM') !== false) {
             $html = view('pdf.ukm-signature', compact('signatures', 'namaKegiatan', 'ketupel'))->render();
         }else {
             $html = view('pdf.hima-signature', compact('signatures', 'namaKegiatan', 'ketupel'))->render();
