@@ -1,4 +1,8 @@
+@if(session('jabatan.code_jabatan') == 1)
+@extends('layouts.pengecek-layout')
+@else
 @extends('layouts.organisasi-layout')
+@endif
 
 @section('content')
 
