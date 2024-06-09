@@ -52,12 +52,14 @@
             <span>LPJ</span>
           </a>
         </li>
-        <li class="nav-item">
-          <a class="nav-link" href="{{ url('/anggaran/organisasi') }}">
-            <i class="fas fa-money-bill-wave"></i> 
-            <span>Anggaran</span>
-          </a>
-        </li>
+        @if(session('jabatan.code_jabatan') == 1)
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url('/anggaran/organisasi') }}">
+                        <i class="fas fa-money-bill-wave"></i> 
+                        <span>Anggaran</span>
+                    </a>
+                </li>
+            @endif
         <li class="nav-item">
           <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseForm" aria-expanded="true"
             aria-controls="collapseForm">
