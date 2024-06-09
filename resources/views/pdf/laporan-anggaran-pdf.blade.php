@@ -62,14 +62,6 @@
                 </tr>
             @endforeach
         </tbody>
-        <tfoot>
-            <tr>
-                <td colspan="3">Total</td>
-                <td style="text-align: right;">{{ number_format($anggaran->sum('dana_diajukan'), 0, ',', '.') }}</td>
-                <td style="text-align: right;">{{ number_format($anggaran->sum('dana_disetujui'), 0, ',', '.') }}</td>
-                <td style="text-align: right;">{{ number_format($anggaran->sum('sisa_anggaran'), 0, ',', '.') }}</td>
-            </tr>
-        </tfoot>
     </table>
     <div class="footer">
         <p>Laporan ini dihasilkan oleh sistem pada {{ now()->format('d M Y') }}.</p>
