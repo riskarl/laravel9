@@ -15,8 +15,9 @@ use Illuminate\Support\Facades\File;
 
 class UsermanajemenController extends Controller
 {
-    function store(Request $request)
+    public function store(Request $request)
     {
+        // Validasi input
         $validatedData = $request->validate([
             'name' => 'required|max:30',
             'username' => 'required|max:15|unique:users,username',
@@ -25,20 +26,30 @@ class UsermanajemenController extends Controller
             'organization' => 'required',
             'jabatan_id' => 'required|exists:jabatan,jabatan_id',
             'role' => 'required',
-            'code_id' => 'required', // Menambahkan validasi untuk jenis_id
-            'number_id' => 'required', // Menambahkan validasi untuk nomer_id
-            'ttd' => 'file|mimes:jpeg,png,jpg,gif|max:2048'
+            'code_id' => 'required', 
+            'number_id' => 'required',
+            'ttd' => 'file|mimes:jpeg,png,jpg,gif'
         ]);
 
-        // Cek dan buat folder ttd jika belum ada
-        $ttdPath = public_path('ttd');
-        if (!File::exists($ttdPath)) {
-            File::makeDirectory($ttdPath, 0755, true);
-        }
-
-        // Proses upload file TTD
+        // Cek apakah file TTD ada dan ukuran melebihi 2MB
         if ($request->hasFile('ttd')) {
             $ttdFile = $request->file('ttd');
+            $maxSize = 2048; // 2MB in KB
+
+            if ($ttdFile->getSize() > $maxSize * 1024) {
+                // Redirect kembali dengan session flash untuk error message
+                return redirect()->back()
+                    ->withInput()
+                    ->with('error', 'File tanda tangan tidak boleh lebih dari 2 MB.');
+            }
+
+            // Cek dan buat folder ttd jika belum ada
+            $ttdPath = public_path('ttd');
+            if (!File::exists($ttdPath)) {
+                File::makeDirectory($ttdPath, 0755, true);
+            }
+
+            // Proses upload file TTD
             $ttdFilename = Str::uuid() . '.' . $ttdFile->getClientOriginalExtension();
             $ttdFile->move($ttdPath, $ttdFilename);
 
@@ -46,9 +57,12 @@ class UsermanajemenController extends Controller
             $validatedData['ttd'] = $ttdFilename;
         }
 
+        // Simpan data ke database
         User::create($validatedData);
-        return redirect('/usermanajemen');
+
+        return redirect('/usermanajemen')->with('success', 'Pengguna berhasil ditambahkan.');
     }
+
 
     function create()
     {
