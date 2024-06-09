@@ -18,8 +18,9 @@ class Organisasi extends Model
     }
     public function anggarans()
     {
-        return $this->hasMany(Anggaran::class, 'id');
+        return $this->hasMany(Anggaran::class, 'id_organisasi', 'id');
     }
+
 }
 
 

@@ -10,8 +10,9 @@ class AnggaranController extends Controller
 {
     public function index()
     {
-        $anggaran = Anggaran::all();
-        $organisasis = Organisasi::all();
+        $anggaran = Anggaran::with('organisasi')->get();
+        $organisasis = Organisasi::All();
+
         return view('anggaran-bpm', ['anggaran' => $anggaran, 'organisasis' => $organisasis]);
     }
 

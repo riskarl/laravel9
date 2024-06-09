@@ -15,6 +15,7 @@ class Anggaran extends Model
 
     public function organisasi()
     {
-        return $this->belongsTo(Organisasi::class, 'id');
+        return $this->belongsTo(Organisasi::class, 'id_organisasi', 'id');
     }
+
 }
