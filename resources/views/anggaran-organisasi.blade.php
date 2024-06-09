@@ -1,8 +1,8 @@
-@if(session('jabatan.code_jabatan') == 1)
-@extends('layouts.pengecek-layout')
-@else
-@extends('layouts.organisasi-layout')
-@endif
+@php
+    $layout = session('jabatan.code_jabatan') == 1 ? 'layouts.pengecek-layout' : 'layouts.organisasi-layout';
+@endphp
+
+@extends($layout)
 
 @section('content')
 
