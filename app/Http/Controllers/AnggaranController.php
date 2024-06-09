@@ -24,13 +24,17 @@ class AnggaranController extends Controller
         $jabatan = $currentUser['jabatan'];
         $org = $currentUser['organisasi'];
 
-        $lpjData = LPJ::with(['proker.organisasi'])
-        ->whereNotNull('file_lpj')
-        ->whereNotNull('dana_disetujui')
-        ->whereHas('proker.organisasi', function($query) use ($org) {
-            $query->where('nama_organisasi', $org);
-        })
-        ->get();
+        $query = LPJ::with(['proker.organisasi'])
+                    ->whereNotNull('file_lpj')
+                    ->whereNotNull('dana_disetujui');
+
+        if ($jabatanId != 1) {
+            $query->whereHas('proker.organisasi', function($query) use ($org) {
+                $query->where('nama_organisasi', $org);
+            });
+        }
+        $lpjData = $query->get();
+
 
         $data = $lpjData->map(function($lpj) {
             $totalAnggaran = $lpj->proker->organisasi->anggarans->sum('total_anggaran');
