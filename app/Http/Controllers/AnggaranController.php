@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Anggaran;
 use App\Models\Organisasi;
 use Illuminate\Http\Request;
+use App\Models\LPJ;
 
 class AnggaranController extends Controller
 {
@@ -18,10 +19,28 @@ class AnggaranController extends Controller
 
     public function indexanggaranorganisasi()
     {
-        $anggaran = Anggaran::with('organisasi')->get();
+        $lpjData = LPJ::with(['proker.organisasi'])
+        ->whereNotNull('file_lpj')
+        ->whereNotNull('dana_disetujui')
+        ->get();
 
-        return view('anggaran-organisasi', ['anggaran' => $anggaran]);
+        $data = $lpjData->map(function($lpj) {
+            $totalAnggaran = $lpj->proker->organisasi->anggarans->sum('total_anggaran');
+            $sisaAnggaran = $totalAnggaran - $lpj->dana_disetujui;
+            
+            return [
+                'id' => $lpj->id,
+                'nama_organisasi' => $lpj->proker->organisasi->nama_organisasi,
+                'nama_proker' => $lpj->proker->nama_proker,
+                'dana_diajukan' => $lpj->proker->dana_diajukan,
+                'dana_disetujui' => $lpj->dana_disetujui,
+                'sisa_anggaran' => $sisaAnggaran,
+            ];
+        });
+    
+        return view('anggaran-organisasi', ['anggaran' => $data]);
     }
+    
 
     public function store(Request $request)
     {

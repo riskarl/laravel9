@@ -1,9 +1,6 @@
 <?php
-
 namespace App\Models;
 
-use App\Http\Controllers\LpjController;
-use App\Http\Controllers\RabController;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -26,7 +23,7 @@ class Proker extends Model
 
     public function organisasi()
     {
-        return $this->belongsTo(Organisasi::class, 'nama_organisasi', 'id');
+        return $this->belongsTo(Organisasi::class, 'id_organisasi', 'id');
     }
 
     public function proposal()
@@ -41,7 +38,7 @@ class Proker extends Model
 
     public function srpd()
     {
-        return $this->hasOne(Rab::class, 'id_proker');
+        return $this->hasOne(Srpd::class, 'id_proker');
     }
 
     public function lpj()

@@ -14,15 +14,14 @@ class Organisasi extends Model
 
     public function proker()
     {
-        return $this->hasMany(Proker::class, 'nama_organisasi', 'nama_organisasi');
+        return $this->hasMany(Proker::class, 'id_organisasi', 'id');
     }
+
     public function anggarans()
     {
         return $this->hasMany(Anggaran::class, 'id_organisasi', 'id');
     }
-
 }
-
 
 
 

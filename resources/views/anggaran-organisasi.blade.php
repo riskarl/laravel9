@@ -22,17 +22,16 @@
               </tr>
             </thead>
             <tbody>
-              {{-- @foreach ($format as $index => $formats)
+              @foreach ($anggaran as $index => $item)
               <tr>
                   <td>{{ $index + 1 }}</td>
-                  <td>{{ $formats->jenis_format}}</td>
-                  <td>
-                    <a href="{{ asset('format/' . $formats->file_format) }}" target="_blank">
-                        {{ $formats->file_format }}
-                    </a>
-                  </td>
-                </tr>
-              @endforeach --}}
+                  <td>{{ $item['nama_organisasi'] }}</td>
+                  <td>{{ $item['nama_proker'] }}</td>
+                  <td>{{ $item['dana_diajukan'] }}</td>
+                  <td>{{ $item['dana_disetujui'] }}</td>
+                  <td>{{ $item['sisa_anggaran'] }}</td>
+              </tr>
+              @endforeach
           </tbody>
           </table>
         </div>
