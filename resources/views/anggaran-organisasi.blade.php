@@ -15,6 +15,9 @@
           <h6 class="m-0 font-weight-bold text-primary">Rincian Anggaran Organisasi</h6>
         </div>
         <div class="table-responsive">
+          <button type="button" class="btn btn-primary" onclick="openAddModal()">
+            Cetak
+        </button>
           <table class="table align-items-center table-flush">
             <thead class="thead-light">
               <tr>
