@@ -19,9 +19,17 @@ class AnggaranController extends Controller
 
     public function indexanggaranorganisasi()
     {
+        $currentUser = $this->getCurrentUser();
+        $jabatanId = $currentUser['jabatan_id'];
+        $jabatan = $currentUser['jabatan'];
+        $org = $currentUser['organisasi'];
+
         $lpjData = LPJ::with(['proker.organisasi'])
         ->whereNotNull('file_lpj')
         ->whereNotNull('dana_disetujui')
+        ->whereHas('proker.organisasi', function($query) use ($org) {
+            $query->where('nama_organisasi', $org);
+        })
         ->get();
 
         $data = $lpjData->map(function($lpj) {
