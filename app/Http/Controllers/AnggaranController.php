@@ -16,6 +16,13 @@ class AnggaranController extends Controller
         return view('anggaran-bpm', ['anggaran' => $anggaran, 'organisasis' => $organisasis]);
     }
 
+    public function indexanggaranorganisasi()
+    {
+        $anggaran = Anggaran::with('organisasi')->get();
+
+        return view('anggaran-organisasi', ['anggaran' => $anggaran]);
+    }
+
     public function store(Request $request)
     {
         // Validasi input jika diperlukan

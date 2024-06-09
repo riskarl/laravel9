@@ -53,7 +53,7 @@
           </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="{{ url('/') }}">
+          <a class="nav-link" href="{{ url('/anggaran/organisasi') }}">
             <i class="fas fa-money-bill-wave"></i> 
             <span>Anggaran</span>
           </a>
