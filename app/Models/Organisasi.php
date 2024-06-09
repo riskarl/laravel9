@@ -16,6 +16,10 @@ class Organisasi extends Model
     {
         return $this->hasMany(Proker::class, 'nama_organisasi', 'nama_organisasi');
     }
+    public function anggarans()
+    {
+        return $this->hasMany(Anggaran::class, 'id');
+    }
 }
 
 

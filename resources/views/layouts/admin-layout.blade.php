@@ -231,22 +231,19 @@
                 <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown"
                   aria-haspopup="true" aria-expanded="false">
                   <img class="img-profile rounded-circle" src="{{ asset('AdminLTE') }}/img/boy.png" style="max-width: 60px">
-                  <span class="ml-2 d-none d-lg-inline text-white small">Maman Ketoprak</span>
+                  <span class="ml-2 d-none d-lg-inline text-white text-large">
+                    @if(Auth::user()->role == '1')
+                        Admin : {{ Auth::user()->name }}
+                    @elseif(Auth::user()->role == '2')
+                        Sekretaris : {{ Auth::user()->name }}
+                    @elseif(Auth::user()->role == '3')
+                        Pengecek : {{ Auth::user()->name }}
+                    @else
+                       {{ Auth::user()->name }}
+                    @endif
+                </span>
                 </a>
                 <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="userDropdown">
-                  <a class="dropdown-item" href="#">
-                    <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
-                    Profile
-                  </a>
-                  <a class="dropdown-item" href="#">
-                    <i class="fas fa-cogs fa-sm fa-fw mr-2 text-gray-400"></i>
-                    Settings
-                  </a>
-                  <a class="dropdown-item" href="#">
-                    <i class="fas fa-list fa-sm fa-fw mr-2 text-gray-400"></i>
-                    Activity Log
-                  </a>
-                  <div class="dropdown-divider"></div>
                   <a class="dropdown-item" href="javascript:void(0);" data-toggle="modal" data-target="#logoutModal">
                     <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
                     Logout
@@ -281,6 +278,35 @@
     <a class="scroll-to-top rounded" href="#page-top">
       <i class="fas fa-angle-up"></i>
     </a>
+
+    <!-- Modal Logout -->
+    <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="logoutModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="logoutModalLabel">Logout</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    Apakah Anda yakin ingin logout?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
+                    <a href="{{ route('logout') }}" class="btn btn-danger"
+                        onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                        Logout
+                    </a>
+                    <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
+                        @csrf
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- End Modal Logout -->
   
     <script src="{{ asset('AdminLTE') }}/vendor/jquery/jquery.min.js"></script>
     <script src="{{ asset('AdminLTE') }}/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
@@ -288,6 +314,12 @@
     <script src="{{ asset('AdminLTE') }}/js/ruang-admin.min.js"></script>
     <script src="{{ asset('AdminLTE') }}/vendor/chart.js/Chart.min.js"></script>
     <script src="{{ asset('AdminLTE') }}/js/demo/chart-area-demo.js"></script>  
+    <script>
+      // Fungsi untuk membuka modal logout
+      function openLogoutModal() {
+          $('#logoutModal').modal('show'); // Menampilkan modal
+      }
+  </script>
   </body>
   
   </html>

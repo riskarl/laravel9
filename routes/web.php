@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AnggaranController;
 use App\Http\Controllers\FormatController;
 use App\Http\Controllers\LpjController;
 use App\Http\Controllers\ProkerController;
@@ -37,6 +38,8 @@ Route::get('/', function () {
     return view('login');
 });
 Route::post('login', [LoginController::class, 'signin']);
+Route::post('logout', [LoginController::class, 'logout'])->name('logout');
+
 Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware('role:1');
@@ -115,3 +118,8 @@ Route::post('/file-format', [FormatController::class, 'store'])->name('format.st
 Route::post('/format/{id}', [FormatController::class, 'update'])->name('format.update')->middleware('role:4');
 Route::delete('/file-format/{id}', [FormatController::class, 'delete'])->name('file-format.delete')->middleware('role:4');
 Route::get('/file/format', [FormatController::class, 'indexformat'])->middleware('role:2');
+
+Route::get('/anggaran', [AnggaranController::class, 'index'])->middleware('role:4');
+Route::post('/anggaran/store', [AnggaranController::class, 'store'])->name('anggaran.store')->middleware('role:4');
+Route::post('/anggaran/update/{id}', [AnggaranController::class, 'update'])->name('anggaran.update')->middleware('role:4');
+Route::delete('/anggaran/delete/{id}', [AnggaranController::class, 'delete'])->name('anggaran.delete')->middleware('role:4');
