@@ -4,7 +4,6 @@
 
 <div class="row">
     <div class="col-lg-12 mb-4">
-        <!-- Simple Tables -->
         <div class="card">
             <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
                 <h6 class="m-0 font-weight-bold text-primary">Manajemen Anggaran</h6>
@@ -20,56 +19,81 @@
             </div>
             @endif
             <div class="table-responsive">
-                <table class="table align-items-center table-flush">
-                    <button type="button" class="btn btn-primary" onclick="openAddModal()">
-                        Tambah Anggaran
-                    </button>
-                    <!-- The Modal -->
-                    <div class="modal fade" id="anggaranModal">
-                        <div class="modal-dialog">
-                            <div class="modal-content">
-                                
-                                <!-- Modal Header -->
-                                <div class="modal-header">
-                                    <h4 class="modal-title" id="modalTitle">Tambah Anggaran Baru</h4>
-                                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                                </div>
-                                
-                                <!-- Modal Body -->
-                                <div class="modal-body">
-                                    <form action="{{ route('anggaran.store') }}" id="anggaranForm" method="POST">
-                                        @csrf
-                                        <div class="form-group">
-                                            <label for="namaOrganisasi">Nama Organisasi:</label>
-                                            <select class="form-control" id="namaOrganisasi" name="id_organisasi" required>
-                                                @foreach ($organisasis as $organisasi)
-                                                    <option value="{{ $organisasi->id }}">{{ $organisasi->nama_organisasi }}</option>
-                                                @endforeach
-                                            </select>
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="jumlahMhs">Jumlah Mahasiswa:</label>
-                                            <input type="number" class="form-control" id="jumlahMhs" name="jumlah_mhs" required>
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="jumlahAnggaran">Jumlah Anggaran:</label>
-                                            <input type="number" class="form-control" id="jumlahAnggaran" name="jumlah_anggaran" required>
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="totalAnggaran">Total Anggaran:</label>
-                                            <input type="number" class="form-control" id="totalAnggaran" name="total_anggaran" required readonly>
-                                        </div>
-                                    </form>
-                                </div>
-                                
-                                <!-- Modal Footer -->
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                    <button type="button" class="btn btn-primary" onclick="submitForm()">Submit</button>
-                                </div>
+                <button type="button" class="btn btn-primary" onclick="openAddModal()">
+                    Tambah Anggaran
+                </button>
+                <!-- The Modal -->
+                <div class="modal fade" id="anggaranModal" tabindex="-1" aria-labelledby="anggaranModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            
+                            <!-- Modal Header -->
+                            <div class="modal-header">
+                                <h4 class="modal-title" id="modalTitle">Tambah Anggaran Baru</h4>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            
+                            <!-- Modal Body -->
+                            <div class="modal-body">
+                                <form action="{{ route('anggaran.store') }}" id="anggaranForm" method="POST">
+                                    @csrf
+                                    <div class="form-group">
+                                        <label for="namaOrganisasi">Nama Organisasi:</label>
+                                        <select class="form-control" id="namaOrganisasi" name="id_organisasi" required>
+                                            @foreach ($organisasis as $organisasi)
+                                                <option value="{{ $organisasi->id }}">{{ $organisasi->nama_organisasi }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="jumlahMhs">Jumlah Mahasiswa:</label>
+                                        <input type="number" class="form-control" id="jumlahMhs" name="jumlah_mhs" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="jumlahAnggaran">Jumlah Anggaran:</label>
+                                        <input type="number" class="form-control" id="jumlahAnggaran" name="jumlah_anggaran" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="totalAnggaran">Total Anggaran:</label>
+                                        <input type="number" class="form-control" id="totalAnggaran" name="total_anggaran" required readonly>
+                                    </div>
+                                </form>
+                            </div>
+                            
+                            <!-- Modal Footer -->
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                <button type="button" class="btn btn-primary" onclick="submitForm()">Submit</button>
                             </div>
                         </div>
                     </div>
+                </div>
+
+                <!-- Delete Modal -->
+                <div class="modal fade" id="deleteAnggaranModal" tabindex="-1" aria-labelledby="deleteAnggaranModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="deleteAnggaranModalLabel">Hapus Data Anggaran</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                Apakah Anda yakin ingin menghapus data anggaran ini?
+                            </div>
+                            <div class="modal-footer">
+                                <form id="deleteAnggaranForm" method="POST" action="">
+                                    @csrf
+                                    @method('DELETE')
+                                    <input type="hidden" name="id" id="deleteAnggaranId">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                    <button type="submit" class="btn btn-danger">Delete</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <table class="table align-items-center table-flush">
                     <thead class="thead-light">
                         <tr>
                             <th>No</th>
@@ -97,29 +121,6 @@
                                 <button type="button" class="btn btn-danger" data-id="{{ $anggarans->id_anggaran }}" onclick="openDeleteModal(this)">
                                     <i class="fas fa-trash-alt"></i>
                                 </button>
-                                <!-- Delete Modal -->
-                                <div class="modal fade" id="deleteAnggaranModal" tabindex="-1" aria-labelledby="deleteAnggaranModalLabel" aria-hidden="true">
-                                    <div class="modal-dialog">
-                                        <div class="modal-content">
-                                            <div class="modal-header">
-                                                <h5 class="modal-title" id="deleteAnggaranModalLabel">Hapus Data Anggaran</h5>
-                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                            </div>
-                                            <div class="modal-body">
-                                                Apakah Anda yakin ingin menghapus data anggaran ini?
-                                            </div>
-                                            <div class="modal-footer">
-                                                <form id="deleteAnggaranForm" method="POST" action="{{ route('anggaran.delete', ['id' => ':id']) }}">
-                                                    @csrf
-                                                    @method('DELETE')
-                                                    <input type="hidden" name="id" id="deleteAnggaranId">
-                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                                    <button type="submit" class="btn btn-danger">Delete</button>
-                                                </form>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
                             </td>
                         </tr> 
                         @endforeach
@@ -132,6 +133,9 @@
 </div>
 
 <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.min.js"></script>
+
 <script>
     function openAddModal() {
         $('#anggaranModal').modal('show');
@@ -166,6 +170,7 @@
         var id = button.getAttribute('data-id');
         var deleteForm = document.getElementById('deleteAnggaranForm');
         deleteForm.action = "{{ url('anggaran/delete') }}/" + id;
+        $('#deleteAnggaranId').val(id);
         $('#deleteAnggaranModal').modal('show');
     }
 
@@ -179,7 +184,6 @@
         document.getElementById('totalAnggaran').value = totalAnggaran;
     }
 
-    // Menambahkan event listener untuk perhitungan otomatis
     $(document).ready(function() {
         $('#jumlahMhs, #jumlahAnggaran').on('input', function() {
             var jumlahMhs = $('#jumlahMhs').val();
