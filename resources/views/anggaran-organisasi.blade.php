@@ -1,10 +1,11 @@
 @php
+    $content = session('jabatan.code_jabatan') == 1 ? 'konten' : 'content';
     $layout = session('jabatan.code_jabatan') == 1 ? 'layouts.pengecek-layout' : 'layouts.organisasi-layout';
 @endphp
 
 @extends($layout)
 
-@section('content')
+@section($content)
 
 <div class="row">
     <div class="col-lg-12 mb-4">
