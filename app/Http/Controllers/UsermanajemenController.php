@@ -83,7 +83,7 @@ class UsermanajemenController extends Controller
             'role' => "required",
             'code_id' => 'required', // Menambahkan validasi untuk jenis_id
             'number_id' => 'required', // Menambahkan validasi untuk nomer_id
-            'ttd' => 'file|mimes:jpeg,png,jpg,gif|max:100'
+            'ttd' => 'file|mimes:jpeg,png,jpg,gif|max:2048'
         ]);
 
         // Cek dan buat folder ttd jika belum ada

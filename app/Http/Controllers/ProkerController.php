@@ -53,7 +53,7 @@ class ProkerController extends Controller
             'tanggal' => 'required',
             'tempat' => 'required',
             'dana_diajukan' => 'required',
-            'ttd_ketupel' => 'file|mimes:jpeg,png,jpg,gif|max:100' // Menambahkan validasi untuk file ttd
+            'ttd_ketupel' => 'file|mimes:jpeg,png,jpg,gif|max:2048' // Menambahkan validasi untuk file ttd
         ]);
 
         // Cek dan buat folder ttd jika belum ada
