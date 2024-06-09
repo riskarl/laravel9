@@ -1,4 +1,5 @@
 @php
+    $button = session('jabatan.code_jabatan') == 1 ? true : false;
     $content = session('jabatan.code_jabatan') == 1 ? 'konten' : 'content';
     $layout = session('jabatan.code_jabatan') == 1 ? 'layouts.pengecek-layout' : 'layouts.organisasi-layout';
     $uniqueOrganisasi = $anggaran->pluck('nama_organisasi')->unique();
@@ -16,9 +17,11 @@
           <h6 class="m-0 font-weight-bold text-primary">Rincian Anggaran Organisasi</h6>
         </div>
         <div class="table-responsive">
+          @if ($button)
           <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#cetakModal">
             Cetak
           </button>
+          @endif
         
           <table class="table align-items-center table-flush">
             <thead class="thead-light">
