@@ -6,6 +6,9 @@ use App\Models\Anggaran;
 use App\Models\Organisasi;
 use Illuminate\Http\Request;
 use App\Models\LPJ;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\File;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class AnggaranController extends Controller
 {
@@ -122,5 +125,49 @@ class AnggaranController extends Controller
             return redirect('/anggaran')->with('error', 'Terjadi kesalahan saat menghapus data anggaran');
         }
     }
+
+    public function cetakLaporan(Request $request)
+    {
+        // Validasi input
+        $request->validate([
+            'nama_organisasi' => 'required|string'
+        ]);
+
+        // Ambil nilai dari form
+        $namaOrganisasi = $request->input('nama_organisasi');
+
+        $query = LPJ::with(['proker.organisasi'])
+                    ->whereNotNull('file_lpj')
+                    ->whereNotNull('dana_disetujui');
+
+        if ($namaOrganisasi != 'semua') {
+            $query->whereHas('proker.organisasi', function($query) use ($namaOrganisasi) {
+                $query->where('nama_organisasi', $namaOrganisasi);
+            });
+        }
+        $lpjData = $query->get();
+
+
+        $data = $lpjData->map(function($lpj) {
+            $totalAnggaran = $lpj->proker->organisasi->anggarans->sum('total_anggaran');
+            $sisaAnggaran = $totalAnggaran - $lpj->dana_disetujui;
+            
+            return [
+                'id' => $lpj->id,
+                'nama_organisasi' => $lpj->proker->organisasi->nama_organisasi,
+                'nama_proker' => $lpj->proker->nama_proker,
+                'dana_diajukan' => $lpj->proker->dana_diajukan,
+                'dana_disetujui' => $lpj->dana_disetujui,
+                'sisa_anggaran' => $sisaAnggaran,
+            ];
+        });
+
+        $pdf = PDF::loadView('pdf.laporan-anggaran-pdf', ['anggaran' => $data]);
+
+        
+        // Untuk sekarang, kita hanya akan mengirim balik data ke view
+        return $pdf->download('laporan-anggaran.pdf');
+    }
+
 
 }

@@ -61,24 +61,26 @@
         </button>
       </div>
       <div class="modal-body">
-        <form id="cetakForm">
+        <form id="cetakForm" action="{{ route('cetakLaporan') }}" method="POST">
+          @csrf
           <div class="form-group">
             <label for="organisasiDropdown">Pilih Organisasi</label>
-            <select class="form-control" id="organisasiDropdown">
+            <select class="form-control" id="organisasiDropdown" name="nama_organisasi">
               <option value="semua">Semua</option>
               @foreach ($uniqueOrganisasi as $namaOrganisasi)
                 <option value="{{ $namaOrganisasi }}">{{ $namaOrganisasi }}</option>
               @endforeach
             </select>
           </div>
-        </form>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
-        <button type="button" class="btn btn-primary">Cetak</button>
+        <button type="submit" class="btn btn-primary">Cetak</button>
       </div>
+        </form>
     </div>
   </div>
 </div>
+
 
 @endsection

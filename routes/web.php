@@ -125,3 +125,4 @@ Route::post('/anggaran/update/{id}', [AnggaranController::class, 'update'])->nam
 Route::delete('/anggaran/delete/{id}', [AnggaranController::class, 'delete'])->name('anggaran.delete')->middleware('role:4');
 
 Route::get('/anggaran/organisasi', [AnggaranController::class, 'indexanggaranorganisasi'])->middleware('role:2,3');
+Route::post('/cetak-laporan', [AnggaranController::class, 'cetakLaporan'])->name('cetakLaporan');
