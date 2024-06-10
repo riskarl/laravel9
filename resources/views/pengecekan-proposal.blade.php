@@ -44,7 +44,7 @@
                 || ($codeJabatan == 5 && (($proker->proposal->status_flow == 0 || $proker->proposal->status_flow == null || $proker->proposal->status_flow == "") || $proker->proposal->status_flow >= 2 ) && $proker->organisasi->nama_organisasi == $orguser && $proker->proposal->status_flow != 1)
                 || ($codeJabatan == 2 && ($proker->organisasi->nama_organisasi == 'BEM' || stripos($proker->organisasi->nama_organisasi, 'UKM') !== false) && 'Kampus' == $orguser && $proker->proposal->status_flow >= 5 && $proker->proposal->status_flow != 1)
                 || ($codeJabatan == 8 && (stripos($proker->organisasi->nama_organisasi, 'HIMA') !== false) && ('Kampus' == $orguser || $proker->organisasi->nama_organisasi == $orguser ) && $proker->proposal->status_flow >= 5 && $proker->proposal->status_flow != 1)
-                || ($codeJabatan == 3 && (stripos($proker->organisasi->nama_organisasi, 'HIMA') !== false) && 'Kampus' == $orguser && $proker->proposal->status_flow >= 6 && $proker->proposal->status_flow != 1)
+                || ($codeJabatan == 3 && (stripos($proker->organisasi->nama_organisasi, 'HIMA') !== false) && ('Kampus' == $orguser || $proker->organisasi->nama_organisasi == $orguser ) && $proker->proposal->status_flow >= 6 && $proker->proposal->status_flow != 1)
                 || ($codeJabatan == 2 && (stripos($proker->organisasi->nama_organisasi, 'HIMA') !== false) && 'Kampus' == $orguser && $proker->proposal->status_flow >= 7 && $proker->proposal->status_flow != 1)
                 || ($codeJabatan == 1 && 'Kampus' == $orguser && ($proker->proposal->status_flow == 8 || $proker->proposal->status_flow == 9)))
                 <tr>
