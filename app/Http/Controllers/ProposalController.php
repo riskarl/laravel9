@@ -90,11 +90,11 @@ class ProposalController extends Controller
         if ($dataTtd !== false) {
             if ($jabatanId == 5) {
                 if (stripos($organisasi, 'HIMA') !== false) {
-                    $dataTtd = $this->nullifyNonMatchingTtd($dataTtd, 'HIMA');
+                    $dataTtd = $this->nullifyNonMatchingTtd($dataTtd, ['HIMA']);
                 } elseif (stripos($organisasi, 'UKM') !== false) {
-                    $dataTtd = $this->nullifyNonMatchingTtd($dataTtd, 'UKM');
+                    $dataTtd = $this->nullifyNonMatchingTtd($dataTtd, ['UKM']);
                 } elseif ($organisasi == 'BEM') {
-                    $dataTtd = $this->nullifyNonMatchingTtd($dataTtd, 'BEM', 5);
+                    $dataTtd = $this->nullifyNonMatchingTtd($dataTtd, ['BEM', 'HIMA', 'UKM']);
                 }
             }
         }
@@ -111,18 +111,15 @@ class ProposalController extends Controller
         return redirect()->back();
     }
 
-    private function nullifyNonMatchingTtd($ttdList, $organisasi, $codeJabatan = null)
+    private function nullifyNonMatchingTtd($ttdList, $organisasiList)
     {
         foreach ($ttdList as &$ttd) {
             $match = false;
 
-            if ($organisasi == 'HIMA' || $organisasi == 'UKM') {
-                if (stripos($ttd['organisasi'], $organisasi) !== false) {
+            foreach ($organisasiList as $org) {
+                if (stripos($ttd['organisasi'], $org) !== false) {
                     $match = true;
-                }
-            } elseif ($organisasi == 'BEM') {
-                if ($ttd['code_jabatan'] == $codeJabatan) {
-                    $match = true;
+                    break;
                 }
             }
 
