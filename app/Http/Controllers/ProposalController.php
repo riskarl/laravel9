@@ -96,7 +96,7 @@ class ProposalController extends Controller
 
         $namaKegiatan = $proker->nama_proker;
     
-        $html = view('pdf.signature', compact('signatures', 'namaKegiatan', 'ketupel'))->render();
+        $html = view('pdf.signatures', compact('signatures', 'namaKegiatan', 'ketupel'))->render();
         $pdf = Pdf::loadHTML($html)->setPaper('A4', 'portrait');
     
         $path = public_path('pengesahan');
