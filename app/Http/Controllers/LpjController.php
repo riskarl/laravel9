@@ -237,7 +237,40 @@ class LpjController extends Controller
         return redirect()->back();
     }
 
-
+    private function filterTtdList($ttdList, $jabatanId, $organisasi)
+    {
+        foreach ($ttdList as &$ttd) {
+            $isMatch = false;
+    
+            if ($jabatanId == 5) {
+                if (stripos($organisasi, 'HIMA') !== false) {
+                    $isMatch = stripos($ttd['organisasi'], 'HIMA') !== false && $ttd['code_jabatan'] == 5;
+                } elseif (stripos($organisasi, 'UKM') !== false) {
+                    $isMatch = stripos($ttd['organisasi'], 'UKM') !== false && $ttd['code_jabatan'] == 5;
+                } elseif ($organisasi == 'BEM') {
+                    $isMatch = ($ttd['organisasi'] == 'BEM' || stripos($ttd['organisasi'], 'HIMA') !== false || stripos($ttd['organisasi'], 'UKM') !== false) && $ttd['code_jabatan'] == 5;
+                }elseif ($organisasi == 'BPM') {
+                    $isMatch = ($ttd['organisasi'] == 'BPM' || $ttd['organisasi'] == 'BEM' || stripos($ttd['organisasi'], 'HIMA') !== false || stripos($ttd['organisasi'], 'UKM') !== false) && $ttd['code_jabatan'] == 5;
+                }
+            } else if ($jabatanId == 4) {
+                $isMatch = $ttd['code_jabatan'] == 4 || $ttd['code_jabatan'] == 5;
+            } else if ($jabatanId == 8) {
+                $isMatch = $ttd['code_jabatan'] == 8 || $ttd['code_jabatan'] == 4 || $ttd['code_jabatan'] == 5;
+            } else if ($jabatanId == 3) {
+                $isMatch = $ttd['code_jabatan'] == 3 || $ttd['code_jabatan'] == 8 || $ttd['code_jabatan'] == 4 || $ttd['code_jabatan'] == 5;
+            } else if ($jabatanId == 2) {
+                $isMatch = ($ttd['code_jabatan'] == 2 || $ttd['code_jabatan'] == 3 || $ttd['code_jabatan'] == 8 || $ttd['code_jabatan'] == 4 || $ttd['code_jabatan'] == 5) && $ttd['role'] != 1;
+            } else if ($jabatanId == 1) {
+                $isMatch = $ttd['code_jabatan'] == 2 || $ttd['code_jabatan'] == 2 || $ttd['code_jabatan'] == 3 || $ttd['code_jabatan'] == 8 || $ttd['code_jabatan'] == 4 || $ttd['code_jabatan'] == 5;
+            }
+            // Jika tidak cocok, setel semua atribut ke null
+            if (!$isMatch) {
+                $ttd = array_fill_keys(array_keys($ttd), null);
+            }
+        }
+    
+        return $ttdList;
+    }
 
     public function updateRevisiLpj(Request $request)
     {
