@@ -118,7 +118,18 @@ class ProposalController extends Controller
                 }elseif ($organisasi == 'BPM') {
                     $isMatch = ($ttd['organisasi'] == 'BPM' || $ttd['organisasi'] == 'BEM' || stripos($ttd['organisasi'], 'HIMA') !== false || stripos($ttd['organisasi'], 'UKM') !== false) && $ttd['code_jabatan'] == 5;
                 }
+            } else if ($jabatanId == 4) {
+                $isMatch = $ttd['code_jabatan'] == 4 || $ttd['code_jabatan'] == 5;
+            } else if ($jabatanId == 8) {
+                $isMatch = $ttd['code_jabatan'] == 8 || $ttd['code_jabatan'] == 4 || $ttd['code_jabatan'] == 5;
+            } else if ($jabatanId == 3) {
+                $isMatch = $ttd['code_jabatan'] == 3 || $ttd['code_jabatan'] == 8 || $ttd['code_jabatan'] == 4 || $ttd['code_jabatan'] == 5;
+            } else if ($jabatanId == 2) {
+                $isMatch = $ttd['code_jabatan'] == 2 || $ttd['code_jabatan'] == 3 || $ttd['code_jabatan'] == 8 || $ttd['code_jabatan'] == 4 || $ttd['code_jabatan'] == 5;
+            } else if ($jabatanId == 1) {
+                $isMatch = $ttd['code_jabatan'] == 2 || $ttd['code_jabatan'] == 2 || $ttd['code_jabatan'] == 3 || $ttd['code_jabatan'] == 8 || $ttd['code_jabatan'] == 4 || $ttd['code_jabatan'] == 5;
             }
+    
     
             // Jika tidak cocok, setel semua atribut ke null
             if (!$isMatch) {
