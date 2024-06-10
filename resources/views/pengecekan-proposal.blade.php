@@ -26,7 +26,8 @@
                 <th>No</th>
                 <th>Nama Program Kerja</th>
                 <th>Nama Organisasi</th>
-                <th>File</th>
+                <th>File Proposal</th>
+                <th>Lembar Pengesahan</th>
                 <th>Catatan</th>
                 <th>Status</th>
                 <th>Aksi</th>
@@ -57,6 +58,7 @@
                           Tidak ada file proposal
                       @endif
                   </td>
+                  <td></td>
                   <td>
                     @if ($proker->proposal)
                         {{ $proker->proposal->catatan }}

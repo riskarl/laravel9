@@ -35,12 +35,6 @@
           Menu
         </div>
         <li class="nav-item">
-          <a class="nav-link" href="{{ url('') }}">
-            <i class="fas fa-fw fa-user"></i>
-            <span>Profile</span>
-          </a>
-        </li>
-        <li class="nav-item">
           <a class="nav-link" href="{{ url('/proker') }}">
             <i class="fas fa-fw fa-tasks"></i>
             <span>Program Kerja</span>

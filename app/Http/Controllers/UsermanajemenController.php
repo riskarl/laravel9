@@ -26,7 +26,7 @@ class UsermanajemenController extends Controller
             'organization' => 'required',
             'jabatan_id' => 'required|exists:jabatan,jabatan_id',
             'role' => 'required',
-            'code_id' => 'required', 
+            'code_id' => 'required',
             'number_id' => 'required',
             'ttd' => 'file|mimes:jpeg,png,jpg,gif'
         ]);
