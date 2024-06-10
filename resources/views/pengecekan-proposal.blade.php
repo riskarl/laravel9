@@ -75,7 +75,15 @@
                     @endif
                   </td>  
                   <td>
-                    @if($proker->proposal->status_flow != 9)
+                    @if($proker->proposal->status_flow != 9 && (
+                    ($codeJabatan == 5 && $orguser == 'BEM' && ($proker->proposal->status_flow == 0 || $proker->proposal->status_flow == null) ) ||
+                    ($codeJabatan == 5 && $orguser != 'BEM' && $proker->proposal->status_flow == 2 ) ||
+                    ($codeJabatan == 4 && $proker->proposal->status_flow == 3 ) ||
+                    ($codeJabatan == 8 && $proker->proposal->status_flow == 4 ) ||
+                    ($codeJabatan == 3 && $proker->proposal->status_flow == 5 ) ||
+                    ($codeJabatan == 2 && $proker->proposal->status_flow == 6 ) ||
+                    ($codeJabatan == 1 && $proker->proposal->status_flow == 7 ) ||
+                    ))
                     <button type="button" class="btn btn-warning" onclick="openRevisiModal({{ $proker->proposal->id }})">Revisi</button>
                     @if($codeJabatan == 1)
                       <form action="{{ route('createSignaturePdf') }}" method="POST" style="display:inline;">
@@ -89,7 +97,11 @@
                     <a href="{{ route('proposals.approve', ['proposalId' => $proker->proposal->id]) }}"><button type="submit" class="btn btn-success">Diterima</button></a>
                     @endif
                     @else
+                    @if($codeJabatan != 1)
+                    Diproses
+                    @else
                     Selesai
+                    @endif
                     @endif
                 </td>
                 </tr>
