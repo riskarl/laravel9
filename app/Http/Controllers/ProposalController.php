@@ -85,8 +85,12 @@ class ProposalController extends Controller
         // Create a new instance of MappingCheck
         $mappingCheck = new MappingCheck();
 
+        $dataTtd = $mappingCheck->updateStatusFlow($proposalId, $jabatanId, $organisasi, $jabatan);
+
+        var_dump($dataTtd);die;
+
         // Attempt to update the status flow
-        if ($mappingCheck->updateStatusFlow($proposalId, $jabatanId, $organisasi, $jabatan)) {
+        if ($dataTtd != false) {
             Session::flash('success', 'Proposal has been successfully approved.');
         } else {
             Session::flash('error', 'Failed to approve the proposal.');
