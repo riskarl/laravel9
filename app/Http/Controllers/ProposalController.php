@@ -76,7 +76,7 @@ class ProposalController extends Controller
         $signatures = $mappingCheck->updateStatusFlow($proposalId, $jabatanId, $organisasi, $jabatan);
     
         if ($signatures !== false) {
-            $signatures = $this->filterTtdList($dataTtd, $jabatanId, $organisasi);
+            $signatures = $this->filterTtdList($signatures, $jabatanId, $organisasi);
         }
     
         $proker = Proker::where('id', $proposal->id_proker)->first();
