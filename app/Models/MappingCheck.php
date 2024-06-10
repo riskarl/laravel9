@@ -119,6 +119,7 @@ class MappingCheck extends Model
                 if ($user->ttd && file_exists($ttdPath)) {
                     $ttdList[] = [
                         'nama' => $user->name,
+                        'code_jabatan' => $user->jabatan->code_jabatan,
                         'jabatan' => $user->jabatan->jabatan,
                         'code_id' => $user->code_id,
                         'number_id' => $user->number_id,
@@ -128,6 +129,8 @@ class MappingCheck extends Model
                     // Tambahkan null jika file ttd tidak ditemukan
                     $ttdList[] = [
                         'nama' => $user->name,
+                        'code_jabatan' => $user->jabatan->code_jabatan,
+                        'organisasi' => $user->organization,
                         'jabatan' => $user->jabatan->jabatan,
                         'code_id' => $user->code_id,
                         'number_id' => $user->number_id,

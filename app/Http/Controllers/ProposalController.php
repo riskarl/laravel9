@@ -87,7 +87,19 @@ class ProposalController extends Controller
 
         $dataTtd = $mappingCheck->updateStatusFlow($proposalId, $jabatanId, $organisasi, $jabatan);
 
-        var_dump($dataTtd);die;
+        if ($dataTtd !== false) {
+            if ($jabatanId == 5) {
+                if (stripos($organisasi, 'HIMA') !== false) {
+                    $dataTtd = $this->nullifyNonMatchingTtd($dataTtd, 'HIMA');
+                } elseif (stripos($organisasi, 'UKM') !== false) {
+                    $dataTtd = $this->nullifyNonMatchingTtd($dataTtd, 'UKM');
+                } elseif ($organisasi == 'BEM') {
+                    $dataTtd = $this->nullifyNonMatchingTtd($dataTtd, 'BEM', 5);
+                }
+            }
+        }
+    
+        var_dump($dataTtd); die;
 
         // Attempt to update the status flow
         if ($dataTtd != false) {
@@ -97,6 +109,29 @@ class ProposalController extends Controller
         }
 
         return redirect()->back();
+    }
+
+    private function nullifyNonMatchingTtd($ttdList, $organisasi, $codeJabatan = null)
+    {
+        foreach ($ttdList as &$ttd) {
+            $match = false;
+
+            if ($organisasi == 'HIMA' || $organisasi == 'UKM') {
+                if (stripos($ttd['organisasi'], $organisasi) !== false) {
+                    $match = true;
+                }
+            } elseif ($organisasi == 'BEM') {
+                if ($ttd['code_jabatan'] == $codeJabatan) {
+                    $match = true;
+                }
+            }
+
+            if (!$match) {
+                $ttd = array_fill_keys(array_keys($ttd), null);
+            }
+        }
+
+        return $ttdList;
     }
 
 
