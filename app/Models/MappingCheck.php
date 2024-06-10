@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\File;
 
 class MappingCheck extends Model
 {
@@ -346,6 +348,15 @@ class MappingCheck extends Model
         } else {
             // Mengganti status berdasarkan jabatan dan jabatan_id
             $proposal->status = 'Revisi by ' . $jabatan;
+        }
+
+        // Hapus file pengesahan jika ada
+        if (!empty($proposal->pengesahan)) {
+            $filePengesahan = public_path('pengesahan/' . $proposal->pengesahan);
+            if (File::exists($filePengesahan)) {
+                File::delete($filePengesahan);
+            }
+            $proposal->pengesahan = null; // Set pengesahan menjadi null
         }
 
         // Simpan perubahan pada proposal
