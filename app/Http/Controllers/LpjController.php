@@ -216,7 +216,7 @@ class LpjController extends Controller
         }
 
         // Check if there is already an existing approval file, if so, delete it
-        $oldFilePath = public_path('pengesahan/' . $lpj->file_lpj);
+        $oldFilePath = public_path('pengesahan/' . $lpj->pengesahan);
         if (File::exists($oldFilePath)) {
             File::delete($oldFilePath);
         }
@@ -225,7 +225,7 @@ class LpjController extends Controller
         $newFilePath = $path . '/' . $fileName;
 
         $pdf->save($newFilePath);
-        $lpj->file_lpj = $fileName;
+        $lpj->pengesahan = $fileName;
         $save = $lpj->save();
 
         if ($signatures != false && $save) {
@@ -309,7 +309,7 @@ class LpjController extends Controller
         }
 
         // Check if there is already an existing approval file, if so, delete it
-        $oldFilePath = public_path('lpj/' . $lpj->file_lpj);
+        $oldFilePath = public_path('lpj/' . $lpj->pengesahan);
         if (File::exists($oldFilePath)) {
             File::delete($oldFilePath);
         }
@@ -318,7 +318,7 @@ class LpjController extends Controller
         $newFilePath = $path . '/' . $fileName;
 
         $pdf->save($newFilePath);
-        $lpj->file_lpj = $fileName;
+        $lpj->pengesahan = $fileName;
         $lpj->save();
 
         return $pdf->stream('document.pdf');

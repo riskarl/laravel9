@@ -27,6 +27,7 @@
                 <th>Nama Program Kerja</th>
                 <th>Nama Organisasi</th>
                 <th>File Lpj</th>
+                <th>Lembar pengesahan</th>
                 <th>Catatan</th>
                 <th>Status</th>
                 <th>Aksi</th>
@@ -60,6 +61,14 @@
                           Tidak ada file LPJ
                       @endif
                   </td>
+                  <td>
+                    @if ($proker->lpj)
+                        <a href="{{ asset('lpj/' . $proker->lpj->pengesahan) }}" target="_blank">
+                            {{ $proker->lpj->pengesahan }}</a>
+                    @else
+                        Tidak ada file LPJ
+                    @endif
+                </td>
                   <td>
                     @if ($proker->lpj)
                         {{ $proker->lpj->catatan }}

@@ -39,10 +39,10 @@
                                 @endif
                             </td>
                             <td>
-                                @if ($proker->lpj && $proker->lpj->status_flow_lpj == 9 && $proker->proposal && $proker->proposal->pengesahan)
-                                    <a href="{{ asset('pengesahan/' . $proker->proposal->pengesahan) }}" target="_blank">{{ $proker->proposal->pengesahan }}</a>
+                                @if ($proker->lpj)
+                                    <a href="{{ asset('lpj/' . $proker->lpj->pengesahan) }}" target="_blank">{{ $proker->lpj->pengesahan }}</a>
                                 @else
-                                    File tidak ada
+                                    Tidak ada file
                                 @endif
                             </td>
                             <td>{{ $proker->lpj ? $proker->lpj->status : 'Pending'}}</td>
