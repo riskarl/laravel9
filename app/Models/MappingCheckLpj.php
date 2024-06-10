@@ -17,17 +17,15 @@ class MappingCheckLpj extends Model
      */
     public function updateStatusFlowLpj($lpj_id, $jabatan_id, $organisasi, $jabatan = null)
     {
-        // Mengambil lpj yang terkait dengan lpj_id
         $lpj = LPJ::with('proker.organisasi')->find($lpj_id);
-
-        // Jika tidak ditemukan lpj, return false
         if (!$lpj) {
             return false;
         }
 
-        // Cek status_flow_lpj saat ini harus null, 0, atau empty
+        $isUpdated = false; // Variable to check if there are any updates
+
+        // Logic to update status
         if ($lpj->status_flow_lpj == null || $lpj->status_flow_lpj == 0 || $lpj->status_flow_lpj == '') {
-            // Cek jabatan_id dan organisasi, kemudian update status_flow_lpj
             if ($jabatan_id == 5) {
                 if ($organisasi === 'BEM') {
                     $lpj->status_flow_lpj = 3;
@@ -35,70 +33,129 @@ class MappingCheckLpj extends Model
                     $lpj->status_flow_lpj = 2;
                 }
                 $lpj->status = 'Approved by Ketua ' . $organisasi;
-
-                // Simpan perubahan pada lpj
-                return $lpj->save();
+                $isUpdated = $lpj->save();
             }
-        }
-
-        // Kondisi tambahan untuk status_flow_lpj awalnya 2 dan organisasi bukan BEM
-        if ($lpj->status_flow_lpj == 2 && $organisasi == 'BEM' && $jabatan_id == 5) {
-            // Update status_flow_lpj menjadi 3
+        } elseif ($lpj->status_flow_lpj == 2 && $organisasi == 'BEM' && $jabatan_id == 5) {
             $lpj->status_flow_lpj = 3;
             $lpj->status = 'Approved by Ketua ' . $organisasi;
-
-            // Simpan perubahan pada lpj
-            return $lpj->save();
-        }
-
-        // Kondisi tambahan jika jabatan_id nya 5, status_flow_lpj nya 3, dan organisasi nya BPM
-        if ($jabatan_id == 5 && $lpj->status_flow_lpj == 3 && $organisasi == 'BPM') {
-            // Update status_flow_lpj menjadi 4
+            $isUpdated = $lpj->save();
+        } elseif ($jabatan_id == 5 && $lpj->status_flow_lpj == 3 && $organisasi == 'BPM') {
             $lpj->status_flow_lpj = 4;
             $lpj->status = 'Approved by Ketua ' . $organisasi;
-
-            // Simpan perubahan pada lpj
-            return $lpj->save();
-        }
-
-        if ($jabatan_id == 4 && $lpj->status_flow_lpj == 4) {
+            $isUpdated = $lpj->save();
+        } elseif ($jabatan_id == 4 && $lpj->status_flow_lpj == 4) {
             $lpj->status_flow_lpj = 5;
             $lpj->status = 'Approved by Pembina ' . $organisasi;
-
-            return $lpj->save();
-        }
-
-        $containsHima = stripos($lpj->proker->organisasi->nama_organisasi, 'HIMA') !== false;
-
-        if ($jabatan_id == 8 && $lpj->status_flow_lpj == 5 && $containsHima) {
+            $isUpdated = $lpj->save();
+        } elseif ($jabatan_id == 8 && $lpj->status_flow_lpj == 5 && stripos($lpj->proker->organisasi->nama_organisasi, 'HIMA') !== false) {
             $lpj->status_flow_lpj = 6;
             $lpj->status = 'Approved by ' . $jabatan;
-
-            return $lpj->save();
-        }
-
-        if ($jabatan_id == 3 && $lpj->status_flow_lpj == 6 && $containsHima) {
+            $isUpdated = $lpj->save();
+        } elseif ($jabatan_id == 3 && $lpj->status_flow_lpj == 6 && stripos($lpj->proker->organisasi->nama_organisasi, 'HIMA') !== false) {
             $lpj->status_flow_lpj = 7;
             $lpj->status = 'Approved by ' . $jabatan;
-
-            return $lpj->save();
-        }
-
-        if ($jabatan_id == 2 && (($lpj->status_flow_lpj == 7 && $containsHima) || ($lpj->status_flow_lpj == 5 && !$containsHima))) {
+            $isUpdated = $lpj->save();
+        } elseif ($jabatan_id == 2 && (($lpj->status_flow_lpj == 7 && stripos($lpj->proker->organisasi->nama_organisasi, 'HIMA') !== false) || ($lpj->status_flow_lpj == 5 && stripos($lpj->proker->organisasi->nama_organisasi, 'HIMA') === false))) {
             $lpj->status_flow_lpj = 8;
             $lpj->status = 'Approved by ' . $jabatan;
+            $isUpdated = $lpj->save();
+        }
 
-            return $lpj->save();
+        // If there is an update, collect signatures
+        if ($isUpdated) {
+            $ttdList = $this->collectSignatures($lpj, $organisasi, $jabatan_id);
+            return $ttdList;
         }
 
         return false;
+    }
+
+    private function collectSignatures($proposal, $organisasi, $jabatan_id)
+    {
+        $ttdList = [];
+
+        // Tentukan pengguna yang tanda tangannya perlu dikumpulkan berdasarkan organisasi dan status_flow
+        $users = [];
+
+        if ($proposal->proker->organisasi->nama_organisasi == 'BEM') {
+            $users = [
+                User::where('jabatan_id', 5)->where('organization', 'BEM')->whereNotNull('ttd')->first(),
+                User::where('jabatan_id', 5)->where('organization', 'BPM')->whereNotNull('ttd')->first(),
+                User::where('jabatan_id', 4)->where('organization', 'BEM')->whereNotNull('ttd')->first(),
+                User::where('jabatan_id', 2)
+                        ->whereNotNull('ttd')
+                        ->where('role', '<>', 1)
+                        ->first(),
+                User::where('jabatan_id', 1)->whereNotNull('ttd')->first(),
+            ];
+        } elseif (stripos($proposal->proker->organisasi->nama_organisasi, 'UKM') !== false) {
+            $users = [
+                User::where('jabatan_id', 5)->where('organization', $proposal->proker->organisasi->nama_organisasi)->whereNotNull('ttd')->first(),
+                User::where('jabatan_id', 5)->where('organization', 'BEM')->whereNotNull('ttd')->first(),
+                User::where('jabatan_id', 5)->where('organization', 'BPM')->whereNotNull('ttd')->first(),
+                User::where('jabatan_id', 4)->where('organization', $proposal->proker->organisasi->nama_organisasi)->whereNotNull('ttd')->first(),
+                User::where('jabatan_id', 2)
+                        ->whereNotNull('ttd')
+                        ->where('role', '<>', 1)
+                        ->first(),
+                User::where('jabatan_id', 1)->whereNotNull('ttd')->first(),
+            ];
+        } elseif (stripos($proposal->proker->organisasi->nama_organisasi, 'HIMA') !== false) {
+            $users = [
+                User::where('jabatan_id', 5)->where('organization', $proposal->proker->organisasi->nama_organisasi)->whereNotNull('ttd')->first(),
+                User::where('jabatan_id', 5)->where('organization', 'BEM')->whereNotNull('ttd')->first(),
+                User::where('jabatan_id', 5)->where('organization', 'BPM')->whereNotNull('ttd')->first(),
+                User::where('jabatan_id', 4)->where('organization', $proposal->proker->organisasi->nama_organisasi)->whereNotNull('ttd')->first(),
+                User::where('jabatan_id', 15)->whereNotNull('ttd')->first(),
+                User::where('jabatan_id', 3)->whereNotNull('ttd')->first(),
+                User::where('jabatan_id', 2)
+                        ->whereNotNull('ttd')
+                        ->where('role', '<>', 1)
+                        ->first(),
+                User::where('jabatan_id', 1)->whereNotNull('ttd')->first(),
+            ];
+        }
+
+        $ttdFolderPath = public_path('ttd');
+
+        // Tambahkan pengguna ke daftar ttd jika mereka memiliki ttd yang valid atau null jika tidak
+        foreach ($users as $user) {
+            if ($user) {
+                $ttdPath = $ttdFolderPath . '/' . $user->ttd;
+                if ($user->ttd && file_exists($ttdPath)) {
+                    $ttdList[] = [
+                        'nama' => $user->name,
+                        'role' => $user->role,
+                        'code_jabatan' => $user->jabatan->code_jabatan,
+                        'organisasi' => $user->organization,
+                        'jabatan' => $user->jabatan->jabatan,
+                        'code_id' => $user->code_id,
+                        'number_id' => $user->number_id,
+                        'ttd' => $ttdPath,
+                    ];
+                } else {
+                    // Tambahkan null jika file ttd tidak ditemukan
+                    $ttdList[] = [
+                        'nama' => $user->name,
+                        'role' => $user->role,
+                        'code_jabatan' => $user->jabatan->code_jabatan,
+                        'organisasi' => $user->organization,
+                        'jabatan' => $user->jabatan->jabatan,
+                        'code_id' => $user->code_id,
+                        'number_id' => $user->number_id,
+                        'ttd' => null,
+                    ];
+                }
+            }
+        }
+
+        return $ttdList;
     }
 
     public function signatureCreateLpj($jabatan_id, $lpj_id, $jabatan)
     {
         $lpj = LPJ::with('proker.organisasi')->find($lpj_id);
 
-        // Jika tidak ditemukan lpj, return false
         if (!$lpj) {
             return false;
         }
@@ -108,11 +165,66 @@ class MappingCheckLpj extends Model
             $lpj->status = 'Approved by ' . $jabatan;
             $lpj->save();
 
-            return true;
+            $organization = $lpj->proker->organisasi->nama_organisasi;
+            $ttdList = [];
+
+            // Determine the appropriate users to collect signatures from based on the organization
+            if ($organization == 'BEM') {
+                $users = User::where(function ($query) {
+                    $query->where('organization', 'BEM')
+                        ->orWhere('organization', 'BPM');
+                })->whereIn('jabatan_id', [5, 4, 2, 1])
+                ->whereNotNull('ttd')
+                ->get();
+            } else if (stripos($organization, 'UKM') !== false) {
+                $users = User::where('organization', $organization)
+                            ->orWhere(function ($query) {
+                                $query->where('organization', 'BEM')
+                                    ->orWhere('organization', 'BPM');
+                            })
+                            ->whereIn('jabatan_id', [5, 4, 2, 1])
+                            ->whereNotNull('ttd')
+                            ->get();
+            } else if (stripos($organization, 'HIMA') !== false) {
+                $users = User::where('organization', $organization)
+                            ->orWhere(function ($query) {
+                                $query->where('organization', 'BEM')
+                                    ->orWhere('organization', 'BPM');
+                            })
+                            ->whereIn('jabatan_id', [5, 4, 15, 3, 2, 1])
+                            ->whereNotNull('ttd')
+                            ->get();
+            }
+
+            $ttdFolderPath = public_path('ttd');
+
+            foreach ($users as $user) {
+                $ttdPath = $ttdFolderPath . '/' . $user->ttd;
+                if ($user->ttd && file_exists($ttdPath)) {
+                    $ttdList[] = [
+                        'nama' => $user->name,
+                        'jabatan' => $user->jabatan,
+                        'code_id' => $user->code_id,
+                        'number_id' => $user->number_id,
+                        'ttd' => $ttdPath,
+                    ];
+                } else {
+                    $ttdList[] = [
+                        'nama' => $user->name,
+                        'jabatan' => $user->jabatan,
+                        'code_id' => $user->code_id,
+                        'number_id' => $user->number_id,
+                        'ttd' => null,
+                    ];
+                }
+            }
+
+            return $ttdList;
         }
 
         return false;
     }
+
 
     public function updateRevisiLpj($lpj_id, $jabatan_id, $organisasi, $jabatan = null, $catatan = null)
     {

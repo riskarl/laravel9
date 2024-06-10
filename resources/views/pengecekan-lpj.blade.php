@@ -35,16 +35,19 @@
             <tbody>
               @foreach ($listproker as $index => $proker)
               @if($proker->lpj)
-                @if(($codeJabatan == 6 && ($proker->lpj->status_flow_lpj == 1 || $proker->lpj->status_flow_lpj == 0 || $proker->lpj->status_flow_lpj == null || $proker->lpj->status_flow_lpj == "") && $proker->organisasi->nama_organisasi == $orguser)
-                || ($codeJabatan == 5 && $orguser == 'BEM' && $proker->organisasi->nama_organisasi != 'BEM' && $proker->lpj->status_flow_lpj == 2 && $proker->lpj->status_flow_lpj != 1)
-                || ($codeJabatan == 5 && $orguser == 'BPM' && $proker->lpj->status_flow_lpj == 3 && $proker->lpj->status_flow_lpj != 1)
-                || ($codeJabatan == 4 && $proker->organisasi->nama_organisasi == $orguser && $proker->lpj->status_flow_lpj == 4 && $proker->lpj->status_flow_lpj != 1)
-                || ($codeJabatan == 5 && ($proker->lpj->status_flow_lpj == 0 || $proker->lpj->status_flow_lpj == null || $proker->lpj->status_flow_lpj == "") && $proker->organisasi->nama_organisasi == $orguser && $proker->lpj->status_flow_lpj != 1)
-                || ($codeJabatan == 2 && ($proker->organisasi->nama_organisasi == 'BEM' || stripos($proker->organisasi->nama_organisasi, 'UKM') !== false) && 'Kampus' == $orguser && $proker->lpj->status_flow_lpj == 5 && $proker->lpj->status_flow_lpj != 1)
-                || ($codeJabatan == 8 && (stripos($proker->organisasi->nama_organisasi, 'HIMA') !== false) && 'Kampus' == $orguser && $proker->lpj->status_flow_lpj == 5 && $proker->lpj->status_flow_lpj != 1)
-                || ($codeJabatan == 3 && (stripos($proker->organisasi->nama_organisasi, 'HIMA') !== false) && 'Kampus' == $orguser && $proker->lpj->status_flow_lpj == 6 && $proker->lpj->status_flow_lpj != 1)
-                || ($codeJabatan == 2 && (stripos($proker->organisasi->nama_organisasi, 'HIMA') !== false) && 'Kampus' == $orguser && $proker->lpj->status_flow_lpj == 7 && $proker->lpj->status_flow_lpj != 1)
-                || ($codeJabatan == 1 && 'Kampus' == $orguser && ($proker->lpj->status_flow_lpj == 8 || $proker->lpj->status_flow_lpj == 9)))
+              @if(
+                ($codeJabatan == 6 && ($proker->lpj->status_flow_lpj <= 1 || $proker->lpj->status_flow_lpj == null) && $proker->organisasi->nama_organisasi == $orguser)
+                || ($codeJabatan == 5 && $orguser == 'BEM' && $proker->organisasi->nama_organisasi != 'BEM' && $proker->lpj->status_flow_lpj >= 2 && $proker->lpj->status_flow_lpj != 1)
+                || ($codeJabatan == 5 && $orguser == 'BEM' && $proker->organisasi->nama_organisasi == 'BEM' && $proker->lpj->status_flow_lpj >= 3 && $proker->lpj->status_flow_lpj != 1)
+                || ($codeJabatan == 5 && $orguser == 'BPM' && $proker->lpj->status_flow_lpj >= 3 && $proker->lpj->status_flow_lpj != 1)
+                || ($codeJabatan == 4 && $proker->organisasi->nama_organisasi == $orguser && $proker->lpj->status_flow_lpj >= 4 && $proker->lpj->status_flow_lpj != 1)
+                || ($codeJabatan == 5 && (($proker->lpj->status_flow_lpj == 0 || $proker->lpj->status_flow_lpj == null || $proker->lpj->status_flow_lpj == "") || $proker->lpj->status_flow_lpj >= 2 ) && $proker->organisasi->nama_organisasi == $orguser && $proker->lpj->status_flow_lpj != 1)
+                || ($codeJabatan == 2 && ($proker->organisasi->nama_organisasi == 'BEM' || stripos($proker->organisasi->nama_organisasi, 'UKM') !== false) && 'Kampus' == $orguser && $proker->lpj->status_flow_lpj >= 5 && $proker->lpj->status_flow_lpj != 1)
+                || ($codeJabatan == 8 && (stripos($proker->organisasi->nama_organisasi, 'HIMA') !== false) && ('Kampus' == $orguser || $proker->organisasi->nama_organisasi == $orguser ) && $proker->lpj->status_flow_lpj >= 5 && $proker->lpj->status_flow_lpj != 1)
+                || ($codeJabatan == 3 && (stripos($proker->organisasi->nama_organisasi, 'HIMA') !== false) && ('Kampus' == $orguser || $proker->organisasi->nama_organisasi == $orguser ) && $proker->lpj->status_flow_lpj >= 6 && $proker->lpj->status_flow_lpj != 1)
+                || ($codeJabatan == 2 && (stripos($proker->organisasi->nama_organisasi, 'HIMA') !== false) && 'Kampus' == $orguser && $proker->lpj->status_flow_lpj >= 7 && $proker->lpj->status_flow_lpj != 1)
+                || ($codeJabatan == 1 && 'Kampus' == $orguser && ($proker->lpj->status_flow_lpj == 8 || $proker->lpj->status_flow_lpj == 9))
+            )            
                 <tr>
                     <td>{{ $index + 1 }}</td>
                     <td>{{ $proker->nama_proker }}</td>
@@ -72,23 +75,36 @@
                     @endif
                   </td>  
                   <td>
-                    @if($proker->lpj->status_flow_lpj != 9)
-                    <button type="button" class="btn btn-warning" onclick="openRevisiModal({{ $proker->lpj->id }})">Revisi</button>
-                    @if($codeJabatan == 1)
-                      <form action="{{ route('createSignaturePdfLpj') }}" method="POST" style="display:inline;">
-                        @csrf
-                        <input type="hidden" name="lpj_id" value="{{ $proker->lpj->id }}">
-                        <input type="hidden" name="proker" value="{{ $proker->nama_proker }}">
-                        <input type="hidden" name="organisasi" value="{{ $proker->organisasi->nama_organisasi }}">
-                        <button type="submit" class="btn btn-success">Diterima</button>
-                      </form>
+                    @if($proker->lpj->status_flow_lpj != 9 && (
+                        ($codeJabatan == 5 && $orguser == 'BEM' && $proker->lpj->status_flow_lpj == 2 && $proker->organisasi->nama_organisasi != 'BEM' ) ||
+                        ($codeJabatan == 5 && $orguser == 'BPM' && $proker->lpj->status_flow_lpj == 3 ) ||
+                        ($codeJabatan == 5 && ($proker->lpj->status_flow_lpj == 0 || $proker->lpj->status_flow_lpj == null)) ||
+                        ($codeJabatan == 4 && $proker->lpj->status_flow_lpj == 4 ) ||
+                        ($codeJabatan == 8 && $proker->lpj->status_flow_lpj == 5 ) ||
+                        ($codeJabatan == 3 && $proker->lpj->status_flow_lpj == 6 ) ||
+                        ($codeJabatan == 2 && (($proker->lpj->status_flow_lpj == 7 && (stripos($proker->organisasi->nama_organisasi, 'HIMA') !== false)) || $proker->lpj->status_flow_lpj == 5)) ||
+                        ($codeJabatan == 1 && $proker->lpj->status_flow_lpj == 8 )
+                    ))
+                        <button type="button" class="btn btn-warning" onclick="openRevisiModal({{ $proker->lpj->id }})">Revisi</button>
+                        @if($codeJabatan == 1)
+                            <form action="{{ route('createSignaturePdfLpj') }}" method="POST" style="display:inline;">
+                                @csrf
+                                <input type="hidden" name="lpj_id" value="{{ $proker->lpj->id }}">
+                                <input type="hidden" name="proker" value="{{ $proker->nama_proker }}">
+                                <input type="hidden" name="organisasi" value="{{ $proker->organisasi->nama_organisasi }}">
+                                <button type="submit" class="btn btn-success">Diterima</button>
+                            </form>
+                        @else
+                            <a href="{{ route('lpjs.approve', ['lpjId' => $proker->lpj->id]) }}"><button type="submit" class="btn btn-success">Diterima</button></a>
+                        @endif
                     @else
-                    <a href="{{ route('lpjs.approve', ['lpjId' => $proker->lpj->id]) }}"><button type="submit" class="btn btn-success">Diterima</button></a>
+                        @if($proker->lpj->status_flow_lpj != 9)
+                            Diproses
+                        @else
+                            Selesai
+                        @endif
                     @endif
-                    @else
-                    Selesai
-                    @endif
-                </td>
+                </td>                
                 </tr>
                 @endif
                 @endif

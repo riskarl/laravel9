@@ -158,27 +158,77 @@ class LpjController extends Controller
         $jabatan = $currentUser['jabatan'];
         $organisasi = $currentUser['organisasi'];
 
-        // Mendapatkan LPJ yang terkait dengan lpjId
-        $lpj = LPJ::find($lpjId);
+        $lpjFolderPath = public_path('lpj');
+        if (!File::exists($lpjFolderPath)) {
+            File::makeDirectory($lpjFolderPath, 0755, true);
+        }
 
-        // Jika tidak ditemukan LPJ, return false
+        // Retrieve the LPJ linked with lpjId
+        $lpj = LPJ::with('proker.organisasi')->find($lpjId);
         if (!$lpj) {
             Session::flash('error', 'LPJ not found.');
             return redirect()->back();
         }
 
-        // Mendapatkan path dari file LPJ
         $filePath = public_path('lpj/' . $lpj->file_lpj);
-
-        // Memeriksa apakah file LPJ ada
         if (!File::exists($filePath)) {
             Session::flash('error', 'LPJ file not found.');
             return redirect()->back();
         }
 
         $mappingCheckLpj = new MappingCheckLpj();
+        $signatures = $mappingCheckLpj->updateStatusFlowLpj($lpjId, $jabatanId, $organisasi, $jabatan);
 
-        if ($mappingCheckLpj->updateStatusFlowLpj($lpjId, $jabatanId, $organisasi, $jabatan)) {
+        if ($signatures !== false) {
+            $signatures = $this->filterTtdList($signatures, $jabatanId, $organisasi);
+        }
+
+        $proker = Proker::where('id', $lpj->id_proker)->first();
+        if (!$proker) {
+            return redirect()->back()->with('error', 'Proker not found');
+        }
+
+        if (empty($proker->ttd_ketupel)) {
+            return redirect()->back()->with('error', 'TTD Ketupel tidak lengkap');
+        }
+
+        $ketupel = [
+            'name' => $proker->nama_ketupel,
+            'nim' => $proker->nim_ketupel,
+            'ttd' => public_path('ttd') . '/' . $proker->ttd_ketupel
+        ];
+
+        $namaKegiatan = $proker->nama_proker;
+
+        if ($proker->organisasi->nama_organisasi == 'BEM') {
+            $html = view('pdf.signatures', compact('signatures', 'namaKegiatan', 'ketupel'))->render();
+        } elseif (stripos($proker->organisasi->nama_organisasi, 'UKM') !== false) {
+            $html = view('pdf.ukm-signature', compact('signatures', 'namaKegiatan', 'ketupel'))->render();
+        } else {
+            $html = view('pdf.hima-signature', compact('signatures', 'namaKegiatan', 'ketupel'))->render();
+        }
+
+        $pdf = Pdf::loadHTML($html)->setPaper('A4', 'portrait');
+
+        $path = public_path('pengesahan');
+        if (!File::exists($path)) {
+            File::makeDirectory($path, 0755, true);
+        }
+
+        // Check if there is already an existing approval file, if so, delete it
+        $oldFilePath = public_path('pengesahan/' . $lpj->file_lpj);
+        if (File::exists($oldFilePath)) {
+            File::delete($oldFilePath);
+        }
+
+        $fileName = Str::uuid() . '.pdf';
+        $newFilePath = $path . '/' . $fileName;
+
+        $pdf->save($newFilePath);
+        $lpj->file_lpj = $fileName;
+        $save = $lpj->save();
+
+        if ($signatures != false && $save) {
             Session::flash('success', 'LPJ has been successfully approved.');
         } else {
             Session::flash('error', 'Failed to approve the LPJ.');
@@ -186,6 +236,7 @@ class LpjController extends Controller
 
         return redirect()->back();
     }
+
 
 
     public function updateRevisiLpj(Request $request)
@@ -215,8 +266,6 @@ class LpjController extends Controller
         $lpjId = $request->input('lpj_id');
         $jabatanId = $currentUser['jabatan_id'];
         $jabatan = $currentUser['jabatan'];
-        $namaKegiatan = $request->input('proker');
-        $organisasi = $request->input('organisasi');
 
         $lpj = LPJ::find($lpjId);
         if (!$lpj) {
@@ -232,16 +281,48 @@ class LpjController extends Controller
             return redirect()->back()->with('error', 'TTD Ketupel tidak lengkap');
         }
 
-        $mappingCheckLpj = new MappingCheckLpj();
-        $result = $mappingCheckLpj->signatureCreateLpj($jabatanId, $lpjId, $jabatan);
+        $namaKegiatan = $proker->nama_proker;
+        $organisasi = $proker->organisasi->nama_organisasi;
 
-        if ($result) {
-            Session::flash('success', 'LPJ has been successfully Approve.');
+        $mappingCheckLpj = new MappingCheckLpj();
+        $signatures = $mappingCheckLpj->signatureCreateLpj($jabatanId, $lpjId, $jabatan);
+
+        $ketupel = [
+            'name' => $proker->nama_ketupel,
+            'nim' => $proker->nim_ketupel,
+            'ttd' => public_path('ttd') . '/' . $proker->ttd_ketupel
+        ];
+
+        if ($organisasi == 'BEM') {
+            $html = view('pdf.signatures', compact('signatures', 'namaKegiatan', 'ketupel'))->render();
+        } elseif (stripos($organisasi, 'UKM') !== false) {
+            $html = view('pdf.ukm-signature', compact('signatures', 'namaKegiatan', 'ketupel'))->render();
         } else {
-            Session::flash('error', 'Failed to Approve the LPJ.');
+            $html = view('pdf.hima-signature', compact('signatures', 'namaKegiatan', 'ketupel'))->render();
         }
 
-        return redirect()->back();
+        $pdf = Pdf::loadHTML($html)->setPaper('A4', 'portrait');
+
+        $path = public_path('lpj');
+        if (!File::exists($path)) {
+            File::makeDirectory($path, 0755, true);
+        }
+
+        // Check if there is already an existing approval file, if so, delete it
+        $oldFilePath = public_path('lpj/' . $lpj->file_lpj);
+        if (File::exists($oldFilePath)) {
+            File::delete($oldFilePath);
+        }
+
+        $fileName = Str::uuid() . '.pdf';
+        $newFilePath = $path . '/' . $fileName;
+
+        $pdf->save($newFilePath);
+        $lpj->file_lpj = $fileName;
+        $lpj->save();
+
+        return $pdf->stream('document.pdf');
     }
+
 
 }
