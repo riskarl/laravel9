@@ -98,7 +98,7 @@
                     <a href="{{ route('proposals.approve', ['proposalId' => $proker->proposal->id]) }}"><button type="submit" class="btn btn-success">Diterima</button></a>
                     @endif
                     @else
-                    @if($codeJabatan != 1)
+                    @if($proker->proposal->status_flow != 9)
                     Diproses
                     @else
                     Selesai
