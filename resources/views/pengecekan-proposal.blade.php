@@ -82,7 +82,7 @@
                     ($codeJabatan == 4 && $proker->proposal->status_flow == 4 ) ||
                     ($codeJabatan == 8 && $proker->proposal->status_flow == 5 ) ||
                     ($codeJabatan == 3 && $proker->proposal->status_flow == 6 ) ||
-                    ($codeJabatan == 2 && $proker->proposal->status_flow == 7 ) ||
+                    ($codeJabatan == 2 && (($proker->proposal->status_flow == 7 && (stripos($proker->organisasi->nama_organisasi, 'HIMA') !== false)) || $proker->proposal->status_flow == 5))) ||
                     ($codeJabatan == 1 && $proker->proposal->status_flow == 8 )
                     ))
                     <button type="button" class="btn btn-warning" onclick="openRevisiModal({{ $proker->proposal->id }})">Revisi</button>
