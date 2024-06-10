@@ -107,26 +107,25 @@ class ProposalController extends Controller
     {
         foreach ($ttdList as &$ttd) {
             $isMatch = false;
-
+    
             if ($jabatanId == 5) {
                 if (stripos($organisasi, 'HIMA') !== false) {
-                    $isMatch = stripos($ttd['organisasi'], 'HIMA') !== false;
+                    $isMatch = stripos($ttd['organisasi'], 'HIMA') !== false && $ttd['code_jabatan'] == 5;
                 } elseif (stripos($organisasi, 'UKM') !== false) {
-                    $isMatch = stripos($ttd['organisasi'], 'UKM') !== false;
+                    $isMatch = stripos($ttd['organisasi'], 'UKM') !== false && $ttd['code_jabatan'] == 5;
                 } elseif ($organisasi == 'BEM') {
-                    $isMatch = $ttd['organisasi'] == 'BEM' || stripos($ttd['organisasi'], 'HIMA') !== false || stripos($ttd['organisasi'], 'UKM') !== false;
+                    $isMatch = ($ttd['organisasi'] == 'BEM' || stripos($ttd['organisasi'], 'HIMA') !== false || stripos($ttd['organisasi'], 'UKM') !== false) && $ttd['code_jabatan'] == 5;
                 }
             }
-
+    
             // Jika tidak cocok, setel semua atribut ke null
             if (!$isMatch) {
                 $ttd = array_fill_keys(array_keys($ttd), null);
             }
         }
-
+    
         return $ttdList;
     }
-
 
     public function updateRevisi(Request $request)
     {
