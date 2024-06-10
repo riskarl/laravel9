@@ -55,54 +55,77 @@ class ProposalController extends Controller
 
     public function approvedProposal($proposalId)
     {
-        // Mendapatkan informasi pengguna saat ini
         $currentUser = $this->getCurrentUser();
-        // Mendapatkan code_jabatan dari pengguna saat ini
         $jabatanId = $currentUser['code_jabatan'];
-        // Mendapatkan jabatan dari pengguna saat ini
         $jabatan = $currentUser['jabatan'];
-        // Mendapatkan organisasi dari pengguna saat ini
         $organisasi = $currentUser['organisasi'];
-
-        // Mendapatkan proposal yang terkait dengan proposalId
+    
         $proposal = Proposal::find($proposalId);
-
-        // Jika tidak ditemukan proposal, return false
         if (!$proposal) {
             Session::flash('error', 'Proposal not found.');
             return redirect()->back();
         }
-
-        // Mendapatkan path dari file proposal
+    
         $filePath = public_path('files/' . $proposal->file_proposal);
-
-        // Memeriksa apakah file proposal ada
         if (!File::exists($filePath)) {
             Session::flash('error', 'Proposal file not found.');
             return redirect()->back();
         }
-
-        // Create a new instance of MappingCheck
+    
         $mappingCheck = new MappingCheck();
-
-        $dataTtd = $mappingCheck->updateStatusFlow($proposalId, $jabatanId, $organisasi, $jabatan);
-
-        if ($dataTtd !== false) {
-            $dataTtd = $this->filterTtdList($dataTtd, $jabatanId, $organisasi);
+        $signatures = $mappingCheck->updateStatusFlow($proposalId, $jabatanId, $organisasi, $jabatan);
+    
+        if ($signatures !== false) {
+            $signatures = $this->filterTtdList($dataTtd, $jabatanId, $organisasi);
         }
     
-        //var_dump($dataTtd); die;
+        $proker = Proker::where('id', $proposal->id_proker)->first();
+        if (!$proker) {
+            return redirect()->back()->with('error', 'Proker not found');
+        }
+    
+        if (empty($proker->ttd_ketupel)) {
+            return redirect()->back()->with('error', 'TTD Ketupel tidak lengkap');
+        }
+    
+        $ketupel = [
+            'name' => $proker->nama_ketupel,
+            'nim' => $proker->nim_ketupel,
+            'ttd' => public_path('ttd') . '/' . $proker->ttd_ketupel
+        ];
 
-        // Attempt to update the status flow
-        if ($dataTtd != false) {
+        $namaKegiatan = $proker->nama_proker;
+    
+        $html = view('pdf.signature', compact('signatures', 'namaKegiatan', 'ketupel'))->render();
+        $pdf = Pdf::loadHTML($html)->setPaper('A4', 'portrait');
+    
+        $path = public_path('pengesahan');
+        if (!File::exists($path)) {
+            File::makeDirectory($path, 0755, true);
+        }
+    
+        // Cek apakah sudah ada file pengesahan sebelumnya, jika ada maka hapus
+        $oldFilePath = public_path('pengesahan/' . $proposal->pengesahan);
+        if (File::exists($oldFilePath)) {
+            File::delete($oldFilePath);
+        }
+    
+        $fileName = Str::uuid() . '.pdf';
+        $newFilePath = $path . '/' . $fileName;
+    
+        $pdf->save($newFilePath);
+        $proposal->pengesahan = $fileName;
+        $save = $proposal->save();
+    
+        if ($signatures != false && $save) {
             Session::flash('success', 'Proposal has been successfully approved.');
         } else {
             Session::flash('error', 'Failed to approve the proposal.');
         }
-
+    
         return redirect()->back();
     }
-
+    
     private function filterTtdList($ttdList, $jabatanId, $organisasi)
     {
         foreach ($ttdList as &$ttd) {
@@ -129,8 +152,6 @@ class ProposalController extends Controller
             } else if ($jabatanId == 1) {
                 $isMatch = $ttd['code_jabatan'] == 2 || $ttd['code_jabatan'] == 2 || $ttd['code_jabatan'] == 3 || $ttd['code_jabatan'] == 8 || $ttd['code_jabatan'] == 4 || $ttd['code_jabatan'] == 5;
             }
-    
-    
             // Jika tidak cocok, setel semua atribut ke null
             if (!$isMatch) {
                 $ttd = array_fill_keys(array_keys($ttd), null);
@@ -168,7 +189,7 @@ class ProposalController extends Controller
         $proposalId = $request->input('proposal_id');
         $jabatanId = $currentUser['jabatan_id'];
         $jabatan = $currentUser['jabatan'];
-        $namaKegiatan = $request->input('proker'); // Pastikan parameter inputnya sesuai
+        $namaKegiatan = $request->input('proker');
         $organisasi = $request->input('organisasi');
 
         $proposal = Proposal::find($proposalId);
@@ -176,7 +197,6 @@ class ProposalController extends Controller
             return redirect()->back()->with('error', 'Proposal not found');
         }
 
-        // Ambil data Proker terkait dari Proposal
         $proker = Proker::where('id', $proposal->id_proker)->first();
         if (!$proker) {
             return redirect()->back()->with('error', 'Proker not found');
@@ -205,25 +225,27 @@ class ProposalController extends Controller
 
         $pdf = Pdf::loadHTML($html)->setPaper('A4', 'portrait');
 
-        // Membuat direktori jika belum ada
         $path = public_path('pengesahan');
         if (!File::exists($path)) {
             File::makeDirectory($path, 0755, true);
         }
 
-        // Membuat nama file dengan UUID
+        // Cek apakah sudah ada file pengesahan sebelumnya, jika ada maka hapus
+        $oldFilePath = public_path('pengesahan/' . $proposal->pengesahan);
+        if (File::exists($oldFilePath)) {
+            File::delete($oldFilePath);
+        }
+
+        // Membuat nama file baru dengan UUID untuk memastikan unik
         $fileName = Str::uuid() . '.pdf';
         $filePath = $path . '/' . $fileName;
 
-        // Menyimpan PDF ke direktori public/pengesahan
         $pdf->save($filePath);
-
-        // Menyimpan nama file di database
         $proposal->pengesahan = $fileName;
         $proposal->save();
 
-        // Mengirim PDF ke browser untuk ditampilkan maupun diunduh
         return $pdf->stream('document.pdf');
     }
+
 
 }
