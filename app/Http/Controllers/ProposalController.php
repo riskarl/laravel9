@@ -96,14 +96,14 @@ class ProposalController extends Controller
 
         $namaKegiatan = $proker->nama_proker;
     
-        if ($organisasi == 'BEM') {
+        if ($proker->organisasi->nama_organisasi == 'BEM') {
             $html = view('pdf.signatures', compact('signatures', 'namaKegiatan', 'ketupel'))->render();
         } elseif (stripos($organisasi, 'UKM') !== false) {
             $html = view('pdf.ukm-signature', compact('signatures', 'namaKegiatan', 'ketupel'))->render();
         } else {
             $html = view('pdf.hima-signature', compact('signatures', 'namaKegiatan', 'ketupel'))->render();
         }
-        
+
         $pdf = Pdf::loadHTML($html)->setPaper('A4', 'portrait');
     
         $path = public_path('pengesahan');
