@@ -84,9 +84,9 @@
                   </td>  
                   <td>
                     @if($proker->proposal->status_flow != 9 && (
-                    ($codeJabatan == 5 && $orguser == 'BEM' && ($proker->proposal->status_flow == 0 || $proker->proposal->status_flow == null) && $proker->organisasi->nama_organisasi == 'BEM') ||
                     ($codeJabatan == 5 && $orguser == 'BEM' && $proker->proposal->status_flow == 2 && $proker->organisasi->nama_organisasi != 'BEM' ) ||
                     ($codeJabatan == 5 && $orguser == 'BPM' && $proker->proposal->status_flow == 3 ) ||
+                    ($codeJabatan == 5 && ($proker->proposal->status_flow == 0 || $proker->proposal->status_flow == null)) ||
                     ($codeJabatan == 4 && $proker->proposal->status_flow == 4 ) ||
                     ($codeJabatan == 8 && $proker->proposal->status_flow == 5 ) ||
                     ($codeJabatan == 3 && $proker->proposal->status_flow == 6 ) ||
