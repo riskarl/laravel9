@@ -91,7 +91,7 @@ class ProposalController extends Controller
             $dataTtd = $this->filterTtdList($dataTtd, $jabatanId, $organisasi);
         }
     
-        var_dump($dataTtd); die;
+        //var_dump($dataTtd); die;
 
         // Attempt to update the status flow
         if ($dataTtd != false) {
