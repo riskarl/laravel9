@@ -82,7 +82,7 @@
                     ($codeJabatan == 8 && $proker->proposal->status_flow == 4 ) ||
                     ($codeJabatan == 3 && $proker->proposal->status_flow == 5 ) ||
                     ($codeJabatan == 2 && $proker->proposal->status_flow == 6 ) ||
-                    ($codeJabatan == 1 && $proker->proposal->status_flow == 7 ) ||
+                    ($codeJabatan == 1 && $proker->proposal->status_flow == 7 )
                     ))
                     <button type="button" class="btn btn-warning" onclick="openRevisiModal({{ $proker->proposal->id }})">Revisi</button>
                     @if($codeJabatan == 1)
