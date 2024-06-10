@@ -85,7 +85,10 @@ class MappingCheck extends Model
                 User::where('jabatan_id', 5)->where('organization', 'BEM')->whereNotNull('ttd')->first(),
                 User::where('jabatan_id', 5)->where('organization', 'BPM')->whereNotNull('ttd')->first(),
                 User::where('jabatan_id', 4)->where('organization', 'BEM')->whereNotNull('ttd')->first(),
-                User::where('jabatan_id', 2)->whereNotNull('ttd')->first(),
+                User::where('jabatan_id', 2)
+                        ->whereNotNull('ttd')
+                        ->where('role', '<>', 1)
+                        ->first(),
                 User::where('jabatan_id', 1)->whereNotNull('ttd')->first(),
             ];
         } elseif (stripos($proposal->proker->organisasi->nama_organisasi, 'UKM') !== false) {
@@ -94,7 +97,10 @@ class MappingCheck extends Model
                 User::where('jabatan_id', 5)->where('organization', 'BEM')->whereNotNull('ttd')->first(),
                 User::where('jabatan_id', 5)->where('organization', 'BPM')->whereNotNull('ttd')->first(),
                 User::where('jabatan_id', 4)->where('organization', $proposal->proker->organisasi->nama_organisasi)->whereNotNull('ttd')->first(),
-                User::where('jabatan_id', 2)->whereNotNull('ttd')->first(),
+                User::where('jabatan_id', 2)
+                        ->whereNotNull('ttd')
+                        ->where('role', '<>', 1)
+                        ->first(),
                 User::where('jabatan_id', 1)->whereNotNull('ttd')->first(),
             ];
         } elseif (stripos($proposal->proker->organisasi->nama_organisasi, 'HIMA') !== false) {
@@ -105,7 +111,10 @@ class MappingCheck extends Model
                 User::where('jabatan_id', 4)->where('organization', $proposal->proker->organisasi->nama_organisasi)->whereNotNull('ttd')->first(),
                 User::where('jabatan_id', 15)->whereNotNull('ttd')->first(),
                 User::where('jabatan_id', 3)->whereNotNull('ttd')->first(),
-                User::where('jabatan_id', 2)->whereNotNull('ttd')->first(),
+                User::where('jabatan_id', 2)
+                        ->whereNotNull('ttd')
+                        ->where('role', '<>', 1)
+                        ->first(),
                 User::where('jabatan_id', 1)->whereNotNull('ttd')->first(),
             ];
         }
@@ -119,6 +128,7 @@ class MappingCheck extends Model
                 if ($user->ttd && file_exists($ttdPath)) {
                     $ttdList[] = [
                         'nama' => $user->name,
+                        'role' => $user->role,
                         'code_jabatan' => $user->jabatan->code_jabatan,
                         'organisasi' => $user->organization,
                         'jabatan' => $user->jabatan->jabatan,
@@ -130,6 +140,7 @@ class MappingCheck extends Model
                     // Tambahkan null jika file ttd tidak ditemukan
                     $ttdList[] = [
                         'nama' => $user->name,
+                        'role' => $user->role,
                         'code_jabatan' => $user->jabatan->code_jabatan,
                         'organisasi' => $user->organization,
                         'jabatan' => $user->jabatan->jabatan,
@@ -169,7 +180,10 @@ class MappingCheck extends Model
                     User::where('jabatan_id', 5)->where('organization', 'BEM')->whereNotNull('ttd')->first(),
                     User::where('jabatan_id', 5)->where('organization', 'BPM')->whereNotNull('ttd')->first(),
                     User::where('jabatan_id', 4)->where('organization', 'BEM')->whereNotNull('ttd')->first(),
-                    User::where('jabatan_id', 2)->whereNotNull('ttd')->first(),
+                    User::where('jabatan_id', 2)
+                    ->whereNotNull('ttd')
+                    ->where('role', '<>', 1)
+                    ->first(),
                     User::where('jabatan_id', 1)->whereNotNull('ttd')->first(),
                 ];
 
@@ -212,7 +226,10 @@ class MappingCheck extends Model
                     User::where('jabatan_id', 5)->where('organization', 'BEM')->whereNotNull('ttd')->first(),
                     User::where('jabatan_id', 5)->where('organization', 'BPM')->whereNotNull('ttd')->first(),
                     User::where('jabatan_id', 4)->where('organization', $proposal->proker->organisasi->nama_organisasi)->whereNotNull('ttd')->first(),
-                    User::where('jabatan_id', 2)->whereNotNull('ttd')->first(),
+                    User::where('jabatan_id', 2)
+                    ->whereNotNull('ttd')
+                    ->where('role', '<>', 1)
+                    ->first(),
                     User::where('jabatan_id', 1)->whereNotNull('ttd')->first(),
                 ];
 
@@ -257,7 +274,10 @@ class MappingCheck extends Model
                     User::where('jabatan_id', 4)->where('organization', $proposal->proker->organisasi->nama_organisasi)->whereNotNull('ttd')->first(),
                     User::where('jabatan_id', 15)->whereNotNull('ttd')->first(),
                     User::where('jabatan_id', 3)->whereNotNull('ttd')->first(),
-                    User::where('jabatan_id', 2)->whereNotNull('ttd')->first(),
+                    User::where('jabatan_id', 2)
+                    ->whereNotNull('ttd')
+                    ->where('role', '<>', 1)
+                    ->first(),
                     User::where('jabatan_id', 1)->whereNotNull('ttd')->first(),
                 ];
 

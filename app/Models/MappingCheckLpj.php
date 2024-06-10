@@ -152,7 +152,10 @@ class MappingCheckLpj extends Model
                 User::where('jabatan_id', 5)->where('organization', 'BEM')->whereNotNull('ttd')->first(),
                 User::where('jabatan_id', 5)->where('organization', 'BPM')->whereNotNull('ttd')->first(),
                 User::where('jabatan_id', 4)->where('organization', 'BEM')->whereNotNull('ttd')->first(),
-                User::where('jabatan_id', 2)->whereNotNull('ttd')->first(),
+                User::where('jabatan_id', 2)
+                        ->whereNotNull('ttd')
+                        ->where('role', '<>', 1)
+                        ->first(),
                 User::where('jabatan_id', 1)->whereNotNull('ttd')->first(),
             ];
         } else if (stripos($organisasiName, 'UKM') !== false) {
@@ -161,7 +164,10 @@ class MappingCheckLpj extends Model
                 User::where('jabatan_id', 5)->where('organization', 'BEM')->whereNotNull('ttd')->first(),
                 User::where('jabatan_id', 5)->where('organization', 'BPM')->whereNotNull('ttd')->first(),
                 User::where('jabatan_id', 4)->where('organization', $organisasiName)->whereNotNull('ttd')->first(),
-                User::where('jabatan_id', 2)->whereNotNull('ttd')->first(),
+                User::where('jabatan_id', 2)
+                        ->whereNotNull('ttd')
+                        ->where('role', '<>', 1)
+                        ->first(),
                 User::where('jabatan_id', 1)->whereNotNull('ttd')->first(),
             ];
         } else if (stripos($organisasiName, 'HIMA') !== false) {
@@ -172,7 +178,10 @@ class MappingCheckLpj extends Model
                 User::where('jabatan_id', 4)->where('organization', $organisasiName)->whereNotNull('ttd')->first(),
                 User::where('jabatan_id', 15)->whereNotNull('ttd')->first(),
                 User::where('jabatan_id', 3)->whereNotNull('ttd')->first(),
-                User::where('jabatan_id', 2)->whereNotNull('ttd')->first(),
+                User::where('jabatan_id', 2)
+                        ->whereNotNull('ttd')
+                        ->where('role', '<>', 1)
+                        ->first(),
                 User::where('jabatan_id', 1)->whereNotNull('ttd')->first(),
             ];
         }
