@@ -88,15 +88,7 @@ class ProposalController extends Controller
         $dataTtd = $mappingCheck->updateStatusFlow($proposalId, $jabatanId, $organisasi, $jabatan);
 
         if ($dataTtd !== false) {
-            if ($jabatanId == 5) {
-                if (stripos($organisasi, 'HIMA') !== false) {
-                    $dataTtd = $this->nullifyNonMatchingTtd($dataTtd, ['HIMA']);
-                } elseif (stripos($organisasi, 'UKM') !== false) {
-                    $dataTtd = $this->nullifyNonMatchingTtd($dataTtd, ['UKM']);
-                } elseif ($organisasi == 'BEM') {
-                    $dataTtd = $this->nullifyNonMatchingTtd($dataTtd, ['BEM', 'HIMA', 'UKM']);
-                }
-            }
+            $dataTtd = $this->filterTtdList($dataTtd, $jabatanId, $organisasi);
         }
     
         var_dump($dataTtd); die;
@@ -111,19 +103,23 @@ class ProposalController extends Controller
         return redirect()->back();
     }
 
-    private function nullifyNonMatchingTtd($ttdList, $organisasiList)
+    private function filterTtdList($ttdList, $jabatanId, $organisasi)
     {
         foreach ($ttdList as &$ttd) {
-            $match = false;
+            $isMatch = false;
 
-            foreach ($organisasiList as $org) {
-                if (stripos($ttd['organisasi'], $org) !== false) {
-                    $match = true;
-                    break;
+            if ($jabatanId == 5) {
+                if (stripos($organisasi, 'HIMA') !== false) {
+                    $isMatch = stripos($ttd['organisasi'], 'HIMA') !== false;
+                } elseif (stripos($organisasi, 'UKM') !== false) {
+                    $isMatch = stripos($ttd['organisasi'], 'UKM') !== false;
+                } elseif ($organisasi == 'BEM') {
+                    $isMatch = $ttd['organisasi'] == 'BEM' || stripos($ttd['organisasi'], 'HIMA') !== false || stripos($ttd['organisasi'], 'UKM') !== false;
                 }
             }
 
-            if (!$match) {
+            // Jika tidak cocok, setel semua atribut ke null
+            if (!$isMatch) {
                 $ttd = array_fill_keys(array_keys($ttd), null);
             }
         }
