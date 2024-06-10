@@ -38,6 +38,7 @@
               @if($proker->proposal)
                 @if(($codeJabatan == 6 && ($proker->proposal->status_flow == 1 || $proker->proposal->status_flow == 0 || $proker->proposal->status_flow == null || $proker->proposal->status_flow == "") && $proker->organisasi->nama_organisasi == $orguser)
                 || ($codeJabatan == 5 && $orguser == 'BEM' && $proker->organisasi->nama_organisasi != 'BEM' && $proker->proposal->status_flow >= 2 && $proker->proposal->status_flow != 1)
+                || ($codeJabatan == 5 && $orguser == 'BEM' && $proker->organisasi->nama_organisasi == 'BEM' && $proker->proposal->status_flow >= 3 && $proker->proposal->status_flow != 1)
                 || ($codeJabatan == 5 && $orguser == 'BPM' && $proker->proposal->status_flow >= 3 && $proker->proposal->status_flow != 1)
                 || ($codeJabatan == 4 && $proker->organisasi->nama_organisasi == $orguser && $proker->proposal->status_flow >= 4 && $proker->proposal->status_flow != 1)
                 || ($codeJabatan == 5 && ($proker->proposal->status_flow == 0 || $proker->proposal->status_flow == null || $proker->proposal->status_flow == "") && $proker->organisasi->nama_organisasi == $orguser && $proker->proposal->status_flow != 1)
