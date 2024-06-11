@@ -9,6 +9,7 @@ use App\Models\LPJ;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\File;
 use Barryvdh\DomPDF\Facade\Pdf;
+use App\Models\SetAnggaran;
 
 class AnggaranController extends Controller
 {
@@ -169,5 +170,27 @@ class AnggaranController extends Controller
         return $pdf->download('laporan-anggaran.pdf');
     }
 
+    public function setAnggaran(Request $request)
+    {
+        // Validasi input
+        $validatedData = $request->validate([
+            'total_anggaran' => 'required|numeric',
+            'jenis_periode' => 'required|in:bulan,tahun',
+            'total_periode' => 'required|numeric|min:1',
+        ]);
+
+        // Proses penyimpanan data
+        try {
+            $setAnggaran = new SetAnggaran(); // Menggunakan model SetAnggaran
+            $setAnggaran->total_anggaran = $request->input('total_anggaran');
+            $setAnggaran->jenis_periode = $request->input('jenis_periode');
+            $setAnggaran->total_periode = $request->input('total_periode');
+            $setAnggaran->save(); // Simpan data ke dalam tabel set_anggaran
+
+            return redirect()->back()->with('success', 'Anggaran berhasil disimpan!');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Terjadi kesalahan saat menyimpan anggaran: ' . $e->getMessage());
+        }
+    }
 
 }

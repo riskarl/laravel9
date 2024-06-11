@@ -126,6 +126,7 @@ Route::delete('/anggaran/delete/{id}', [AnggaranController::class, 'delete'])->n
 
 Route::get('/anggaran/organisasi', [AnggaranController::class, 'indexanggaranorganisasi'])->middleware('role:2,3');
 Route::post('/cetak-laporan', [AnggaranController::class, 'cetakLaporan'])->name('cetakLaporan');
+Route::post('/set-anggaran', [AnggaranController::class, 'setAnggaran'])->name('setAnggaran');
 
 Route::get('/laporan/proker', [ProkerController::class, 'ShowLaporanProker'])->middleware('role:1');
 Route::post('/cetak-laporan', [ProkerController::class, 'cetakLaporan'])->name('cetakLaporan');

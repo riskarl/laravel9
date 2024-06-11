@@ -18,11 +18,16 @@
         </div>
         <div class="table-responsive">
           @if ($button)
-          <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#cetakModal">
-            Cetak
-          </button>
+          <div class="d-flex justify-content-between mb-2">
+            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#cetakModal">
+              Cetak
+            </button>
+            <button type="button" class="btn btn-success" data-toggle="modal" data-target="#setAnggaranModal">
+              Set Anggaran
+            </button>
+          </div>
           @endif
-        
+
           <table class="table align-items-center table-flush">
             <thead class="thead-light">
               <tr>
@@ -85,5 +90,47 @@
   </div>
 </div>
 
+<!-- Modal untuk Set Anggaran -->
+<div class="modal fade" id="setAnggaranModal" tabindex="-1" role="dialog" aria-labelledby="setAnggaranModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="setAnggaranModalLabel">Set Anggaran</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <!-- Form untuk Set Anggaran -->
+        <form id="setAnggaranForm" action="{{ route('setAnggaran') }}" method="POST">
+          @csrf
+          <div class="form-group">
+            <label for="totalAnggaran">Total Anggaran</label>
+            <input type="number" class="form-control" id="totalAnggaran" name="total_anggaran" required>
+          </div>
+          <div class="form-group">
+            <label>Jenis Periode</label><br>
+            <div class="form-check form-check-inline">
+              <input class="form-check-input" type="radio" name="jenis_periode" id="periodeBulan" value="bulan" required>
+              <label class="form-check-label" for="periodeBulan">Bulan</label>
+            </div>
+            <div class="form-check form-check-inline">
+              <input class="form-check-input" type="radio" name="jenis_periode" id="periodeTahun" value="tahun" required>
+              <label class="form-check-label" for="periodeTahun">Tahun</label>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="totalPeriode">Total Periode</label>
+            <input type="number" class="form-control" id="totalPeriode" name="total_periode" required>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
+            <button type="submit" class="btn btn-success">Set Anggaran</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
 
 @endsection
