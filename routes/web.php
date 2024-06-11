@@ -128,5 +128,5 @@ Route::get('/anggaran/organisasi', [AnggaranController::class, 'indexanggaranorg
 Route::post('/cetak-laporan', [AnggaranController::class, 'cetakLaporan'])->name('cetakLaporan');
 Route::post('/set-anggaran', [AnggaranController::class, 'setAnggaran'])->name('setAnggaran');
 
-Route::get('/laporan/proker', [ProkerController::class, 'ShowLaporanProker'])->middleware('role:1');
+Route::get('/laporan/proker', [ProkerController::class, 'ShowLaporanProker'])->middleware('role:1,3');
 Route::post('/cetak-laporan', [ProkerController::class, 'cetakLaporan'])->name('cetakLaporan');

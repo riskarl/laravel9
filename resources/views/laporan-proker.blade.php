@@ -1,6 +1,11 @@
-@extends('layouts.admin-layout')
+@php
+    $content = session('jabatan.code_jabatan') == 1 ? 'konten' : 'kontainer';
+    $layout = session('jabatan.code_jabatan') == 1 ? 'layouts.pengecek-layout' : 'layouts.admin-layout';
+@endphp
 
-@section('kontainer')
+@extends($layout)
+
+@section($content)
 
 <div class="row">
     <div class="col-lg-12 mb-4">

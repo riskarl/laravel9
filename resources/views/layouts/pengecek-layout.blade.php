@@ -54,6 +54,14 @@
                     </a>
                 </li>
             @endif
+            @if(session('jabatan.code_jabatan') == 1)
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url('/laporan/proker') }}">
+                      <i class="fas fa-fw fa-clipboard-check"></i>
+                      <span>Laporan Program Kerja</span>
+                    </a>
+                </li>
+            @endif
         <li class="nav-item">
           <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseForm" aria-expanded="true"
             aria-controls="collapseForm">

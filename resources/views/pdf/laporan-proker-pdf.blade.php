@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Laporan Anggaran</title>
+    <title>Laporan Program Kerja</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -35,6 +35,24 @@
             font-size: 12px;
             color: #555;
         }
+        .badge-success {
+            color: white;
+            background-color: green;
+            padding: 5px;
+            border-radius: 4px;
+        }
+        .badge-warning {
+            color: white;
+            background-color: orange;
+            padding: 5px;
+            border-radius: 4px;
+        }
+        .badge-danger {
+            color: white;
+            background-color: red;
+            padding: 5px;
+            border-radius: 4px;
+        }
     </style>
 </head>
 <body>
@@ -42,7 +60,7 @@
     <table>
         <thead>
             <tr>
-                <th>NO</th>
+                <th>No</th>
                 <th>Nama Organisasi</th>
                 <th>Nama Program Kerja</th>
                 <th>Proposal</th>
@@ -54,11 +72,47 @@
             @foreach ($listproker as $index => $item)
                 <tr>
                     <td>{{ $index + 1 }}</td>
-                    <td>{{ $item->organisasi['nama_organisasi'] }}</td>
-                    <td>{{ $item['nama_proker'] }}</td>
-                    {{-- <td>{{ number_format($item['status_flow'], 0, ',', '.') }}</td>
-                    <td>{{ $item['lpj'] }}</td>
-                    <td>{{ $item['keterangan'] }}</td> --}}
+                    <td>{{ $item->organisasi->nama_organisasi }}</td>
+                    <td>{{ $item->nama_proker }}</td>
+                    <td>
+                        @if ($item->proposal)
+                            @if ($item->proposal->status_flow == 9)
+                                Disetujui
+                            @elseif ($item->proposal->status_flow < 9)
+                                Belum Selesai
+                            @else
+                                Tidak ada
+                            @endif
+                        @else
+                            Tidak ada
+                        @endif
+                    </td>
+                    <td>
+                        @if ($item->lpj)
+                            @if ($item->lpj->status_flow_lpj == 9)
+                                Disetujui
+                            @elseif ($item->lpj->status_flow_lpj < 9)
+                                Belum Selesai
+                            @else
+                                Tidak ada
+                            @endif
+                        @else
+                            Tidak ada
+                        @endif
+                    </td>
+                    <td>
+                        @if ($item->proposal)
+                            @if ($item->proposal->status_flow == 9 && $item->lpj && $item->lpj->status_flow_lpj == 9)
+                                <span class="badge badge-success">Terlaksana</span>
+                            @elseif ($item->proposal->status_flow == 9 && (!$item->lpj || $item->lpj->status_flow_lpj < 9))
+                                <span class="badge badge-warning">Belum Selesai</span>
+                            @else
+                                <span class="badge badge-danger">Belum Terlaksana</span>
+                            @endif
+                        @else
+                            <span class="badge badge-danger">Belum Terlaksana</span>
+                        @endif
+                    </td>
                 </tr>
             @endforeach
         </tbody>

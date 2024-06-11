@@ -151,19 +151,23 @@ class ProkerController extends Controller
 
     public function cetakLaporan(Request $request)
     {
-        $namaOrganisasi = $request->input('nama_organisasi');
+    $namaOrganisasi = $request->input('nama_organisasi');
 
-        if ($namaOrganisasi == 'semua') {
-            $listproker = Proker::all();
-        } else {
-            $listproker = Proker::where('nama_organisasi', $namaOrganisasi)->get();
-        }
-
-        // Load view laporan-proker-pdf.blade.php dengan data proker yang sesuai
-        $pdf = PDF::loadView('pdf.laporan-proker-pdf', ['listproker' => $listproker]);
-
-        // Unduh file PDF dengan nama laporan-proker.pdf
-        return $pdf->download('laporan-proker.pdf');
+    if ($namaOrganisasi == 'semua') {
+        $listproker = Proker::with(['organisasi', 'proposal', 'lpj'])->get();
+    } else {
+        $listproker = Proker::with(['organisasi', 'proposal', 'lpj'])
+                            ->whereHas('organisasi', function($query) use ($namaOrganisasi) {
+                                $query->where('nama_organisasi', $namaOrganisasi);
+                            })->get();
     }
+
+    // Load view laporan-proker-pdf.blade.php dengan data proker yang sesuai
+    $pdf = PDF::loadView('pdf.laporan-proker-pdf', ['listproker' => $listproker]);
+
+    // Unduh file PDF dengan nama laporan-proker.pdf
+    return $pdf->download('laporan-proker.pdf');
+    }   
+
 }
 
