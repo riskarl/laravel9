@@ -184,10 +184,10 @@ class MappingCheckLpj extends Model
                 ];
             } elseif (stripos($lpj->proker->organisasi->nama_organisasi, 'UKM') !== false) {
                 $users = [
-                    User::where('jabatan_id', 5)->where('organization', $proposal->proker->organisasi->nama_organisasi)->whereNotNull('ttd')->first(),
+                    User::where('jabatan_id', 5)->where('organization', $lpj->proker->organisasi->nama_organisasi)->whereNotNull('ttd')->first(),
                     User::where('jabatan_id', 5)->where('organization', 'BEM')->whereNotNull('ttd')->first(),
                     User::where('jabatan_id', 5)->where('organization', 'BPM')->whereNotNull('ttd')->first(),
-                    User::where('jabatan_id', 4)->where('organization', $proposal->proker->organisasi->nama_organisasi)->whereNotNull('ttd')->first(),
+                    User::where('jabatan_id', 4)->where('organization', $lpj->proker->organisasi->nama_organisasi)->whereNotNull('ttd')->first(),
                     User::where('jabatan_id', 2)
                             ->whereNotNull('ttd')
                             ->where('role', '<>', 1)
@@ -196,10 +196,10 @@ class MappingCheckLpj extends Model
                 ];
             } elseif (stripos($lpj->proker->organisasi->nama_organisasi, 'HIMA') !== false) {
                 $users = [
-                    User::where('jabatan_id', 5)->where('organization', $proposal->proker->organisasi->nama_organisasi)->whereNotNull('ttd')->first(),
+                    User::where('jabatan_id', 5)->where('organization', $lpj->proker->organisasi->nama_organisasi)->whereNotNull('ttd')->first(),
                     User::where('jabatan_id', 5)->where('organization', 'BEM')->whereNotNull('ttd')->first(),
                     User::where('jabatan_id', 5)->where('organization', 'BPM')->whereNotNull('ttd')->first(),
-                    User::where('jabatan_id', 4)->where('organization', $proposal->proker->organisasi->nama_organisasi)->whereNotNull('ttd')->first(),
+                    User::where('jabatan_id', 4)->where('organization', $lpj->proker->organisasi->nama_organisasi)->whereNotNull('ttd')->first(),
                     User::where('jabatan_id', 15)->whereNotNull('ttd')->first(),
                     User::where('jabatan_id', 3)->whereNotNull('ttd')->first(),
                     User::where('jabatan_id', 2)
