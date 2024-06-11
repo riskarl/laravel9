@@ -171,7 +171,7 @@ class MappingCheckLpj extends Model
             // Determine the appropriate users to collect signatures from based on the organization
             $users = [];
 
-            if ($proposal->proker->organisasi->nama_organisasi == 'BEM') {
+            if ($lpj->proker->organisasi->nama_organisasi == 'BEM') {
                 $users = [
                     User::where('jabatan_id', 5)->where('organization', 'BEM')->whereNotNull('ttd')->first(),
                     User::where('jabatan_id', 5)->where('organization', 'BPM')->whereNotNull('ttd')->first(),
@@ -182,7 +182,7 @@ class MappingCheckLpj extends Model
                             ->first(),
                     User::where('jabatan_id', 1)->whereNotNull('ttd')->first(),
                 ];
-            } elseif (stripos($proposal->proker->organisasi->nama_organisasi, 'UKM') !== false) {
+            } elseif (stripos($lpj->proker->organisasi->nama_organisasi, 'UKM') !== false) {
                 $users = [
                     User::where('jabatan_id', 5)->where('organization', $proposal->proker->organisasi->nama_organisasi)->whereNotNull('ttd')->first(),
                     User::where('jabatan_id', 5)->where('organization', 'BEM')->whereNotNull('ttd')->first(),
@@ -194,7 +194,7 @@ class MappingCheckLpj extends Model
                             ->first(),
                     User::where('jabatan_id', 1)->whereNotNull('ttd')->first(),
                 ];
-            } elseif (stripos($proposal->proker->organisasi->nama_organisasi, 'HIMA') !== false) {
+            } elseif (stripos($lpj->proker->organisasi->nama_organisasi, 'HIMA') !== false) {
                 $users = [
                     User::where('jabatan_id', 5)->where('organization', $proposal->proker->organisasi->nama_organisasi)->whereNotNull('ttd')->first(),
                     User::where('jabatan_id', 5)->where('organization', 'BEM')->whereNotNull('ttd')->first(),
