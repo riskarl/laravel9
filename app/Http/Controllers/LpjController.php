@@ -210,13 +210,13 @@ class LpjController extends Controller
 
         $pdf = Pdf::loadHTML($html)->setPaper('A4', 'portrait');
 
-        $path = public_path('pengesahan');
+        $path = public_path('lpj');
         if (!File::exists($path)) {
             File::makeDirectory($path, 0755, true);
         }
 
         // Check if there is already an existing approval file, if so, delete it
-        $oldFilePath = public_path('pengesahan/' . $lpj->pengesahan);
+        $oldFilePath = public_path('lpj/' . $lpj->pengesahan);
         if (File::exists($oldFilePath)) {
             File::delete($oldFilePath);
         }
