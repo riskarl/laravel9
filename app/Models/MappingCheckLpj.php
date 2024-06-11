@@ -169,31 +169,45 @@ class MappingCheckLpj extends Model
             $ttdList = [];
 
             // Determine the appropriate users to collect signatures from based on the organization
-            if ($organization == 'BEM') {
-                $users = User::where(function ($query) {
-                    $query->where('organization', 'BEM')
-                        ->orWhere('organization', 'BPM');
-                })->whereIn('jabatan_id', [5, 4, 2, 1])
-                ->whereNotNull('ttd')
-                ->get();
-            } else if (stripos($organization, 'UKM') !== false) {
-                $users = User::where('organization', $organization)
-                            ->orWhere(function ($query) {
-                                $query->where('organization', 'BEM')
-                                    ->orWhere('organization', 'BPM');
-                            })
-                            ->whereIn('jabatan_id', [5, 4, 2, 1])
+            $users = [];
+
+            if ($proposal->proker->organisasi->nama_organisasi == 'BEM') {
+                $users = [
+                    User::where('jabatan_id', 5)->where('organization', 'BEM')->whereNotNull('ttd')->first(),
+                    User::where('jabatan_id', 5)->where('organization', 'BPM')->whereNotNull('ttd')->first(),
+                    User::where('jabatan_id', 4)->where('organization', 'BEM')->whereNotNull('ttd')->first(),
+                    User::where('jabatan_id', 2)
                             ->whereNotNull('ttd')
-                            ->get();
-            } else if (stripos($organization, 'HIMA') !== false) {
-                $users = User::where('organization', $organization)
-                            ->orWhere(function ($query) {
-                                $query->where('organization', 'BEM')
-                                    ->orWhere('organization', 'BPM');
-                            })
-                            ->whereIn('jabatan_id', [5, 4, 15, 3, 2, 1])
+                            ->where('role', '<>', 1)
+                            ->first(),
+                    User::where('jabatan_id', 1)->whereNotNull('ttd')->first(),
+                ];
+            } elseif (stripos($proposal->proker->organisasi->nama_organisasi, 'UKM') !== false) {
+                $users = [
+                    User::where('jabatan_id', 5)->where('organization', $proposal->proker->organisasi->nama_organisasi)->whereNotNull('ttd')->first(),
+                    User::where('jabatan_id', 5)->where('organization', 'BEM')->whereNotNull('ttd')->first(),
+                    User::where('jabatan_id', 5)->where('organization', 'BPM')->whereNotNull('ttd')->first(),
+                    User::where('jabatan_id', 4)->where('organization', $proposal->proker->organisasi->nama_organisasi)->whereNotNull('ttd')->first(),
+                    User::where('jabatan_id', 2)
                             ->whereNotNull('ttd')
-                            ->get();
+                            ->where('role', '<>', 1)
+                            ->first(),
+                    User::where('jabatan_id', 1)->whereNotNull('ttd')->first(),
+                ];
+            } elseif (stripos($proposal->proker->organisasi->nama_organisasi, 'HIMA') !== false) {
+                $users = [
+                    User::where('jabatan_id', 5)->where('organization', $proposal->proker->organisasi->nama_organisasi)->whereNotNull('ttd')->first(),
+                    User::where('jabatan_id', 5)->where('organization', 'BEM')->whereNotNull('ttd')->first(),
+                    User::where('jabatan_id', 5)->where('organization', 'BPM')->whereNotNull('ttd')->first(),
+                    User::where('jabatan_id', 4)->where('organization', $proposal->proker->organisasi->nama_organisasi)->whereNotNull('ttd')->first(),
+                    User::where('jabatan_id', 15)->whereNotNull('ttd')->first(),
+                    User::where('jabatan_id', 3)->whereNotNull('ttd')->first(),
+                    User::where('jabatan_id', 2)
+                            ->whereNotNull('ttd')
+                            ->where('role', '<>', 1)
+                            ->first(),
+                    User::where('jabatan_id', 1)->whereNotNull('ttd')->first(),
+                ];
             }
 
             $ttdFolderPath = public_path('ttd');
@@ -203,7 +217,10 @@ class MappingCheckLpj extends Model
                 if ($user->ttd && file_exists($ttdPath)) {
                     $ttdList[] = [
                         'nama' => $user->name,
-                        'jabatan' => $user->jabatan,
+                        'role' => $user->role,
+                        'code_jabatan' => $user->jabatan->code_jabatan,
+                        'organisasi' => $user->organization,
+                        'jabatan' => $user->jabatan->jabatan,
                         'code_id' => $user->code_id,
                         'number_id' => $user->number_id,
                         'ttd' => $ttdPath,
@@ -211,7 +228,10 @@ class MappingCheckLpj extends Model
                 } else {
                     $ttdList[] = [
                         'nama' => $user->name,
-                        'jabatan' => $user->jabatan,
+                        'role' => $user->role,
+                        'code_jabatan' => $user->jabatan->code_jabatan,
+                        'organisasi' => $user->organization,
+                        'jabatan' => $user->jabatan->jabatan,
                         'code_id' => $user->code_id,
                         'number_id' => $user->number_id,
                         'ttd' => null,
