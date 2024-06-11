@@ -38,27 +38,27 @@
     </style>
 </head>
 <body>
-    <h2>Laporan Anggaran</h2>
+    <h2>Laporan Program Kerja</h2>
     <table>
         <thead>
             <tr>
                 <th>NO</th>
                 <th>Nama Organisasi</th>
                 <th>Nama Program Kerja</th>
-                <th>Dana Diajukan</th>
-                <th>Dana Disetujui</th>
-                <th>Sisa Anggaran</th>
+                <th>Proposal</th>
+                <th>LPJ</th>
+                <th>Keterangan</th>
             </tr>
         </thead>
         <tbody>
-            @foreach ($anggaran as $index => $item)
+            @foreach ($listproker as $index => $item)
                 <tr>
                     <td>{{ $index + 1 }}</td>
-                    <td>{{ $item['nama_organisasi'] }}</td>
+                    <td>{{ $item->organisasi['nama_organisasi'] }}</td>
                     <td>{{ $item['nama_proker'] }}</td>
-                    <td>{{ number_format($item['dana_diajukan'], 0, ',', '.') }}</td>
-                    <td>{{ number_format($item['dana_disetujui'], 0, ',', '.') }}</td>
-                    <td>{{ number_format($item['sisa_anggaran'], 0, ',', '.') }}</td>
+                    {{-- <td>{{ number_format($item['status_flow'], 0, ',', '.') }}</td>
+                    <td>{{ $item['lpj'] }}</td>
+                    <td>{{ $item['keterangan'] }}</td> --}}
                 </tr>
             @endforeach
         </tbody>

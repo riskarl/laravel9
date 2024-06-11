@@ -58,6 +58,12 @@
             <span>LPJ</span>
           </a>
         </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{{ url('/laporan/proker') }}">
+            <i class="fas fa-fw fa-clipboard-check"></i>
+            <span>Laporan Program Kerja</span>
+          </a>
+        </li>
         <hr class="sidebar-divider">
         <div class="version" id="version-ruangadmin"></div>
       </ul>

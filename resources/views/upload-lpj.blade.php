@@ -61,7 +61,7 @@
                                         </button>
                                     </div>
                                     @elseif ($proker->lpj->status_flow_lpj == 9)
-                                    <span style="background-color: lightgreen; color: black;">Selesai</span>
+                                    <span class="badge badge-success">Selesai</span>
                                     @else
                                         Diproses
                                     @endif

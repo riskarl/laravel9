@@ -8,10 +8,11 @@ use Illuminate\Http\Request;
 use Session;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\File;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class ProkerController extends Controller
 {
-    
+
     public function index()
     {
         // Mendapatkan informasi pengguna saat ini
@@ -135,4 +136,34 @@ class ProkerController extends Controller
         $proker->delete();
         return redirect('/proker');
     }
+
+    public function ShowLaporanProker()
+    {
+        $listproker = Proker::all();
+        $organisasi = Organisasi::all();
+        $uniqueOrganisasi = Organisasi::whereHas('proker')
+            ->pluck('nama_organisasi')
+            ->unique();
+
+        // Kemudian kirimkan variabel $uniqueOrganisasi ke view
+        return view('laporan-proker', ['listproker' => $listproker, 'uniqueOrganisasi' => $uniqueOrganisasi, 'organisasi' => $organisasi]);
+    }
+
+    public function cetakLaporan(Request $request)
+    {
+        $namaOrganisasi = $request->input('nama_organisasi');
+
+        if ($namaOrganisasi == 'semua') {
+            $listproker = Proker::all();
+        } else {
+            $listproker = Proker::where('nama_organisasi', $namaOrganisasi)->get();
+        }
+
+        // Load view laporan-proker-pdf.blade.php dengan data proker yang sesuai
+        $pdf = PDF::loadView('pdf.laporan-proker-pdf', ['listproker' => $listproker]);
+
+        // Unduh file PDF dengan nama laporan-proker.pdf
+        return $pdf->download('laporan-proker.pdf');
+    }
 }
+

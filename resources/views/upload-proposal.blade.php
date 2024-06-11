@@ -56,9 +56,9 @@
                                             Upload File
                                         </button>
                                         @elseif ($proker->proposal?->status_flow == 9)
-                                        <span style="background-color: lightgreen; color: black;">Disetujui</span>
+                                        <span class="badge badge-success">Disetujui</span>
                                         @else
-                                        Diproses
+                                        <span class="badge badge-warning">Diproses</span>
                                         @endif
                                     </td>
                                 </tr>
