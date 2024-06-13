@@ -61,15 +61,7 @@ class AnggaranController extends Controller
                     ->whereNotNull('dana_disetujui')
                     ->whereBetween('created_at', [$tglSetAnggaran, $endDate]);
 
-        // Filter berdasarkan organisasi jika bukan admin
-        if ($jabatanId != 1) {
-            $query->whereHas('proker.organisasi', function($query) use ($org) {
-                $query->where('nama_organisasi', $org);
-            });
-        }
-
         $lpjData = $query->get();
-
 
         // Variabel untuk menyimpan total sisa anggaran
         $totalSisaAnggaran = $totalAnggaran;
@@ -93,9 +85,17 @@ class AnggaranController extends Controller
             ];
         });
 
-        return view('anggaran-organisasi', ['anggaran' => $data, 'totalAnggaran' => $TA]);
-    }
+        // Filter data berdasarkan organisasi jika bukan admin
+        if ($jabatanId != 1) {
+            $dataFiltered = $data->filter(function($item) use ($org) {
+                return $item['nama_organisasi'] == $org;
+            });
+        } else {
+            $dataFiltered = $data;
+        }
 
+        return view('anggaran-organisasi', ['anggaran' => $dataFiltered, 'totalAnggaran' => $TA]);
+    }
 
 
     public function store(Request $request)
