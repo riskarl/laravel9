@@ -65,13 +65,48 @@ class AnggaranController extends Controller
     {
         // Validasi input jika diperlukan
         $validatedData = $request->validate([
-           'id_organisasi' => 'required|exists:tb_organisasi,id',
+            'id_organisasi' => 'required|exists:tb_organisasi,id',
             'jumlah_mhs' => 'required|numeric',
             'jumlah_anggaran' => 'required|numeric',
             'total_anggaran' => 'required|numeric',
         ]);
-
-        $organisasi = Organisasi::find($request->id);
+    
+        // Mendapatkan data organisasi
+        $organisasi = Organisasi::find($request->id_organisasi);
+    
+        // Mendapatkan data anggaran yang sudah ada
+        $totalAnggaranAll = SetAnggaran::all();
+        if ($totalAnggaranAll->isEmpty()) {
+            return redirect()->back()->with('error', 'Anggaran belum diatur.');
+        }
+    
+        $setAnggaran = $totalAnggaranAll->first();
+        $tglSetAnggaran = $setAnggaran->updated_at != null ? $setAnggaran->updated_at : $setAnggaran->created_at;
+        $periode = $setAnggaran->jenis_periode; // bulan atau tahun
+        $total_periode = $setAnggaran->total_periode;
+        $jumlah_anggaran = $setAnggaran->total_anggaran;
+    
+        // Mendapatkan tanggal akhir periode
+        $endDate = $periode == 'bulan' 
+            ? $tglSetAnggaran->addMonths($total_periode) 
+            : $tglSetAnggaran->addYears($total_periode);
+    
+        // Pastikan tanggal sekarang berada dalam rentang periode anggaran
+        $currentDate = now();
+        if ($currentDate->lessThan($tglSetAnggaran) || $currentDate->greaterThan($endDate)) {
+            return redirect()->back()->with('error', 'Anggaran yang disimpan tidak masuk dalam periode yang sesuai.');
+        }
+    
+        // Mendapatkan total anggaran yang telah digunakan dalam periode tersebut
+        $totalUsedAnggaran = Anggaran::where('created_at', '>=', $tglSetAnggaran)
+                                    ->where('created_at', '<=', $endDate)
+                                    ->sum('jumlah_anggaran');
+    
+        // Pastikan jumlah anggaran yang diinput tidak melebihi anggaran total yang tersedia
+        if ($totalUsedAnggaran + $request->jumlah_anggaran > $jumlah_anggaran) {
+            return redirect()->back()->with('error', 'Jumlah anggaran yang dimasukkan melebihi total anggaran yang tersedia.');
+        }
+    
         // Simpan data ke dalam database
         $anggaran = new Anggaran();
         $anggaran->id_organisasi = $request->id_organisasi;
@@ -79,10 +114,11 @@ class AnggaranController extends Controller
         $anggaran->jumlah_anggaran = $request->jumlah_anggaran;
         $anggaran->total_anggaran = $request->total_anggaran;
         $anggaran->save();
-
+    
         // Berhasil, kirim respon
         return redirect('/anggaran')->with('success', 'Data Anggaran berhasil Disimpan!');
     }
+    
 
     public function update(Request $request, $id)
     {
