@@ -74,7 +74,7 @@
                   <td>{{ $item['dana_diajukan'] }}</td>
                   <td>{{ $item['dana_disetujui'] }}</td>
                   <td>{{ $item['sisa_anggaran'] }}</td>
-                  <td></td>
+                  <td>{{ $item['total_sisa_anggaran'] }}</td>
               </tr>
               @endforeach
             </tbody>
