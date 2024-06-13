@@ -270,11 +270,15 @@ class AnggaranController extends Controller
         } else {
             $dataFiltered = $data;
         }
+
+        $tglMulaiFormatted = Carbon::parse($tglSetAnggaran)->format('d-m-Y');
+        $tglAkhirFormatted = Carbon::parse($endDate)->format('d-m-Y');
+        $fileName = "laporan-anggaran-{$tglMulaiFormatted}-to-{$tglAkhirFormatted}.pdf";
     
         $pdf = PDF::loadView('pdf.laporan-anggaran-pdf', ['anggaran' => $dataFiltered]);
     
         // Mengunduh laporan PDF
-        return $pdf->download('laporan-anggaran.pdf');
+        return $pdf->download($fileName);
     }
     
     public function setAnggaran(Request $request)
