@@ -28,6 +28,7 @@ class AnggaranController extends Controller
         $currentUser = $this->getCurrentUser();
         $jabatanId = $currentUser['jabatan_id'];
         $org = $currentUser['organisasi'];
+        $TA = SetAnggaran::All();
 
         // Dapatkan data SetAnggaran terbaru
         $setAnggaran = SetAnggaran::orderBy('updated_at', 'desc')->first();
@@ -91,7 +92,7 @@ class AnggaranController extends Controller
             ];
         });
 
-        return view('anggaran-organisasi', ['anggaran' => $data, 'totalAnggaran' => $totalAnggaran]);
+        return view('anggaran-organisasi', ['anggaran' => $data, 'totalAnggaran' => $TA]);
     }
 
 
