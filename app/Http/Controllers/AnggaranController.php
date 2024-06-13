@@ -28,34 +28,40 @@ class AnggaranController extends Controller
         $currentUser = $this->getCurrentUser();
         $jabatanId = $currentUser['jabatan_id'];
         $org = $currentUser['organisasi'];
-        $TA = SetAnggaran::all();
+        $TA = SetAnggaran::All();
 
+        // Dapatkan data SetAnggaran terbaru
         $setAnggaran = SetAnggaran::orderBy('updated_at', 'desc')->first();
         if (!$setAnggaran) {
             return redirect()->back()->with('error', 'Tidak ada data anggaran yang ditemukan.');
         }
 
+        // Tentukan tanggal dan waktu awal serta akhir periode
         $tglSetAnggaran = $setAnggaran->updated_at ?: $setAnggaran->created_at;
-        $periode = $setAnggaran->jenis_periode;
+        $periode = $setAnggaran->jenis_periode; // 'bulan' atau 'tahun'
         $total_periode = $setAnggaran->total_periode;
-        $totalAnggaran = $setAnggaran->total_anggaran;
+        $totalAnggaran = $setAnggaran->total_anggaran; // Dapatkan total_anggaran
 
-        $tglSetAnggaranTimestamp = strtotime($tglSetAnggaran);
+        // Menggunakan Carbon untuk mengatur tanggal dan waktu akhir periode
         $endDate = $periode == 'bulan' 
-            ? date('Y-m-d H:i:s', strtotime("+$total_periode month", $tglSetAnggaranTimestamp))
-            : date('Y-m-d H:i:s', strtotime("+$total_periode year", $tglSetAnggaranTimestamp));
+            ? Carbon::parse($tglSetAnggaran)->addMonths($total_periode) 
+            : Carbon::parse($tglSetAnggaran)->addYears($total_periode);
 
-        $currentDate = date('Y-m-d H:i:s');
+        // Tanggal dan waktu sekarang
+        $currentDate = Carbon::now();
 
-        if ($currentDate < $tglSetAnggaran || $currentDate > $endDate) {
+        // Memastikan kita berada dalam rentang periode yang sesuai
+        if ($currentDate->lessThan($tglSetAnggaran) || $currentDate->greaterThan($endDate)) {
             return redirect()->back()->with('error', 'Tidak ada data anggaran yang berlaku untuk periode ini.');
         }
 
+        // Query data LPJ yang hanya berada dalam rentang waktu yang berjalan
         $query = LPJ::with(['proker.organisasi'])
                     ->whereNotNull('file_lpj')
                     ->whereNotNull('dana_disetujui')
                     ->whereBetween('created_at', [$tglSetAnggaran, $endDate]);
 
+        // Filter berdasarkan organisasi jika bukan admin
         if ($jabatanId != 1) {
             $query->whereHas('proker.organisasi', function($query) use ($org) {
                 $query->where('nama_organisasi', $org);
@@ -64,11 +70,16 @@ class AnggaranController extends Controller
 
         $lpjData = $query->get();
 
+
+        // Variabel untuk menyimpan total sisa anggaran
         $totalSisaAnggaran = $totalAnggaran;
 
+        // Memproses data untuk tampilan
         $data = $lpjData->map(function($lpj) use (&$totalSisaAnggaran) {
             $totalAnggaranOrganisasi = $lpj->proker->organisasi->anggarans->sum('total_anggaran');
             $sisaAnggaran = $totalAnggaranOrganisasi - $lpj->dana_disetujui;
+
+            // Mengurangi total sisa anggaran dengan dana disetujui
             $totalSisaAnggaran -= $lpj->dana_disetujui;
 
             return [
@@ -77,13 +88,14 @@ class AnggaranController extends Controller
                 'nama_proker' => $lpj->proker->nama_proker,
                 'dana_diajukan' => $lpj->proker->dana_diajukan,
                 'dana_disetujui' => $lpj->dana_disetujui,
-                'sisa_anggaran' => $sisaAnggaran,
-                'total_sisa_anggaran' => $totalSisaAnggaran,
+                'sisa_anggaran' => $sisaAnggaran, // Sisa anggaran untuk organisasi tersebut
+                'total_sisa_anggaran' => $totalSisaAnggaran, // Total sisa anggaran setelah pengurangan bertahap
             ];
         });
 
         return view('anggaran-organisasi', ['anggaran' => $data, 'totalAnggaran' => $TA]);
     }
+
 
 
     public function store(Request $request)
