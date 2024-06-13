@@ -45,10 +45,10 @@
                 <th>NO</th>
                 <th>Nama Organisasi</th>
                 <th>Nama Program Kerja</th>
-                <th>Dana Diajukan</th>
-                <th>Dana Disetujui</th>
-                <th>Sisa Anggaran Organisasi</th>
-                <th>Total Sisa Anggaran</th>
+                <th>Dana Diajukan (Rp)</th>
+                <th>Dana Disetujui (Rp)</th>
+                <th>Sisa Anggaran Organisasi (Rp)</th>
+                <th>Total Sisa Anggaran (Rp)</th>
             </tr>
         </thead>
         <tbody>
@@ -60,6 +60,7 @@
                     <td>{{ number_format($item['dana_diajukan'], 0, ',', '.') }}</td>
                     <td>{{ number_format($item['dana_disetujui'], 0, ',', '.') }}</td>
                     <td>{{ number_format($item['sisa_anggaran'], 0, ',', '.') }}</td>
+                    <td>{{ number_format($item['total_sisa_anggaran'], 0, ',', '.') }}</td>
                 </tr>
             @endforeach
         </tbody>

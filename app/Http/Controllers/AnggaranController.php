@@ -210,26 +210,48 @@ class AnggaranController extends Controller
         $request->validate([
             'nama_organisasi' => 'required|string'
         ]);
-
+    
         // Ambil nilai dari form
         $namaOrganisasi = $request->input('nama_organisasi');
-
+    
+        // Dapatkan data SetAnggaran terbaru
+        $setAnggaran = SetAnggaran::orderBy('updated_at', 'desc')->first();
+        if (!$setAnggaran) {
+            return redirect()->back()->with('error', 'Tidak ada data anggaran yang ditemukan.');
+        }
+    
+        // Tentukan tanggal dan waktu awal serta akhir periode
+        $tglSetAnggaran = $setAnggaran->updated_at ?: $setAnggaran->created_at;
+        $periode = $setAnggaran->jenis_periode; // 'bulan' atau 'tahun'
+        $total_periode = $setAnggaran->total_periode;
+        $totalAnggaran = $setAnggaran->total_anggaran; // Dapatkan total_anggaran
+    
+        // Menggunakan Carbon untuk mengatur tanggal dan waktu akhir periode
+        $endDate = $periode == 'bulan' 
+            ? Carbon::parse($tglSetAnggaran)->addMonths($total_periode) 
+            : Carbon::parse($tglSetAnggaran)->addYears($total_periode);
+    
+        // Tanggal dan waktu sekarang
+        $currentDate = Carbon::now();
+    
+        // Memastikan kita berada dalam rentang periode yang sesuai
+        if ($currentDate->lessThan($tglSetAnggaran) || $currentDate->greaterThan($endDate)) {
+            return redirect()->back()->with('error', 'Tidak ada data anggaran yang berlaku untuk periode ini.');
+        }
+    
+        // Query data LPJ yang hanya berada dalam rentang waktu yang berjalan
         $query = LPJ::with(['proker.organisasi'])
                     ->whereNotNull('file_lpj')
-                    ->whereNotNull('dana_disetujui');
-
-        if ($namaOrganisasi != 'semua') {
-            $query->whereHas('proker.organisasi', function($query) use ($namaOrganisasi) {
-                $query->where('nama_organisasi', $namaOrganisasi);
-            });
-        }
+                    ->whereNotNull('dana_disetujui')
+                    ->whereBetween('created_at', [$tglSetAnggaran, $endDate]);
+    
         $lpjData = $query->get();
-
-
+    
+        // Memproses data untuk tampilan
         $data = $lpjData->map(function($lpj) {
             $totalAnggaran = $lpj->proker->organisasi->anggarans->sum('total_anggaran');
             $sisaAnggaran = $totalAnggaran - $lpj->dana_disetujui;
-            
+    
             return [
                 'id' => $lpj->id,
                 'nama_organisasi' => $lpj->proker->organisasi->nama_organisasi,
@@ -239,14 +261,22 @@ class AnggaranController extends Controller
                 'sisa_anggaran' => $sisaAnggaran,
             ];
         });
-
-        $pdf = PDF::loadView('pdf.laporan-anggaran-pdf', ['anggaran' => $data]);
-
-        
-        // Untuk sekarang, kita hanya akan mengirim balik data ke view
+    
+        // Filter data berdasarkan organisasi jika nama organisasi bukan 'semua'
+        if ($namaOrganisasi != 'semua') {
+            $dataFiltered = $data->filter(function($item) use ($namaOrganisasi) {
+                return $item['nama_organisasi'] == $namaOrganisasi;
+            });
+        } else {
+            $dataFiltered = $data;
+        }
+    
+        $pdf = PDF::loadView('pdf.laporan-anggaran-pdf', ['anggaran' => $dataFiltered]);
+    
+        // Mengunduh laporan PDF
         return $pdf->download('laporan-anggaran.pdf');
     }
-
+    
     public function setAnggaran(Request $request)
     {
         // Validasi input
