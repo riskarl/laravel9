@@ -53,6 +53,8 @@
           </table>
           <hr>
 
+          @endif
+
           <table class="table align-items-center table-flush">
             <thead class="thead-light">
               <tr>
