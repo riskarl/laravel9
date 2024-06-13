@@ -28,6 +28,31 @@
           </div>
           @endif
 
+          <hr>
+          <table class="table align-items-center table-flush">
+            <thead class="thead-light">
+              <tr>
+                <th>NO</th>
+                <th>Total Anggaran</th>
+                <th>Jenis Periode</th>
+                <th>Total Periode</th>
+                <th>Tanggal Set</th>
+              </tr>
+            </thead>
+            <tbody id="anggaranTableBody">
+              @foreach ($totalAnggaran as $idx => $i)
+              <tr>
+                  <td>{{ $idx + 1 }}</td>
+                  <td>{{ $i['total_anggaran'] }}</td>
+                  <td>{{ $i['jenis_periode'] }}</td>
+                  <td>{{ $i['total_periode'] }}</td>
+                  <td>{{ $i['updated_at'] != (null || '') ? $i['updated_at'] : $i['created_at'] }}</td>
+              </tr>
+              @endforeach
+            </tbody>
+          </table>
+          <hr>
+
           <table class="table align-items-center table-flush">
             <thead class="thead-light">
               <tr>

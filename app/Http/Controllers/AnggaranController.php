@@ -17,8 +17,9 @@ class AnggaranController extends Controller
     {
         $anggaran = Anggaran::with('organisasi')->get();
         $organisasis = Organisasi::All();
+        $totalAnggaran = SetAnggaran::All();
 
-        return view('anggaran-bpm', ['anggaran' => $anggaran, 'organisasis' => $organisasis]);
+        return view('anggaran-bpm', ['anggaran' => $anggaran, 'organisasis' => $organisasis, 'totalAnggaran' => $totalAnggaran]);
     }
 
     public function indexanggaranorganisasi()
@@ -178,19 +179,33 @@ class AnggaranController extends Controller
             'jenis_periode' => 'required|in:bulan,tahun',
             'total_periode' => 'required|numeric|min:1',
         ]);
-
-        // Proses penyimpanan data
+    
+        // Proses penyimpanan atau pembaruan data
         try {
-            $setAnggaran = new SetAnggaran(); // Menggunakan model SetAnggaran
-            $setAnggaran->total_anggaran = $request->input('total_anggaran');
-            $setAnggaran->jenis_periode = $request->input('jenis_periode');
-            $setAnggaran->total_periode = $request->input('total_periode');
-            $setAnggaran->save(); // Simpan data ke dalam tabel set_anggaran
-
-            return redirect()->back()->with('success', 'Anggaran berhasil disimpan!');
+            // Cek apakah ada data setAnggaran yang sudah ada di database
+            $setAnggaran = SetAnggaran::first(); // Mengambil data pertama yang ditemukan
+    
+            if ($setAnggaran) {
+                // Jika data sudah ada, lakukan pembaruan
+                $setAnggaran->total_anggaran = $request->input('total_anggaran');
+                $setAnggaran->jenis_periode = $request->input('jenis_periode');
+                $setAnggaran->total_periode = $request->input('total_periode');
+                $setAnggaran->save(); // Simpan perubahan data
+                $message = 'Anggaran berhasil diperbarui!';
+            } else {
+                // Jika data belum ada, buat data baru
+                $setAnggaran = new SetAnggaran(); // Menggunakan model SetAnggaran
+                $setAnggaran->total_anggaran = $request->input('total_anggaran');
+                $setAnggaran->jenis_periode = $request->input('jenis_periode');
+                $setAnggaran->total_periode = $request->input('total_periode');
+                $setAnggaran->save(); // Simpan data baru ke dalam tabel set_anggaran
+                $message = 'Anggaran berhasil disimpan!';
+            }
+    
+            return redirect()->back()->with('success', $message);
         } catch (\Exception $e) {
             return redirect()->back()->with('error', 'Terjadi kesalahan saat menyimpan anggaran: ' . $e->getMessage());
         }
-    }
+    }    
 
 }
