@@ -63,7 +63,9 @@
                 <th>Dana Diajukan</th>
                 <th>Dana Disetujui</th>
                 <th>Sisa Anggaran Organisasi</th>
+                @if ($button)
                 <th>Total Sisa Anggaran</th>
+                @endif
               </tr>
             </thead>
             <tbody id="anggaranTableBody">
@@ -75,7 +77,9 @@
                   <td>{{ $item['dana_diajukan'] }}</td>
                   <td>{{ $item['dana_disetujui'] }}</td>
                   <td>{{ $item['sisa_anggaran'] }}</td>
+                  @if ($button)
                   <td>{{ $item['total_sisa_anggaran'] }}</td>
+                  @endif
               </tr>
               @endforeach
             </tbody>
