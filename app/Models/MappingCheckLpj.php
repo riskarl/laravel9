@@ -265,15 +265,31 @@ class MappingCheckLpj extends Model
 
         // Mengganti 'approve by' menjadi 'revisi by' dan menambahkan jabatan dan organisasi
         if ($jabatan_id == 5) {
-            $lpj->status = 'Revisi by Ketua ' . $organisasi;
+            if ($organisasi === 'BEM') {
+                $lpj->status = 'Revisi by Ketua ' . $organisasi;
+            } else {
+                $lpj->status = 'Revisi by Ketua ' . $organisasi;
+            }
         } else if ($jabatan_id == 4) {
             $lpj->status = 'Revisi by Pembina ' . $organisasi;
         } else {
+            // Mengganti status berdasarkan jabatan dan jabatan_id
             $lpj->status = 'Revisi by ' . $jabatan;
         }
 
+        // Hapus file pengesahan jika ada
+        if (!empty($lpj->pengesahan)) {
+            $filePengesahan = public_path('lpj/' . $lpj->pengesahan);
+            if (File::exists($filePengesahan)) {
+                File::delete($filePengesahan);
+            }
+            $lpj->pengesahan = null; // Set pengesahan menjadi null
+        }
+
+        // Simpan perubahan pada lpj
         return $lpj->save();
     }
+
 
     private function getSignatureList($organisasiName)
     {
