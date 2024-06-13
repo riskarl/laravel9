@@ -30,10 +30,21 @@
             padding: 10px;
             text-align: left;
         }
+        .summary-table {
+            width: 100%;
+            margin-top: 20px;
+            border: none;
+        }
+        .summary-table th, .summary-table td {
+            padding: 10px;
+            text-align: left;
+            border: none;
+        }
         .footer {
             text-align: center;
             font-size: 12px;
             color: #555;
+            margin-top: 40px;
         }
     </style>
 </head>
@@ -65,6 +76,23 @@
             @endforeach
         </tbody>
     </table>
+
+    <h3>Keterangan Anggaran</h3>
+    <table class="summary-table">
+        <tr>
+            <th>Total Anggaran Periode:</th>
+            <td>Rp {{ number_format($ketAnggaran['total_anggaran_periode'], 0, ',', '.') }}</td>
+        </tr>
+        <tr>
+            <th>Total Anggaran Disetujui:</th>
+            <td>Rp {{ number_format($ketAnggaran['total_anggaran_disetujui'], 0, ',', '.') }}</td>
+        </tr>
+        <tr>
+            <th>Sisa Anggaran Periode:</th>
+            <td>Rp {{ number_format($ketAnggaran['sisa_anggaran_periode'], 0, ',', '.') }}</td>
+        </tr>
+    </table>
+
     <div class="footer">
         <p>Laporan ini dihasilkan oleh sistem pada {{ now()->format('d M Y') }}.</p>
         <p>&copy; {{ now()->year }} (SIPROKER). Semua hak dilindungi.</p>
