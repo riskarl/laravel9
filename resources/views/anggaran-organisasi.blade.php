@@ -61,7 +61,8 @@
                 <th>Nama Program Kerja</th>
                 <th>Dana Diajukan</th>
                 <th>Dana Disetujui</th>
-                <th>Sisa Anggaran</th>
+                <th>Sisa Anggaran Organisasi</th>
+                <th>Total Sisa Anggaran</th>
               </tr>
             </thead>
             <tbody id="anggaranTableBody">
@@ -73,6 +74,7 @@
                   <td>{{ $item['dana_diajukan'] }}</td>
                   <td>{{ $item['dana_disetujui'] }}</td>
                   <td>{{ $item['sisa_anggaran'] }}</td>
+                  <td></td>
               </tr>
               @endforeach
             </tbody>

@@ -38,7 +38,7 @@
     </style>
 </head>
 <body>
-    <h2>Laporan Anggaran</h2>
+    <h2>Rekapitulasi Anggaran</h2>
     <table>
         <thead>
             <tr>
@@ -47,7 +47,8 @@
                 <th>Nama Program Kerja</th>
                 <th>Dana Diajukan</th>
                 <th>Dana Disetujui</th>
-                <th>Sisa Anggaran</th>
+                <th>Sisa Anggaran Organisasi</th>
+                <th>Total Sisa Anggaran</th>
             </tr>
         </thead>
         <tbody>
