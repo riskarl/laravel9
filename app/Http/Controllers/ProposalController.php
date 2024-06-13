@@ -3,13 +3,16 @@
 namespace App\Http\Controllers;
 
 use App\Models\Proker;
+use App\Models\User;
 use Illuminate\Http\Request;
 use App\Models\Proposal;
+use App\Mail\ProposalApproved;
 use DB;
 use Session;
 use App\Models\MappingCheck;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Mail;
 use Barryvdh\DomPDF\Facade\Pdf;
 
 
@@ -254,5 +257,24 @@ class ProposalController extends Controller
         return $pdf->stream('document.pdf');
     }
 
+    // public function kirimemail(Request $request, $proposalId)
+    // {
+    //     $pdf = Pdf::loadView('pdf.signatures-blade');
+    //     $proposal = Proposal::find($proposalId);
+    //     $users = User::pluck('email')->all();
 
+    //     foreach ($users as $user) {
+    //     // if ($proposal) {
+    //     //     $proposal->status = 'Approved';
+    //     //     $proposal->save();
+
+    //         // Send email
+    //         Mail::to($user)->send(new ProposalApproved($pdf));
+
+    //         return redirect()->back()->with('success', 'Proposal approved and email sent.');
+    //     // }
+    // }
+
+    //     return redirect()->back()->with('error', 'Proposal not found.');
+    // }
 }

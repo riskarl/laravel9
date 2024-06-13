@@ -62,20 +62,6 @@
                     </a>
                 </li>
             @endif
-        <li class="nav-item">
-          <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseForm" aria-expanded="true"
-            aria-controls="collapseForm">
-            <i class="fab fa-fw fa-wpforms"></i>
-            <span>Riwayat</span>
-          </a>
-          <div id="collapseForm" class="collapse" aria-labelledby="headingForm" data-parent="#accordionSidebar">
-            <div class="bg-white py-2 collapse-inner rounded">
-              <h6 class="collapse-header">Riwayat</h6>
-              <a class="collapse-item" href="form_basics.html">Proposal</a>
-              <a class="collapse-item" href="form_advanceds.html">LPJ</a>
-            </div>
-          </div>
-        </li>
         <hr class="sidebar-divider">
         <div class="version" id="version-ruangadmin"></div>
       </ul>

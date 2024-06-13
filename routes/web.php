@@ -2,13 +2,16 @@
 
 use App\Http\Controllers\AnggaranController;
 use App\Http\Controllers\FormatController;
+use App\Http\Controllers\HomeController;
 use App\Http\Controllers\LpjController;
 use App\Http\Controllers\ProkerController;
 use App\Http\Controllers\ProposalController;
 use App\Http\Controllers\RabController;
 use App\Http\Controllers\UsermanajemenController;
+use App\Models\LPJ;
 use App\Models\Organisasi;
 use App\Models\Proker;
+use App\Models\Proposal;
 use App\Models\User;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LoginController;
@@ -40,9 +43,7 @@ Route::get('/', function () {
 Route::post('login', [LoginController::class, 'signin']);
 Route::post('logout', [LoginController::class, 'logout'])->name('logout');
 
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware('role:1');
+Route::get('/dashboard', [HomeController::class, 'index'])->middleware('role:1');
 
 Route::get('/usermanajemen/create', [UsermanajemenController::class, 'createform'])->middleware('role:1');
 Route::post('/usermanajemen', [UsermanajemenController::class, 'store'])->middleware('role:1');
@@ -130,3 +131,6 @@ Route::post('/set-anggaran', [AnggaranController::class, 'setAnggaran'])->name('
 
 Route::get('/laporan/proker', [ProkerController::class, 'ShowLaporanProker'])->middleware('role:1,3');
 Route::post('/cetak-laporan', [ProkerController::class, 'cetakLaporan'])->name('cetakLaporan');
+
+Route::post('/approve-proposal/{proposalId}', [ProposalController::class, 'kirimemail'])->name('proposal.approve');
+
