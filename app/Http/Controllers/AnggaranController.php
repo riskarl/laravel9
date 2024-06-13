@@ -101,7 +101,7 @@ class AnggaranController extends Controller
         // Mendapatkan total anggaran yang telah digunakan dalam periode tersebut
         $totalUsedAnggaran = Anggaran::where('created_at', '>=', $tglSetAnggaran)
                                     ->where('created_at', '<=', $endDate)
-                                    ->sum('jumlah_anggaran');
+                                    ->sum('total_anggaran');
 
         // Pastikan jumlah anggaran yang diinput tidak melebihi anggaran total yang tersedia
         if ($totalUsedAnggaran + $request->jumlah_anggaran > $jumlah_anggaran) {
