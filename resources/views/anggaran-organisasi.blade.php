@@ -101,7 +101,7 @@
         </button>
       </div>
       <div class="modal-body">
-        <form id="cetakForm" action="{{ route('cetakLaporan') }}" method="POST">
+        <form id="cetakForm" action="{{ route('cetakLaporanAnggaran') }}" method="POST">
           @csrf
           <div class="form-group">
             <label for="organisasiDropdown">Pilih Organisasi</label>
