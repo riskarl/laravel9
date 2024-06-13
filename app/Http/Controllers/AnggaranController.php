@@ -28,6 +28,8 @@ class AnggaranController extends Controller
         $jabatanId = $currentUser['jabatan_id'];
         $jabatan = $currentUser['jabatan'];
         $org = $currentUser['organisasi'];
+        $tAnggaran = SetAnggaran::All();
+
 
         $query = LPJ::with(['proker.organisasi'])
                     ->whereNotNull('file_lpj')
@@ -55,7 +57,7 @@ class AnggaranController extends Controller
             ];
         });
     
-        return view('anggaran-organisasi', ['anggaran' => $data]);
+        return view('anggaran-organisasi', ['anggaran' => $data, 'totalAnggaran' => $tAnggaran]);
     }
     
 
