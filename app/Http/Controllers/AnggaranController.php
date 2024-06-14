@@ -28,52 +28,56 @@ class AnggaranController extends Controller
         $currentUser = $this->getCurrentUser();
         $jabatanId = $currentUser['jabatan_id'];
         $org = $currentUser['organisasi'];
-        $TA = SetAnggaran::All();
-
+        $TA = SetAnggaran::all();
+    
         // Dapatkan data SetAnggaran terbaru
         $setAnggaran = SetAnggaran::orderBy('updated_at', 'desc')->first();
         if (!$setAnggaran) {
             return redirect()->back()->with('error', 'Tidak ada data anggaran yang ditemukan.');
         }
-
-        // Tentukan tanggal dan waktu awal serta akhir periode
-        $tglSetAnggaran = $setAnggaran->updated_at ?: $setAnggaran->created_at;
+    
+        // Ambil tanggal mulai periode dari data SetAnggaran
+        $tglSetAnggaran = $setAnggaran->tgl_mulai_periode;
+        if (!$tglSetAnggaran) {
+            return redirect()->back()->with('error', 'Tanggal mulai periode tidak ditemukan pada data anggaran.');
+        }
+    
         $periode = $setAnggaran->jenis_periode; // 'bulan' atau 'tahun'
         $total_periode = $setAnggaran->total_periode;
         $totalAnggaran = $setAnggaran->total_anggaran; // Dapatkan total_anggaran
-
-        // Menggunakan Carbon untuk mengatur tanggal dan waktu akhir periode
+    
+        // Menggunakan Carbon untuk mengatur tanggal akhir periode
         $endDate = $periode == 'bulan' 
             ? Carbon::parse($tglSetAnggaran)->addMonths($total_periode) 
             : Carbon::parse($tglSetAnggaran)->addYears($total_periode);
-
+    
         // Tanggal dan waktu sekarang
         $currentDate = Carbon::now();
-
-        // Memastikan kita berada dalam rentang periode yang sesuai
-        if ($currentDate->lessThan($tglSetAnggaran) || $currentDate->greaterThan($endDate)) {
+    
+        // Memastikan kita berada dalam rentang periode yang sesuai (>= tanggal mulai dan <= tanggal akhir)
+        if ($currentDate->lt(Carbon::parse($tglSetAnggaran)) || $currentDate->gt($endDate)) {
             return redirect()->back()->with('error', 'Tidak ada data anggaran yang berlaku untuk periode ini.');
         }
-
+    
         // Query data LPJ yang hanya berada dalam rentang waktu yang berjalan
         $query = LPJ::with(['proker.organisasi'])
                     ->whereNotNull('file_lpj')
                     ->whereNotNull('dana_disetujui')
                     ->whereBetween('created_at', [$tglSetAnggaran, $endDate]);
-
+    
         $lpjData = $query->get();
-
+    
         // Variabel untuk menyimpan total sisa anggaran
         $totalSisaAnggaran = $totalAnggaran;
-
+    
         // Memproses data untuk tampilan
         $data = $lpjData->map(function($lpj) use (&$totalSisaAnggaran) {
             $totalAnggaranOrganisasi = $lpj->proker->organisasi->anggarans->sum('total_anggaran');
             $sisaAnggaran = $totalAnggaranOrganisasi - $lpj->dana_disetujui;
-
+    
             // Mengurangi total sisa anggaran dengan dana disetujui
             $totalSisaAnggaran -= $lpj->dana_disetujui;
-
+    
             return [
                 'id' => $lpj->id,
                 'nama_organisasi' => $lpj->proker->organisasi->nama_organisasi,
@@ -84,7 +88,7 @@ class AnggaranController extends Controller
                 'total_sisa_anggaran' => $totalSisaAnggaran, // Total sisa anggaran setelah pengurangan bertahap
             ];
         });
-
+    
         // Filter data berdasarkan organisasi jika bukan admin
         if ($jabatanId != 1) {
             $dataFiltered = $data->filter(function($item) use ($org) {
@@ -93,9 +97,10 @@ class AnggaranController extends Controller
         } else {
             $dataFiltered = $data;
         }
-
+    
         return view('anggaran-organisasi', ['anggaran' => $dataFiltered, 'totalAnggaran' => $TA]);
     }
+    
 
 
     public function store(Request $request)
@@ -118,7 +123,11 @@ class AnggaranController extends Controller
         }
 
         $setAnggaran = $totalAnggaranAll->first();
-        $tglSetAnggaran = $setAnggaran->updated_at != null ? $setAnggaran->updated_at : $setAnggaran->created_at;
+        $tglSetAnggaran = $setAnggaran->tgl_mulai_periode;
+        if (!$tglSetAnggaran) {
+            return redirect()->back()->with('error', 'Tanggal mulai periode tidak ditemukan pada data anggaran.');
+        }
+
         $periode = $setAnggaran->jenis_periode; // bulan atau tahun
         $total_periode = $setAnggaran->total_periode;
         $jumlah_anggaran = $setAnggaran->total_anggaran;
@@ -130,7 +139,7 @@ class AnggaranController extends Controller
 
         // Pastikan tanggal dan waktu sekarang berada dalam rentang periode anggaran
         $currentDate = Carbon::now();
-        if ($currentDate->lessThan($tglSetAnggaran) || $currentDate->greaterThan($endDate)) {
+        if ($currentDate->lt($tglSetAnggaran) || $currentDate->gt($endDate)) {
             return redirect()->back()->with('error', 'Anggaran yang disimpan tidak masuk dalam periode yang sesuai.');
         }
 
@@ -155,6 +164,7 @@ class AnggaranController extends Controller
         // Berhasil, kirim respon
         return redirect('/anggaran')->with('success', 'Data Anggaran berhasil Disimpan!');
     }
+
 
     
 
@@ -210,60 +220,64 @@ class AnggaranController extends Controller
         $request->validate([
             'nama_organisasi' => 'required|string'
         ]);
-    
+
         // Ambil nilai dari form
         $namaOrganisasi = $request->input('nama_organisasi');
-    
+
         // Dapatkan data SetAnggaran terbaru
         $setAnggaran = SetAnggaran::orderBy('updated_at', 'desc')->first();
         if (!$setAnggaran) {
             return redirect()->back()->with('error', 'Tidak ada data anggaran yang ditemukan.');
         }
-    
-        // Tentukan tanggal dan waktu awal serta akhir periode
-        $tglSetAnggaran = $setAnggaran->updated_at ?: $setAnggaran->created_at;
+
+        // Ambil tanggal mulai periode dari data SetAnggaran
+        $tglSetAnggaran = $setAnggaran->tgl_mulai_periode;
+        if (!$tglSetAnggaran) {
+            return redirect()->back()->with('error', 'Tanggal mulai periode tidak ditemukan pada data anggaran.');
+        }
+
         $periode = $setAnggaran->jenis_periode; // 'bulan' atau 'tahun'
         $total_periode = $setAnggaran->total_periode;
         $totalAnggaran = $setAnggaran->total_anggaran; // Dapatkan total_anggaran
-    
+
         // Menggunakan Carbon untuk mengatur tanggal dan waktu akhir periode
         $endDate = $periode == 'bulan' 
             ? Carbon::parse($tglSetAnggaran)->addMonths($total_periode) 
             : Carbon::parse($tglSetAnggaran)->addYears($total_periode);
-    
+
         // Tanggal dan waktu sekarang
         $currentDate = Carbon::now();
-    
-        // Memastikan kita berada dalam rentang periode yang sesuai
-        if ($currentDate->lessThan($tglSetAnggaran) || $currentDate->greaterThan($endDate)) {
+
+        // Memastikan kita berada dalam rentang periode yang sesuai (>= tanggal mulai dan <= tanggal akhir)
+        if ($currentDate->lt($tglSetAnggaran) || $currentDate->gt($endDate)) {
             return redirect()->back()->with('error', 'Tidak ada data anggaran yang berlaku untuk periode ini.');
         }
-    
+
         // Query data LPJ yang hanya berada dalam rentang waktu yang berjalan
         $query = LPJ::with(['proker.organisasi'])
                     ->whereNotNull('file_lpj')
                     ->whereNotNull('dana_disetujui')
                     ->whereBetween('created_at', [$tglSetAnggaran, $endDate]);
-    
+
         $lpjData = $query->get();
-    
+
         // Variabel untuk menyimpan total sisa anggaran
         $totalSisaAnggaran = $totalAnggaran;
-    
+
         // Variabel untuk menghitung total anggaran disetujui
         $totalAnggaranDisetujui = 0;
-    
+
         // Memproses data untuk tampilan
         $data = $lpjData->map(function($lpj) use (&$totalSisaAnggaran, &$totalAnggaranDisetujui) {
             $totalAnggaranOrganisasi = $lpj->proker->organisasi->anggarans->sum('total_anggaran');
             $sisaAnggaran = $totalAnggaranOrganisasi - $lpj->dana_disetujui;
-    
+
             // Mengurangi total sisa anggaran dengan dana disetujui
             $totalSisaAnggaran -= $lpj->dana_disetujui;
-    
+
             // Menambah ke total anggaran disetujui
             $totalAnggaranDisetujui += $lpj->dana_disetujui;
-    
+
             return [
                 'id' => $lpj->id,
                 'nama_organisasi' => $lpj->proker->organisasi->nama_organisasi,
@@ -274,7 +288,7 @@ class AnggaranController extends Controller
                 'total_sisa_anggaran' => $totalSisaAnggaran,
             ];
         });
-    
+
         // Filter data berdasarkan organisasi jika nama organisasi bukan 'semua'
         if ($namaOrganisasi != 'semua') {
             $dataFiltered = $data->filter(function($item) use ($namaOrganisasi) {
@@ -283,28 +297,27 @@ class AnggaranController extends Controller
         } else {
             $dataFiltered = $data;
         }
-    
+
         // Data tambahan untuk laporan
         $ketAnggaran = [
             'total_anggaran_periode' => $totalAnggaran,
             'total_anggaran_disetujui' => $totalAnggaranDisetujui,
             'sisa_anggaran_periode' => $totalSisaAnggaran
         ];
-    
+
         // Format tanggal periode untuk nama file
         $tglMulaiFormatted = Carbon::parse($tglSetAnggaran)->format('d-m-Y');
         $tglAkhirFormatted = Carbon::parse($endDate)->format('d-m-Y');
         $fileName = "laporan-anggaran-{$tglMulaiFormatted}-to-{$tglAkhirFormatted}.pdf";
-    
+
         $pdf = PDF::loadView('pdf.laporan-anggaran-pdf', [
             'anggaran' => $dataFiltered,
             'ketAnggaran' => $ketAnggaran
         ]);
-    
+
         // Mengunduh laporan PDF dengan nama file yang dinamis
         return $pdf->download($fileName);
     }
-    
 
     
     public function setAnggaran(Request $request)
@@ -314,6 +327,7 @@ class AnggaranController extends Controller
             'total_anggaran' => 'required|numeric',
             'jenis_periode' => 'required|in:bulan,tahun',
             'total_periode' => 'required|numeric|min:1',
+            'tgl_mulai_periode' => 'required|date', // Validasi untuk tanggal mulai periode
         ]);
     
         // Proses penyimpanan atau pembaruan data
@@ -326,6 +340,7 @@ class AnggaranController extends Controller
                 $setAnggaran->total_anggaran = $request->input('total_anggaran');
                 $setAnggaran->jenis_periode = $request->input('jenis_periode');
                 $setAnggaran->total_periode = $request->input('total_periode');
+                $setAnggaran->tgl_mulai_periode = $request->input('tgl_mulai_periode'); // Perbarui tanggal mulai periode
                 $setAnggaran->save(); // Simpan perubahan data
                 $message = 'Anggaran berhasil diperbarui!';
             } else {
@@ -334,6 +349,7 @@ class AnggaranController extends Controller
                 $setAnggaran->total_anggaran = $request->input('total_anggaran');
                 $setAnggaran->jenis_periode = $request->input('jenis_periode');
                 $setAnggaran->total_periode = $request->input('total_periode');
+                $setAnggaran->tgl_mulai_periode = $request->input('tgl_mulai_periode'); // Simpan tanggal mulai periode baru
                 $setAnggaran->save(); // Simpan data baru ke dalam tabel set_anggaran
                 $message = 'Anggaran berhasil disimpan!';
             }
@@ -342,6 +358,6 @@ class AnggaranController extends Controller
         } catch (\Exception $e) {
             return redirect()->back()->with('error', 'Terjadi kesalahan saat menyimpan anggaran: ' . $e->getMessage());
         }
-    }    
-
+    }
+    
 }

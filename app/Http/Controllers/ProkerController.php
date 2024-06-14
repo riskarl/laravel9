@@ -9,6 +9,8 @@ use Session;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\File;
 use Barryvdh\DomPDF\Facade\Pdf;
+use App\Models\SetAnggaran;
+use Carbon\Carbon;
 
 class ProkerController extends Controller
 {
@@ -17,16 +19,44 @@ class ProkerController extends Controller
     {
         // Mendapatkan informasi pengguna saat ini
         $currentUser = $this->getCurrentUser();
-        //mengambil semua data organisasi
+        // Mengambil semua data organisasi
         $organisasi = Organisasi::all();
-        //mengambil semua data proker
-        $listproker = Proker::all();
-        //mendapatkan jabatan dari pengguna saat ini
+        // Mendapatkan jabatan dari pengguna saat ini
         $jabatan = $currentUser['jabatan'];
-        //mendapatkan organisasi dari pengguna saat ini
+        // Mendapatkan organisasi dari pengguna saat ini
         $organisasiUser = $currentUser['organisasi'];
-        return view('proker', ['listproker' => $listproker, 'organisasi' => $organisasi, 'jabatan' => $jabatan, 'orguser' => $organisasiUser]);
+
+        // Ambil data SetAnggaran terbaru
+        $setAnggaran = SetAnggaran::orderBy('updated_at', 'desc')->first();
+        if (!$setAnggaran) {
+            return redirect()->back()->with('error', 'Tidak ada data anggaran yang ditemukan.');
+        }
+
+        // Ambil tanggal mulai periode dari data SetAnggaran
+        $tglSetAnggaran = $setAnggaran->tgl_mulai_periode;
+        if (!$tglSetAnggaran) {
+            return redirect()->back()->with('error', 'Tanggal mulai periode tidak ditemukan pada data anggaran.');
+        }
+
+        $periode = $setAnggaran->jenis_periode; // 'bulan' atau 'tahun'
+        $total_periode = $setAnggaran->total_periode;
+
+        // Menggunakan Carbon untuk mengatur tanggal akhir periode
+        $endDate = $periode == 'bulan' 
+            ? Carbon::parse($tglSetAnggaran)->addMonths($total_periode)
+            : Carbon::parse($tglSetAnggaran)->addYears($total_periode);
+
+        // Filter data Proker yang berada dalam rentang periode aktif
+        $listproker = Proker::whereBetween('created_at', [$tglSetAnggaran, $endDate])->get();
+
+        return view('proker', [
+            'listproker' => $listproker,
+            'organisasi' => $organisasi,
+            'jabatan' => $jabatan,
+            'orguser' => $organisasiUser
+        ]);
     }
+
 
     public function tampil()
     {
@@ -51,9 +81,9 @@ class ProkerController extends Controller
             'nama_proker' => 'required',
             'nama_ketupel' => 'required',
             'nim_ketupel' => 'required',
-            'tanggal' => 'required',
+            'tanggal' => 'required|date',
             'tempat' => 'required',
-            'dana_diajukan' => 'required',
+            'dana_diajukan' => 'required|numeric',
             'ttd_ketupel' => 'file|mimes:jpeg,png,jpg,gif|max:2048' // Menambahkan validasi untuk file ttd
         ]);
 
@@ -74,11 +104,38 @@ class ProkerController extends Controller
         }
         $validatedData['id_organisasi'] = $validatedData['nama_organisasi'];
 
+        // Ambil data SetAnggaran terbaru
+        $setAnggaran = SetAnggaran::orderBy('updated_at', 'desc')->first();
+        if (!$setAnggaran) {
+            return redirect()->back()->with('error', 'Tidak ada data anggaran yang ditemukan.');
+        }
+
+        // Ambil tanggal mulai periode dari data SetAnggaran
+        $tglSetAnggaran = $setAnggaran->tgl_mulai_periode;
+        if (!$tglSetAnggaran) {
+            return redirect()->back()->with('error', 'Tanggal mulai periode tidak ditemukan pada data anggaran.');
+        }
+
+        $periode = $setAnggaran->jenis_periode; // 'bulan' atau 'tahun'
+        $total_periode = $setAnggaran->total_periode;
+
+        // Menggunakan Carbon untuk mengatur tanggal akhir periode
+        $endDate = $periode == 'bulan' 
+            ? Carbon::parse($tglSetAnggaran)->addMonths($total_periode) 
+            : Carbon::parse($tglSetAnggaran)->addYears($total_periode);
+
+        // Tanggal dan waktu sekarang
+        $currentDate = Carbon::now();
+
+        // Memastikan tanggal saat ini berada dalam rentang periode yang sesuai (>= tanggal mulai dan <= tanggal akhir)
+        if ($currentDate->lt(Carbon::parse($tglSetAnggaran)) || $currentDate->gt($endDate)) {
+            return redirect()->back()->with('error', 'Tidak ada data anggaran yang berlaku untuk periode ini.');
+        }
+
         // Simpan data ke database
         Proker::create($validatedData);
-        return redirect('/proker');
+        return redirect('/proker')->with('success', 'Data Proker berhasil disimpan!');
     }
-
     public function edit(Proker $proker)
     {
         //mendapatkan informasi pengguna saat ini
@@ -97,7 +154,7 @@ class ProkerController extends Controller
             "nama_proker" => "required",
             "nama_ketupel" => "required",
             'nim_ketupel' => 'required',
-            "tanggal" => "required",
+            "tanggal" => "required|date",
             "tempat" => "required",
             "dana_diajukan" => "required",
             "ttd_ketupel" => "file|mimes:jpeg,png,jpg,gif|max:2048" // Menambahkan validasi untuk file ttd
@@ -125,10 +182,39 @@ class ProkerController extends Controller
         }
         $validatedData['id_organisasi'] = $validatedData['nama_organisasi'];
 
+        // Ambil data SetAnggaran terbaru
+        $setAnggaran = SetAnggaran::orderBy('updated_at', 'desc')->first();
+        if (!$setAnggaran) {
+            return redirect()->back()->with('error', 'Tidak ada data anggaran yang ditemukan.');
+        }
+
+        // Ambil tanggal mulai periode dari data SetAnggaran
+        $tglSetAnggaran = $setAnggaran->tgl_mulai_periode;
+        if (!$tglSetAnggaran) {
+            return redirect()->back()->with('error', 'Tanggal mulai periode tidak ditemukan pada data anggaran.');
+        }
+
+        $periode = $setAnggaran->jenis_periode; // 'bulan' atau 'tahun'
+        $total_periode = $setAnggaran->total_periode;
+
+        // Menggunakan Carbon untuk mengatur tanggal akhir periode
+        $endDate = $periode == 'bulan' 
+            ? Carbon::parse($tglSetAnggaran)->addMonths($total_periode) 
+            : Carbon::parse($tglSetAnggaran)->addYears($total_periode);
+
+        // Tanggal dan waktu sekarang
+        $currentDate = Carbon::now();
+
+        // Memastikan tanggal saat ini berada dalam rentang periode yang sesuai (>= tanggal mulai dan <= tanggal akhir)
+        if ($currentDate->lt(Carbon::parse($tglSetAnggaran)) || $currentDate->gt($endDate)) {
+            return redirect()->back()->with('error', 'Tidak ada data anggaran yang berlaku untuk periode ini.');
+        }
+
         // Update proker dengan data yang divalidasi
         $proker->update($validatedData);
-        return redirect('/proker');
+        return redirect('/proker')->with('success', 'Data Proker berhasil diperbarui!');
     }
+
 
     function delete($id)
     {

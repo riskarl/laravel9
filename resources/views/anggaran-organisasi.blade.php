@@ -155,6 +155,10 @@
             <label for="totalPeriode">Total Periode</label>
             <input type="number" class="form-control" id="totalPeriode" name="total_periode" required>
           </div>
+          <div class="form-group">
+            <label for="tglMulaiPeriode">Tanggal Mulai Periode</label>
+            <input type="date" class="form-control" id="tglMulaiPeriode" name="tgl_mulai_periode" required>
+          </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
             <button type="submit" class="btn btn-success">Set Anggaran</button>
@@ -164,5 +168,6 @@
     </div>
   </div>
 </div>
+
 
 @endsection
