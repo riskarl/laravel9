@@ -97,12 +97,64 @@ class LpjController extends Controller
     public function pengecekanlpj()
     {
         $currentUser = $this->getCurrentUser();
-        $proker = Proker::with(['organisasi', 'lpj'])->get();
         $organisasiUser = $currentUser['organisasi'];
         $codeJabatan = $currentUser['code_jabatan'];
-
-        return view('pengecekan-lpj', ['listproker' => $proker, 'orguser' => $organisasiUser, 'codeJabatan' => $codeJabatan]);
-    }
+    
+        // Ambil data SetAnggaran terbaru
+        $setAnggaran = SetAnggaran::orderBy('updated_at', 'desc')->first();
+        if (!$setAnggaran) {
+            session()->flash('error', 'Tidak ada data anggaran yang ditemukan.');
+            return view('pengecekan-lpj', [
+                'listproker' => collect([]), // Koleksi kosong jika tidak ada data
+                'orguser' => $organisasiUser,
+                'codeJabatan' => $codeJabatan
+            ]);
+        }
+    
+        // Ambil tanggal mulai periode dari data SetAnggaran
+        $tglSetAnggaran = $setAnggaran->tgl_mulai_periode;
+        if (!$tglSetAnggaran) {
+            session()->flash('error', 'Tanggal mulai periode tidak ditemukan pada data anggaran.');
+            return view('pengecekan-lpj', [
+                'listproker' => collect([]), // Koleksi kosong jika tidak ada data
+                'orguser' => $organisasiUser,
+                'codeJabatan' => $codeJabatan
+            ]);
+        }
+    
+        $periode = $setAnggaran->jenis_periode; // 'bulan' atau 'tahun'
+        $total_periode = $setAnggaran->total_periode;
+    
+        // Menggunakan Carbon untuk mengatur tanggal akhir periode
+        $endDate = $periode == 'bulan' 
+            ? Carbon::parse($tglSetAnggaran)->addMonths($total_periode)
+            : Carbon::parse($tglSetAnggaran)->addYears($total_periode);
+    
+        // Tanggal dan waktu sekarang
+        $currentDate = Carbon::now();
+    
+        // Memastikan kita berada dalam rentang periode yang sesuai (>= tanggal mulai dan <= tanggal akhir)
+        if ($currentDate->lt(Carbon::parse($tglSetAnggaran)) || $currentDate->gt($endDate)) {
+            session()->flash('error', 'Tidak ada data proker yang berlaku untuk periode ini.');
+            return view('pengecekan-lpj', [
+                'listproker' => collect([]), // Koleksi kosong jika tidak ada data valid dalam rentang periode
+                'orguser' => $organisasiUser,
+                'codeJabatan' => $codeJabatan
+            ]);
+        }
+    
+        // Mengambil data proker dengan organisasi dan lpj terkait yang berada dalam rentang periode aktif
+        $proker = Proker::with(['organisasi', 'lpj'])
+            ->whereBetween('created_at', [$tglSetAnggaran, $endDate])
+            ->get();
+    
+        // Mengirim data pengguna ke view 'pengecekan-lpj'
+        return view('pengecekan-lpj', [
+            'listproker' => $proker,
+            'orguser' => $organisasiUser,
+            'codeJabatan' => $codeJabatan
+        ]);
+    }    
 
     public function pengecekanlpjbpm()
     {

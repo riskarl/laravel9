@@ -4,20 +4,30 @@
 
 <div class="row">
     <div class="col-lg-12 mb-4">
+
+      @if (session('error'))
+          <div class="alert alert-danger alert-dismissible fade show" role="alert">
+              {{ session('error') }}
+              <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+              </button>
+          </div>
+      @endif
+
+      @if (session('success'))
+          <div class="alert alert-success alert-dismissible fade show" role="alert">
+              {{ session('success') }}
+              <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+              </button>
+          </div>
+      @endif
       <!-- Simple Tables -->
       <div class="card">
         <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
           <h6 class="m-0 font-weight-bold text-primary">Pengecekan Laporan Pertanggungjawaban</h6>
         </div>
-        @if(session('success'))
-        <div class="alert alert-success">
-        {{ session('success') }}
-        </div>
-        @endif
-        @if(session('error'))
-        <div class="alert alert-danger">
-        {{ session('error') }}
-        </div>
+
         @endif
         <div class="table-responsive">
           <table class="table align-items-center table-flush">
