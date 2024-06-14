@@ -29,13 +29,15 @@ class ProkerController extends Controller
         // Ambil data SetAnggaran terbaru
         $setAnggaran = SetAnggaran::orderBy('updated_at', 'desc')->first();
         if (!$setAnggaran) {
-            return redirect()->back()->with('error', 'Tidak ada data anggaran yang ditemukan.');
+            session()->flash('error', 'Tidak ada data anggaran yang ditemukan.');
+            return redirect()->route('proker');
         }
 
         // Ambil tanggal mulai periode dari data SetAnggaran
         $tglSetAnggaran = $setAnggaran->tgl_mulai_periode;
         if (!$tglSetAnggaran) {
-            return redirect()->back()->with('error', 'Tanggal mulai periode tidak ditemukan pada data anggaran.');
+            session()->flash('error', 'Tanggal mulai periode tidak ditemukan pada data anggaran.');
+            return redirect()->route('proker');
         }
 
         $periode = $setAnggaran->jenis_periode; // 'bulan' atau 'tahun'
@@ -56,6 +58,7 @@ class ProkerController extends Controller
             'orguser' => $organisasiUser
         ]);
     }
+
 
 
     public function tampil()

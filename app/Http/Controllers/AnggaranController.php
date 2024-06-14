@@ -33,13 +33,15 @@ class AnggaranController extends Controller
         // Dapatkan data SetAnggaran terbaru
         $setAnggaran = SetAnggaran::orderBy('updated_at', 'desc')->first();
         if (!$setAnggaran) {
-            return redirect()->back()->with('error', 'Tidak ada data anggaran yang ditemukan.');
+            session()->flash('error', 'Tidak ada data anggaran yang ditemukan.');
+            return redirect()->route('anggaran-organisasi');
         }
     
         // Ambil tanggal mulai periode dari data SetAnggaran
         $tglSetAnggaran = $setAnggaran->tgl_mulai_periode;
         if (!$tglSetAnggaran) {
-            return redirect()->back()->with('error', 'Tanggal mulai periode tidak ditemukan pada data anggaran.');
+            session()->flash('error', 'Tanggal mulai periode tidak ditemukan pada data anggaran.');
+            return redirect()->route('anggaran-organisasi');
         }
     
         $periode = $setAnggaran->jenis_periode; // 'bulan' atau 'tahun'
@@ -56,7 +58,8 @@ class AnggaranController extends Controller
     
         // Memastikan kita berada dalam rentang periode yang sesuai (>= tanggal mulai dan <= tanggal akhir)
         if ($currentDate->lt(Carbon::parse($tglSetAnggaran)) || $currentDate->gt($endDate)) {
-            return redirect()->back()->with('error', 'Tidak ada data anggaran yang berlaku untuk periode ini.');
+            session()->flash('error', 'Tidak ada data anggaran yang berlaku untuk periode ini.');
+            return redirect()->route('anggaran-organisasi');
         }
     
         // Query data LPJ yang hanya berada dalam rentang waktu yang berjalan
@@ -98,9 +101,11 @@ class AnggaranController extends Controller
             $dataFiltered = $data;
         }
     
-        return view('anggaran-organisasi', ['anggaran' => $dataFiltered, 'totalAnggaran' => $TA]);
-    }
-    
+        return view('anggaran-organisasi', [
+            'anggaran' => $dataFiltered,
+            'totalAnggaran' => $TA,
+        ]);
+    }    
 
 
     public function store(Request $request)
