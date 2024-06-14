@@ -45,7 +45,7 @@
                   <td>{{ $i['total_anggaran'] }}</td>
                   <td>{{ $i['jenis_periode'] }}</td>
                   <td>{{ $i['total_periode'] }}</td>
-                  <td>{{ $i['updated_at'] != (null || '') ? $i['updated_at'] : $i['created_at'] }}</td>
+                  <td>{{ $i['tgl_mulai_periode'] ?? null }}</td>
               </tr>
               @endforeach
             </tbody>

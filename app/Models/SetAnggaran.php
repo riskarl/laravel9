@@ -19,7 +19,8 @@ class SetAnggaran extends Model
     protected $fillable = [
         'total_anggaran',
         'jenis_periode',
-        'total_periode'
+        'total_periode',
+        'tgl_mulai_periode'
     ];
 
     public $timestamps = true;
