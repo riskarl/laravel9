@@ -17,12 +17,58 @@ class LpjController extends Controller
     public function index()
     {
         $currentUser = $this->getCurrentUser();
-        $lpj = LPJ::all();
         $organisasiUser = $currentUser['organisasi'];
+        $lpj = LPJ::all();
+
+        // Ambil data SetAnggaran terbaru
+        $setAnggaran = SetAnggaran::orderBy('updated_at', 'desc')->first();
+        if (!$setAnggaran) {
+            session()->flash('error', 'Tidak ada data anggaran yang ditemukan.');
+            return view('upload-lpj', [
+                'listproker' => collect([]),
+                'orguser' => $organisasiUser,
+                'lpj' => $lpj
+            ]);
+        }
+
+        // Ambil tanggal mulai periode dari data SetAnggaran
+        $tglSetAnggaran = $setAnggaran->tgl_mulai_periode;
+        if (!$tglSetAnggaran) {
+            session()->flash('error', 'Tanggal mulai periode tidak ditemukan pada data anggaran.');
+            return view('upload-lpj', [
+                'listproker' => collect([]),
+                'orguser' => $organisasiUser,
+                'lpj' => $lpj
+            ]);
+        }
+
+        $periode = $setAnggaran->jenis_periode; // 'bulan' atau 'tahun'
+        $total_periode = $setAnggaran->total_periode;
+
+        // Menggunakan Carbon untuk mengatur tanggal akhir periode
+        $endDate = $periode == 'bulan' 
+            ? Carbon::parse($tglSetAnggaran)->addMonths($total_periode)
+            : Carbon::parse($tglSetAnggaran)->addYears($total_periode);
+
+        // Tanggal dan waktu sekarang
+        $currentDate = Carbon::now();
+
+        // Memastikan kita berada dalam rentang periode yang sesuai (>= tanggal mulai dan <= tanggal akhir)
+        if ($currentDate->lt(Carbon::parse($tglSetAnggaran)) || $currentDate->gt($endDate)) {
+            session()->flash('error', 'Tidak ada data proker yang berlaku untuk periode ini.');
+            return view('upload-lpj', [
+                'listproker' => collect([]),
+                'orguser' => $organisasiUser,
+                'lpj' => $lpj
+            ]);
+        }
+
+        // Filter data Proker yang berada dalam rentang periode aktif
         $proker = Proker::with(['lpj', 'proposal'])
             ->whereHas('proposal', function ($query) {
                 $query->where('status_flow', 9);
             })
+            ->whereBetween('created_at', [$tglSetAnggaran, $endDate])
             ->get();
 
         // Iterasi melalui setiap proker untuk memodifikasi nilai pengesahan
@@ -32,8 +78,13 @@ class LpjController extends Controller
             }
         }
 
-        return view('upload-lpj', ['listproker' => $proker, 'orguser' => $organisasiUser, 'lpj' => $lpj]);
+        return view('upload-lpj', [
+            'listproker' => $proker,
+            'orguser' => $organisasiUser,
+            'lpj' => $lpj
+        ]);
     }
+
 
 
     public function indexlpj()
