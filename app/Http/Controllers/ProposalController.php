@@ -14,24 +14,75 @@ use Illuminate\Support\Str;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Mail;
 use Barryvdh\DomPDF\Facade\Pdf;
+use App\Models\SetAnggaran;
+use Carbon\Carbon;
 
 
 class ProposalController extends Controller
 {
     public function index()
     {
-        //mendapatkan informasi pengguna saat ini
+        // Mendapatkan informasi pengguna saat ini
         $currentUser = $this->getCurrentUser();
-        //mengambil data proker dengan organisasi dan proposal terkait
-        $proker = Proker::with(['organisasi', 'proposal'])->get();
-        //mendapatkan data jabatan dari pengguna saat ini
         $jabatan = $currentUser['jabatan'];
-        //mendapatkan organisasi pengguna saat ini
         $organisasiUser = $currentUser['organisasi'];
-
+    
+        // Ambil data SetAnggaran terbaru
+        $setAnggaran = SetAnggaran::orderBy('updated_at', 'desc')->first();
+        if (!$setAnggaran) {
+            session()->flash('error', 'Tidak ada data anggaran yang ditemukan.');
+            return view('upload-proposal', [
+                'listproker' => collect([]), // Koleksi kosong jika tidak ada data
+                'jabatan' => $jabatan,
+                'orguser' => $organisasiUser
+            ]);
+        }
+    
+        // Ambil tanggal mulai periode dari data SetAnggaran
+        $tglSetAnggaran = $setAnggaran->tgl_mulai_periode;
+        if (!$tglSetAnggaran) {
+            session()->flash('error', 'Tanggal mulai periode tidak ditemukan pada data anggaran.');
+            return view('upload-proposal', [
+                'listproker' => collect([]), // Koleksi kosong jika tidak ada data
+                'jabatan' => $jabatan,
+                'orguser' => $organisasiUser
+            ]);
+        }
+    
+        $periode = $setAnggaran->jenis_periode; // 'bulan' atau 'tahun'
+        $total_periode = $setAnggaran->total_periode;
+    
+        // Menggunakan Carbon untuk mengatur tanggal akhir periode
+        $endDate = $periode == 'bulan' 
+            ? Carbon::parse($tglSetAnggaran)->addMonths($total_periode)
+            : Carbon::parse($tglSetAnggaran)->addYears($total_periode);
+    
+        // Tanggal dan waktu sekarang
+        $currentDate = Carbon::now();
+    
+        // Memastikan kita berada dalam rentang periode yang sesuai (>= tanggal mulai dan <= tanggal akhir)
+        if ($currentDate->lt(Carbon::parse($tglSetAnggaran)) || $currentDate->gt($endDate)) {
+            session()->flash('error', 'Tidak ada data proker yang berlaku untuk periode ini.');
+            return view('upload-proposal', [
+                'listproker' => collect([]), // Koleksi kosong jika tidak ada data valid dalam rentang periode
+                'jabatan' => $jabatan,
+                'orguser' => $organisasiUser
+            ]);
+        }
+    
+        // Mengambil data proker dengan organisasi dan proposal terkait yang berada dalam rentang periode aktif
+        $proker = Proker::with(['organisasi', 'proposal'])
+            ->whereBetween('created_at', [$tglSetAnggaran, $endDate])
+            ->get();
+    
         // Mengirim data pengguna ke view 'upload-proposal'
-        return view('upload-proposal', ['listproker' => $proker, 'jabatan' => $jabatan, 'orguser' => $organisasiUser]);
+        return view('upload-proposal', [
+            'listproker' => $proker,
+            'jabatan' => $jabatan,
+            'orguser' => $organisasiUser
+        ]);
     }
+    
 
 
     public function indexproposal()
