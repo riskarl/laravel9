@@ -5,6 +5,26 @@
 <form action="/proker" method="POST" enctype="multipart/form-data">
     @csrf
     <h1>Tambah Program Kerja</h1>
+
+    @if (session('error'))
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            {{ session('error') }}
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+    @endif
+
+    @if (session('success'))
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            {{ session('success') }}
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+    @endif
+
+
     <div class="form-group">
       <label for="exampleInputEmail1">Nama Organisasi</label>
       <select name="nama_organisasi" id="selectOrganisasi" required>
