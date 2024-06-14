@@ -7,6 +7,9 @@ use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Support\Facades\Session;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\NotificationEmail;
 
 class Controller extends BaseController
 {
@@ -59,6 +62,19 @@ class Controller extends BaseController
         $pdf = Pdf::loadHTML($html)->setPaper('A4', 'portrait');
         // Mengirim PDF ke browser untuk ditampilkan maupun diunduh
         return $pdf->stream('document.pdf');
+    }
+
+    public function sendEmail(array $details, string $recipientEmail)
+    {
+        // Tambahkan base_url ke details
+        $details['base_url'] = url('/');
+
+        try {
+            Mail::to($recipientEmail)->send(new NotificationEmail($details));
+            return true;
+        } catch (\Exception $e) {
+            return false;
+        }
     }
     
 }

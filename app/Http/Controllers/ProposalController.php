@@ -162,6 +162,26 @@ class ProposalController extends Controller
 
     public function approvedProposal($proposalId)
     {
+
+        // penggunaan sistem Email
+        // $details = [
+        //     'receiver_name' => 'John Doe',
+        //     'proposal_title' => 'Pengembangan Aplikasi Mobile',
+        //     'sender_name' => 'Tim IT',
+        //     'date' => now()->format('Y-m-d')
+        // ];
+        
+        // $recipientEmail = 'recipient@example.com';
+        
+        // $result = $this->sendEmail($details, $recipientEmail);
+        
+        // if ($result) {
+        //     echo "Email berhasil dikirim!";
+        // } else {
+        //     echo "Gagal mengirim email.";
+        // }
+
+
         $currentUser = $this->getCurrentUser();
         $jabatanId = $currentUser['code_jabatan'];
         $jabatan = $currentUser['jabatan'];
@@ -361,24 +381,4 @@ class ProposalController extends Controller
         return $pdf->stream('document.pdf');
     }
 
-    // public function kirimemail(Request $request, $proposalId)
-    // {
-    //     $pdf = Pdf::loadView('pdf.signatures-blade');
-    //     $proposal = Proposal::find($proposalId);
-    //     $users = User::pluck('email')->all();
-
-    //     foreach ($users as $user) {
-    //     // if ($proposal) {
-    //     //     $proposal->status = 'Approved';
-    //     //     $proposal->save();
-
-    //         // Send email
-    //         Mail::to($user)->send(new ProposalApproved($pdf));
-
-    //         return redirect()->back()->with('success', 'Proposal approved and email sent.');
-    //     // }
-    // }
-
-    //     return redirect()->back()->with('error', 'Proposal not found.');
-    // }
 }
