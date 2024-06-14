@@ -11,6 +11,8 @@ use App\Models\MappingCheckLpj;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\File;
 use Barryvdh\DomPDF\Facade\Pdf;
+use App\Models\SetAnggaran;
+use Carbon\Carbon;
 
 class LpjController extends Controller
 {
@@ -112,21 +114,52 @@ class LpjController extends Controller
         // Validasi input
         $validatedData = $request->validate([
             'file_lpj' => 'required|file|mimes:pdf,doc,docx|max:2048',
-            'dana_disetujui' => 'required|numeric',
+            'dana_disetujui' => 'required',
             'id_proker' => 'required',
         ]);
-    
+
+        // Ambil data SetAnggaran terbaru
+        $setAnggaran = SetAnggaran::orderBy('updated_at', 'desc')->first();
+        if (!$setAnggaran) {
+            session()->flash('error', 'Tidak ada data anggaran yang ditemukan.');
+            return redirect()->back();
+        }
+
+        // Ambil tanggal mulai periode dari data SetAnggaran
+        $tglSetAnggaran = $setAnggaran->tgl_mulai_periode;
+        if (!$tglSetAnggaran) {
+            session()->flash('error', 'Tanggal mulai periode tidak ditemukan pada data anggaran.');
+            return redirect()->back();
+        }
+
+        $periode = $setAnggaran->jenis_periode; // 'bulan' atau 'tahun'
+        $total_periode = $setAnggaran->total_periode;
+
+        // Menggunakan Carbon untuk mengatur tanggal akhir periode
+        $endDate = $periode == 'bulan' 
+            ? Carbon::parse($tglSetAnggaran)->addMonths($total_periode)
+            : Carbon::parse($tglSetAnggaran)->addYears($total_periode);
+
+        // Tanggal dan waktu sekarang
+        $currentDate = Carbon::now();
+
+        // Memastikan kita berada dalam rentang periode yang sesuai (>= tanggal mulai dan <= tanggal akhir)
+        if ($currentDate->lt(Carbon::parse($tglSetAnggaran)) || $currentDate->gt($endDate)) {
+            session()->flash('error', 'Tidak ada data proker yang berlaku untuk periode ini.');
+            return redirect()->back();
+        }
+
         $file = $request->file('file_lpj');
         $filename = Str::uuid() . '.' . $file->getClientOriginalExtension();
         $directory = public_path('lpj');
-    
+
         if (!File::exists($directory)) {
             File::makeDirectory($directory, 0755, true);
         }
-    
+
         // Cek apakah data LPJ untuk id_proker ini sudah ada
         $lpj = LPJ::where('id_proker', $request->id_proker)->first();
-    
+
         if ($lpj) {
             // Jika ada, update file dan data lainnya
             if (File::exists($directory . '/' . $lpj->file_lpj)) {
@@ -145,29 +178,61 @@ class LpjController extends Controller
             $lpj->catatan = 'Belum ada catatan';
             $lpj->id_proker = $request->id_proker;
         }
-    
+
         // Pindahkan file ke direktori yang ditentukan
         $file->move($directory, $filename);
-    
+
         // Simpan perubahan atau data baru
         $lpj->save();
-    
-        return redirect('/uploadlpj')->with('success', 'File LPJ berhasil diupload!');
-    }    
+
+        return redirect()->back()->with('success', 'File LPJ berhasil diupload!');
+    }
+
 
     public function update(Request $request, $id_proker)
     {
         // Validasi input
         $validatedData = $request->validate([
-            'file_lpj' => 'nullable|file|mimes:pdf,doc,docx',
-            'dana_disetujui' => 'required|numeric',
+            'file_lpj' => 'nullable|file|mimes:pdf,doc,docx|max:2048',
+            'dana_disetujui' => 'required',
         ]);
 
         // Temukan LPJ berdasarkan id_proker
         $lpj = LPJ::where('id_proker', $id_proker)->first();
 
         if (!$lpj) {
-            return redirect()->back()->with('error', 'Data tidak ditemukan');
+            return redirect()->back()->with('error', 'Data tidak ditemukan.');
+        }
+
+        // Ambil data SetAnggaran terbaru
+        $setAnggaran = SetAnggaran::orderBy('updated_at', 'desc')->first();
+        if (!$setAnggaran) {
+            session()->flash('error', 'Tidak ada data anggaran yang ditemukan.');
+            return redirect()->back();
+        }
+
+        // Ambil tanggal mulai periode dari data SetAnggaran
+        $tglSetAnggaran = $setAnggaran->tgl_mulai_periode;
+        if (!$tglSetAnggaran) {
+            session()->flash('error', 'Tanggal mulai periode tidak ditemukan pada data anggaran.');
+            return redirect()->back();
+        }
+
+        $periode = $setAnggaran->jenis_periode; // 'bulan' atau 'tahun'
+        $total_periode = $setAnggaran->total_periode;
+
+        // Menggunakan Carbon untuk mengatur tanggal akhir periode
+        $endDate = $periode == 'bulan' 
+            ? Carbon::parse($tglSetAnggaran)->addMonths($total_periode)
+            : Carbon::parse($tglSetAnggaran)->addYears($total_periode);
+
+        // Tanggal dan waktu sekarang
+        $currentDate = Carbon::now();
+
+        // Memastikan kita berada dalam rentang periode yang sesuai (>= tanggal mulai dan <= tanggal akhir)
+        if ($currentDate->lt(Carbon::parse($tglSetAnggaran)) || $currentDate->gt($endDate)) {
+            session()->flash('error', 'Tidak ada data proker yang berlaku untuk periode ini.');
+            return redirect()->back();
         }
 
         // Jika ada file yang diunggah
@@ -198,8 +263,9 @@ class LpjController extends Controller
         // Simpan perubahan
         $lpj->save();
 
-        return redirect('/uploadlpj')->with('success', 'File LPJ berhasil diperbarui!');
+        return redirect()->back()->with('success', 'File LPJ berhasil diperbarui!');
     }
+
 
 
     public function approvedLpj($lpjId)
