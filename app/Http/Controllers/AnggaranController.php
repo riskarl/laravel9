@@ -34,14 +34,20 @@ class AnggaranController extends Controller
         $setAnggaran = SetAnggaran::orderBy('updated_at', 'desc')->first();
         if (!$setAnggaran) {
             session()->flash('error', 'Tidak ada data anggaran yang ditemukan.');
-            return redirect()->route('anggaran-organisasi');
+            return view('anggaran-organisasi', [
+                'anggaran' => collect([]),
+                'totalAnggaran' => $TA,
+            ]);
         }
     
         // Ambil tanggal mulai periode dari data SetAnggaran
         $tglSetAnggaran = $setAnggaran->tgl_mulai_periode;
         if (!$tglSetAnggaran) {
             session()->flash('error', 'Tanggal mulai periode tidak ditemukan pada data anggaran.');
-            return redirect()->route('anggaran-organisasi');
+            return view('anggaran-organisasi', [
+                'anggaran' => collect([]),
+                'totalAnggaran' => $TA,
+            ]);
         }
     
         $periode = $setAnggaran->jenis_periode; // 'bulan' atau 'tahun'
@@ -59,7 +65,10 @@ class AnggaranController extends Controller
         // Memastikan kita berada dalam rentang periode yang sesuai (>= tanggal mulai dan <= tanggal akhir)
         if ($currentDate->lt(Carbon::parse($tglSetAnggaran)) || $currentDate->gt($endDate)) {
             session()->flash('error', 'Tidak ada data anggaran yang berlaku untuk periode ini.');
-            return redirect()->route('anggaran-organisasi');
+            return view('anggaran-organisasi', [
+                'anggaran' => collect([]),
+                'totalAnggaran' => $TA,
+            ]);
         }
     
         // Query data LPJ yang hanya berada dalam rentang waktu yang berjalan
@@ -105,7 +114,8 @@ class AnggaranController extends Controller
             'anggaran' => $dataFiltered,
             'totalAnggaran' => $TA,
         ]);
-    }    
+    }
+    
 
 
     public function store(Request $request)
