@@ -193,13 +193,13 @@ class ProposalController extends Controller
         $signatures = $mappingCheck->updateStatusFlow($proposalId, $jabatanId, $organisasi, $jabatan);
     
         if ($signatures !== false) {
+            $status_flow = $signatures['status_flow'] + 1;
             $signatures = $this->filterTtdList($signatures['ttdList'], $jabatanId, $organisasi);
 
             $ruteBem = [5,5,4,2,1];
             $ruteHima = [5,5,5,4,8,3,2,1];
             $ruteUkm = [5,5,5,4,2,1];
 
-            $status_flow = $signatures['status_flow'] + 1;
             $namaOrganisasi = $proker->organisasi->nama_organisasi;
             
             $status_code_mapping = [
