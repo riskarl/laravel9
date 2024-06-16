@@ -20,14 +20,14 @@ class MappingCheck extends Model
     {
         // Mengambil proposal yang terkait dengan proposal_id
         $proposal = Proposal::with('proker.organisasi')->find($proposal_id);
-    
+
         // Jika tidak ditemukan proposal, return false
         if (!$proposal) {
             return false;
         }
-    
+
         $isUpdated = false; // Variabel untuk mengecek apakah ada perubahan
-    
+
         // Logika update status
         if ($proposal->status_flow == null || $proposal->status_flow == 0 || $proposal->status_flow == '') {
             if ($jabatan_id == 5) {
@@ -64,13 +64,16 @@ class MappingCheck extends Model
             $proposal->status = 'Approved by ' . $jabatan;
             $isUpdated = $proposal->save();
         }
-    
-        // Jika ada perubahan status, kumpulkan tanda tangan
+
+        // Jika ada perubahan status, kumpulkan tanda tangan dan kembalikan data yang dibutuhkan
         if ($isUpdated) {
             $ttdList = $this->collectSignatures($proposal, $organisasi, $jabatan_id);
-            return $ttdList;
+            return [
+                'ttdList' => $ttdList,
+                'status_flow' => $proposal->status_flow
+            ];
         }
-    
+
         return false;
     }
 
