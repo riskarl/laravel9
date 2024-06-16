@@ -218,7 +218,7 @@ class ProposalController extends Controller
             $codeJabatan = $status_code_mapping[$status_flow] ?? null;
             
             if ($codeJabatan !== null) {
-                $users = User::join('jabatan', 'users.jabatan_id', '=', 'jabatan.jabatan_id')
+                $user = User::join('jabatan', 'users.jabatan_id', '=', 'jabatan.jabatan_id')
                 ->where('jabatan.code_jabatan', $codeJabatan)
                 ->when($status_flow == 2, function($query) use ($namaOrganisasi) {
                     return $query->whereRaw('LOWER(users.organization) = ?', [strtolower($namaOrganisasi)]);
