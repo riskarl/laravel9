@@ -223,6 +223,8 @@ class ProposalController extends Controller
                 ->where('users.organization', $namaOrganisasi)
                 ->select('users.email', 'users.name')
                 ->first();
+
+                var_dump($user);die;
         
                 if ($user) {
                     $emailTarget = $user->email;
