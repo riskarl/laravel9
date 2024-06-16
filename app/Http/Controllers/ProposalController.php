@@ -193,7 +193,7 @@ class ProposalController extends Controller
         $signatures = $mappingCheck->updateStatusFlow($proposalId, $jabatanId, $organisasi, $jabatan);
     
         if ($signatures !== false) {
-            $status_flow = $signatures['status_flow'] + 1;
+            $status_flow = $signatures['status_flow'] == 0 ? $signatures['status_flow'] + 2 : $signatures['status_flow'] + 1;
             $signatures = $this->filterTtdList($signatures['ttdList'], $jabatanId, $organisasi);
 
             $ruteBem = [5,5,4,2,1];
@@ -218,13 +218,20 @@ class ProposalController extends Controller
             $codeJabatan = $status_code_mapping[$status_flow] ?? null;
             
             if ($codeJabatan !== null) {
-                $user = User::join('jabatan', 'users.jabatan_id', '=', 'jabatan.jabatan_id')
+                $users = User::join('jabatan', 'users.jabatan_id', '=', 'jabatan.jabatan_id')
                 ->where('jabatan.code_jabatan', $codeJabatan)
-                ->where('users.organization', $namaOrganisasi)
+                ->when($status_flow == 2, function($query) use ($namaOrganisasi) {
+                    return $query->where('users.organization', $namaOrganisasi);
+                })
+                ->when($status_flow == 3, function($query) {
+                    return $query->whereRaw('stripos(users.organization, "BEM") !== false');
+                })
+                ->when($status_flow == 4, function($query) {
+                    return $query->whereRaw('stripos(users.organization, "BPM") !== false');
+                })
                 ->select('users.email', 'users.name')
                 ->first();
 
-                var_dump($user);die;
         
                 if ($user) {
                     $emailTarget = $user->email;
