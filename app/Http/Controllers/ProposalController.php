@@ -221,17 +221,16 @@ class ProposalController extends Controller
                 $users = User::join('jabatan', 'users.jabatan_id', '=', 'jabatan.jabatan_id')
                 ->where('jabatan.code_jabatan', $codeJabatan)
                 ->when($status_flow == 2, function($query) use ($namaOrganisasi) {
-                    return $query->where('users.organization', $namaOrganisasi);
+                    return $query->whereRaw('LOWER(users.organization) = ?', [strtolower($namaOrganisasi)]);
                 })
                 ->when($status_flow == 3, function($query) {
-                    return $query->whereRaw('stripos(users.organization, "BEM") !== false');
+                    return $query->whereRaw('LOWER(users.organization) LIKE ?', ['%bem%']);
                 })
                 ->when($status_flow == 4, function($query) {
-                    return $query->whereRaw('stripos(users.organization, "BPM") !== false');
+                    return $query->whereRaw('LOWER(users.organization) LIKE ?', ['%bpm%']);
                 })
                 ->select('users.email', 'users.name')
                 ->first();
-
         
                 if ($user) {
                     $emailTarget = $user->email;
