@@ -247,23 +247,46 @@ class LpjController extends Controller
     
         $namaOrganisasi = $proker->organisasi->nama_organisasi;
         
-        $user = $this->processStatusFlow($lpjId, $jabatanId, $organisasi, $jabatan, $namaOrganisasi);
+        $proker = Proker::where('id', $request->id_proker)->first();
+        if (!$proker) {
+            return redirect()->back()->with('error', 'Proker not found');
+        }
     
-        if ($user) {
-            $result = $this->sendNotificationEmail($user);
-    
-            if ($result) {
-                Session::flash('success', 'Email has been sent.');
-            } else {
-                Session::flash('error', 'Failed to sent the email.');
-                return redirect()->back();
-            }
+        if (empty($proker->ttd_ketupel)) {
+            return redirect()->back()->with('error', 'TTD Ketupel tidak lengkap');
         }
 
-        // Simpan perubahan atau data baru
-        $lpj->save();
+        $codeJabatan = 5;
+        $status_flow = 0;
+        $namaOrganisasi = $proker->organisasi->nama_organisasi;
 
-        return redirect()->back()->with('success', 'File LPJ berhasil diupload!');
+        if ($codeJabatan !== null) {
+            $user = User::join('jabatan', 'users.jabatan_id', '=', 'jabatan.jabatan_id')
+                ->where('jabatan.code_jabatan', $codeJabatan)
+                ->when($status_flow == 2, function($query) use ($namaOrganisasi) {
+                    return $query->whereRaw('LOWER(users.organization) = ?', [strtolower($namaOrganisasi)]);
+                })
+                ->when($status_flow == 3, function($query) {
+                    return $query->whereRaw('LOWER(users.organization) LIKE ?', ['%bem%']);
+                })
+                ->when($status_flow == 4, function($query) {
+                    return $query->whereRaw('LOWER(users.organization) LIKE ?', ['%bpm%']);
+                })
+                ->select('users.email', 'users.name')
+                ->first();
+
+                $sendEmail = $this->sendNotificationEmail($user);
+
+                if($sendEmail){
+                   // Simpan perubahan atau data baru
+                    $lpj->save();
+                    return redirect()->back()->with('success', 'File LPJ berhasil diupload!');
+                }else{
+                    return redirect()->back()->with('error', 'gagal kirim email!');
+                }
+        }
+
+        return redirect()->back()->with('error', 'File LPJ Gagal  diupload!');
     }
 
 

@@ -95,6 +95,8 @@ class UploadController extends Controller
                     return redirect()->back()->with('error', 'gagal kirim email!');   
                 }
         }
+
+        return redirect()->back()->with('error', 'File Proposal gagal diupload!');
     }
 
     public function uploadrab(Request $request, $id)
