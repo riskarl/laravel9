@@ -440,6 +440,8 @@ class ProposalController extends Controller
 
         $sendEmail = $this->sendEmail($details, $user->email);
 
+        var_dump($sendEmail);die;
+
         if ($sendEmail) {
             return $pdf->stream('document.pdf');
         } else {
