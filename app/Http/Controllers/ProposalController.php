@@ -449,23 +449,13 @@ class ProposalController extends Controller
 
     private function getUserForNotification($proker)
     {
-        $codeJabatan = 6; // Misalkan jabatan yang Anda tentukan
-        $statusFlow = 8; // Misalkan status flow yang Anda tentukan
+        $codeJabatan = 6;
         $namaOrganisasi = $proker->organisasi->nama_organisasi;
 
         return User::join('jabatan', 'users.jabatan_id', '=', 'jabatan.jabatan_id')
             ->where('jabatan.code_jabatan', $codeJabatan)
-            ->when($statusFlow <= 8, function ($query) use ($namaOrganisasi) {
-                return $query->whereRaw('LOWER(users.organization) = ?', [strtolower($namaOrganisasi)]);
-            })
-            ->when($statusFlow <= 8, function ($query) {
-                return $query->whereRaw('LOWER(users.organization) LIKE ?', ['%bem%']);
-            })
-            ->when($statusFlow <= 8, function ($query) {
-                return $query->whereRaw('LOWER(users.organization) LIKE ?', ['%bpm%']);
-            })
+            ->whereRaw('LOWER(users.organization) = ?', [strtolower($namaOrganisasi)])
             ->select('users.email', 'users.name')
             ->first();
     }
-
 }
