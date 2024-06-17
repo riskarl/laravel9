@@ -66,7 +66,10 @@ class MappingCheckLpj extends Model
         // If there is an update, collect signatures
         if ($isUpdated) {
             $ttdList = $this->collectSignatures($lpj, $organisasi, $jabatan_id);
-            return $ttdList;
+            return [
+                'ttdList' => $ttdList,
+                'status_flow' => $lpj->status_flow_lpj
+            ];
         }
 
         return false;

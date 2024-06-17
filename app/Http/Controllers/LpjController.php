@@ -347,9 +347,71 @@ class LpjController extends Controller
 
         $mappingCheckLpj = new MappingCheckLpj();
         $signatures = $mappingCheckLpj->updateStatusFlowLpj($lpjId, $jabatanId, $organisasi, $jabatan);
-
+        $status_flow = $signatures['status_flow'] == 0 ? $signatures['status_flow'] + 2 : $signatures['status_flow'] + 1;
         if ($signatures !== false) {
-            $signatures = $this->filterTtdList($signatures, $jabatanId, $organisasi);
+            $signatures = $this->filterTtdList($signatures['ttdList'], $jabatanId, $organisasi);
+        }
+
+        $ruteBem = [5,5,4,2,1];
+        $ruteHima = [5,5,5,4,8,3,2,1];
+        $ruteUkm = [5,5,5,4,2,1];
+
+        $namaOrganisasi = $proker->organisasi->nama_organisasi;
+        
+        $status_code_mapping = [
+            0 => 6, // SEKRETARIS
+            1 => 6, // REVISI
+            2 => stripos($namaOrganisasi, 'UKM') !== false ? 5 : 5, // KETUA UKM atau KETUA HIMA
+            3 => 5, // KETUA BEM
+            4 => 5, // KETUA BPM
+            5 => 4, // PEMBINA
+            6 => 8, // KETUA PRODI
+            7 => 3, // KETUA JURUSAN
+            8 => 2, // KOORDINATOR SUB BAGIAN
+            9 => 1  // WAKIL DIREKTUR
+        ];
+        
+        $codeJabatan = $status_code_mapping[$status_flow] ?? null;
+        
+        if ($codeJabatan !== null) {
+            $user = User::join('jabatan', 'users.jabatan_id', '=', 'jabatan.jabatan_id')
+            ->where('jabatan.code_jabatan', $codeJabatan)
+            ->when($status_flow == 2, function($query) use ($namaOrganisasi) {
+                return $query->whereRaw('LOWER(users.organization) = ?', [strtolower($namaOrganisasi)]);
+            })
+            ->when($status_flow == 3, function($query) {
+                return $query->whereRaw('LOWER(users.organization) LIKE ?', ['%bem%']);
+            })
+            ->when($status_flow == 4, function($query) {
+                return $query->whereRaw('LOWER(users.organization) LIKE ?', ['%bpm%']);
+            })
+            ->select('users.email', 'users.name')
+            ->first();
+    
+            if ($user) {
+                $emailTarget = $user->email;
+                $nameTarget = $user->name;
+
+                //penggunaan sistem Email
+                $details = [
+                    'receiver_name' => $nameTarget,
+                    'proposal_title' => 'Pemberitahuan Proposal Pengajuan Masuk',
+                    'sender_name' => 'Tim IT',
+                    'date' => now()->format('Y-m-d')
+                ];
+                        
+                $recipientEmail = $emailTarget;
+                
+                $result = $this->sendEmail($details, $recipientEmail);
+                
+                if ($result) {
+                    Session::flash('success', 'Email has been sent.');
+                } else {
+                    Session::flash('error', 'Failed to sent the email.');
+                    return redirect()->back();
+                }
+                
+            }
         }
 
         $proker = Proker::where('id', $lpj->id_proker)->first();
@@ -360,6 +422,21 @@ class LpjController extends Controller
         if (empty($proker->ttd_ketupel)) {
             return redirect()->back()->with('error', 'TTD Ketupel tidak lengkap');
         }
+
+        $namaOrganisasi = $proker->organisasi->nama_organisasi;
+            
+        $status_code_mapping = [
+            0 => 6, // SEKRETARIS
+            1 => 6, // REVISI
+            2 => stripos($namaOrganisasi, 'UKM') !== false ? 5 : 5, // KETUA UKM atau KETUA HIMA
+            3 => 5, // KETUA BEM
+            4 => 5, // KETUA BPM
+            5 => 4, // PEMBINA
+            6 => 8, // KETUA PRODI
+            7 => 3, // KETUA JURUSAN
+            8 => 2, // KOORDINATOR SUB BAGIAN
+            9 => 1  // WAKIL DIREKTUR
+        ];
 
         $ketupel = [
             'name' => $proker->nama_ketupel,
