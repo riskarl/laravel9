@@ -16,6 +16,7 @@ use Illuminate\Support\Facades\Mail;
 use Barryvdh\DomPDF\Facade\Pdf;
 use App\Models\SetAnggaran;
 use Carbon\Carbon;
+use App\Mail\NotificationEmail;
 
 
 class ProposalController extends Controller
