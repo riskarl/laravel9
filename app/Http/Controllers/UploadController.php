@@ -57,9 +57,6 @@ class UploadController extends Controller
             $proposal->status_flow = 0;
         }
 
-        // Simpan perubahan atau penambahan baru
-        $proposal->save();
-
         $proker = Proker::where('id', $request->id_proker)->first();
         if (!$proker) {
             return redirect()->back()->with('error', 'Proker not found');
@@ -69,7 +66,7 @@ class UploadController extends Controller
             return redirect()->back()->with('error', 'TTD Ketupel tidak lengkap');
         }
 
-        $codeJabatan = 6;
+        $codeJabatan = 5;
         $status_flow = 0;
         $namaOrganisasi = $proker->organisasi->nama_organisasi;
 
@@ -91,6 +88,8 @@ class UploadController extends Controller
                 $sendEmail = $this->sendNotificationEmail($user);
 
                 if($sendEmail){
+                    // Simpan perubahan atau penambahan baru
+                    $proposal->save();
                     return redirect()->back()->with('success', 'File Proposal berhasil diupload!');
                 }else{
                     return redirect()->back()->with('error', 'gagal kirim email!');   
@@ -127,7 +126,7 @@ class UploadController extends Controller
 
         return redirect()->back()->with('success', 'File RAB berhasil diupload!');
     }
-    
+
     private function sendNotificationEmail($user)
     {
         if ($user) {
