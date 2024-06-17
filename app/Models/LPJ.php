@@ -18,6 +18,7 @@ class LPJ extends Model
         'status',
         'catatan',
         'dana_disetujui',
+        'status_flow_lpj'
     ];
 
     public function proker()
