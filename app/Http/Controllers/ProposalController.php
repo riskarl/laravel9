@@ -403,9 +403,11 @@ class ProposalController extends Controller
             $html = view('pdf.hima-signature', compact('signatures', 'namaKegiatan', 'ketupel'))->render();
         }
 
-        // Membuat PDF
+        // Membuat PDF di memori
         $pdf = Pdf::loadHTML($html)->setPaper('A4', 'portrait');
+        $pdfData = $pdf->output(); // Mendapatkan data PDF dalam bentuk biner
 
+        // Simpan PDF ke disk jika diperlukan untuk referensi
         $path = public_path('pengesahan');
         if (!File::exists($path)) {
             File::makeDirectory($path, 0755, true);
@@ -429,26 +431,35 @@ class ProposalController extends Controller
         // Mengambil pengguna yang sesuai untuk notifikasi
         $user = $this->getUserForNotification($proker);
 
-          // Pastikan file pengesahan ada sebelum dikirim
-        if (!File::exists($filePath)) {
-            return redirect()->back()->with('error', 'File pengesahan tidak ditemukan.');
-        }
-
         // Kirim notifikasi email dengan lampiran file PDF
         $details = [
             'receiver_name' => $user->name,
             'proposal_title' => 'Pemberitahuan Proposal Pengajuan Masuk',
             'sender_name' => 'Tim IT',
             'date' => now()->format('Y-m-d'),
-            'file_attachment' => $filePath
+            // 'file_attachment' => $filePath // Tidak digunakan lagi karena file dilampirkan langsung
         ];
 
-        $sendEmail = $this->sendEmail($details, $user->email);
+        $sendEmail = $this->sendEmailWithAttachment($details, $user->email, $pdfData, $fileName);
 
         if ($sendEmail) {
             return $pdf->stream('document.pdf');
         } else {
             return redirect()->back()->with('error', 'Gagal mengirim email!');
+        }
+    }
+
+    private function sendEmailWithAttachment(array $details, string $recipientEmail, string $pdfData, string $fileName)
+    {
+        // Tambahkan base_url ke details
+        $details['base_url'] = url('/');
+
+        try {
+            Mail::to($recipientEmail)->send(new NotificationEmail($details, $pdfData, $fileName));
+            return true;
+        } catch (\Exception $e) {
+            \Log::error('Error sending email: ' . $e->getMessage());
+            return false;
         }
     }
 

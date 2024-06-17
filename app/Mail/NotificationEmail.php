@@ -11,10 +11,14 @@ class NotificationEmail extends Mailable
     use Queueable, SerializesModels;
 
     public $details;
+    public $pdfData;
+    public $fileName;
 
-    public function __construct($details)
+    public function __construct($details, $pdfData = null, $fileName = null)
     {
         $this->details = $details;
+        $this->pdfData = $pdfData;
+        $this->fileName = $fileName;
     }
 
     public function build()
@@ -24,7 +28,7 @@ class NotificationEmail extends Mailable
 
         // Tentukan tampilan yang akan digunakan berdasarkan apakah ada file yang di-attach
         $viewName = 'emails.notification';
-        if (isset($this->details['file_attachment']) && !empty($this->details['file_attachment'])) {
+        if ($this->pdfData && $this->fileName) {
             $viewName = 'emails.approved';
         } else if (isset($this->details['proposal_title']) && stripos($this->details['proposal_title'], 'LPJ') !== false) {
             $viewName = 'emails.notification-lpj';
@@ -36,17 +40,11 @@ class NotificationEmail extends Mailable
                       ->view($viewName)
                       ->with('details', $this->details);
 
-        // Lampirkan file jika ada
-        if (isset($this->details['file_attachment']) && !empty($this->details['file_attachment'])) {
-            $filePath = $this->details['file_attachment'];
-            if (file_exists($filePath)) {
-                $email->attach($filePath, [
-                    'as' => basename($filePath),
-                    'mime' => mime_content_type($filePath),
-                ]);
-            } else {
-                return false;
-            }
+        // Lampirkan data PDF jika ada
+        if ($this->pdfData && $this->fileName) {
+            $email->attachData($this->pdfData, $this->fileName, [
+                'mime' => 'application/pdf',
+            ]);
         }
 
         return $email;
