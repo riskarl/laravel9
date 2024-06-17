@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\File;
 use Barryvdh\DomPDF\Facade\Pdf;
 use App\Models\SetAnggaran;
 use Carbon\Carbon;
+use App\Models\User;
 
 class LpjController extends Controller
 {
@@ -425,7 +426,7 @@ class LpjController extends Controller
                 
             }
         }
-        
+
         $ketupel = [
             'name' => $proker->nama_ketupel,
             'nim' => $proker->nim_ketupel,
