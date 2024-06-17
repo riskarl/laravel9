@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Mail;
 
 use Illuminate\Bus\Queueable;
@@ -38,10 +39,14 @@ class NotificationEmail extends Mailable
         // Lampirkan file jika ada
         if (isset($this->details['file_attachment']) && !empty($this->details['file_attachment'])) {
             $filePath = $this->details['file_attachment'];
-            $email->attach($filePath, [
-                'as' => basename($filePath),
-                'mime' => mime_content_type($filePath),
-            ]);
+            if (file_exists($filePath)) {
+                $email->attach($filePath, [
+                    'as' => basename($filePath),
+                    'mime' => mime_content_type($filePath),
+                ]);
+            } else {
+                return false;
+            }
         }
 
         return $email;

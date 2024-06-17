@@ -429,6 +429,11 @@ class ProposalController extends Controller
         // Mengambil pengguna yang sesuai untuk notifikasi
         $user = $this->getUserForNotification($proker);
 
+          // Pastikan file pengesahan ada sebelum dikirim
+        if (!File::exists($filePath)) {
+            return redirect()->back()->with('error', 'File pengesahan tidak ditemukan.');
+        }
+
         // Kirim notifikasi email dengan lampiran file PDF
         $details = [
             'receiver_name' => $user->name,
@@ -439,8 +444,6 @@ class ProposalController extends Controller
         ];
 
         $sendEmail = $this->sendEmail($details, $user->email);
-
-        var_dump($sendEmail);die;
 
         if ($sendEmail) {
             return $pdf->stream('document.pdf');
