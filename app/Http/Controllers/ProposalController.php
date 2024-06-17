@@ -373,12 +373,12 @@ class ProposalController extends Controller
 
         $proposal = Proposal::find($proposalId);
         if (!$proposal) {
-            return redirect()->back()->with('error', 'Proposal not found');
+            return redirect()->back()->with('error', 'Proposal tidak ditemukan');
         }
 
         $proker = Proker::where('id', $proposal->id_proker)->first();
         if (!$proker) {
-            return redirect()->back()->with('error', 'Proker not found');
+            return redirect()->back()->with('error', 'Proker tidak ditemukan');
         }
 
         if (empty($proker->ttd_ketupel)) {
@@ -394,6 +394,7 @@ class ProposalController extends Controller
             'ttd' => public_path('ttd') . '/' . $proker->ttd_ketupel
         ];
 
+        // Pilih template PDF berdasarkan organisasi
         if ($organisasi == 'BEM') {
             $html = view('pdf.signatures', compact('signatures', 'namaKegiatan', 'ketupel'))->render();
         } elseif (stripos($organisasi, 'UKM') !== false) {
@@ -402,6 +403,7 @@ class ProposalController extends Controller
             $html = view('pdf.hima-signature', compact('signatures', 'namaKegiatan', 'ketupel'))->render();
         }
 
+        // Membuat PDF
         $pdf = Pdf::loadHTML($html)->setPaper('A4', 'portrait');
 
         $path = public_path('pengesahan');
@@ -409,21 +411,61 @@ class ProposalController extends Controller
             File::makeDirectory($path, 0755, true);
         }
 
-        // Cek apakah sudah ada file pengesahan sebelumnya, jika ada maka hapus
+        // Hapus file pengesahan lama jika ada
         $oldFilePath = public_path('pengesahan/' . $proposal->pengesahan);
         if (File::exists($oldFilePath)) {
             File::delete($oldFilePath);
         }
 
-        // Membuat nama file baru dengan UUID untuk memastikan unik
+        // Simpan PDF baru dengan nama file unik
         $fileName = Str::uuid() . '.pdf';
         $filePath = $path . '/' . $fileName;
-
         $pdf->save($filePath);
+
+        // Perbarui path pengesahan di database
         $proposal->pengesahan = $fileName;
         $proposal->save();
 
-        return $pdf->stream('document.pdf');
+        // Mengambil pengguna yang sesuai untuk notifikasi
+        $user = $this->getUserForNotification($proker);
+
+        // Kirim notifikasi email dengan lampiran file PDF
+        $details = [
+            'receiver_name' => $user->name,
+            'proposal_title' => 'Pemberitahuan Proposal Pengajuan Masuk',
+            'sender_name' => 'Tim IT',
+            'date' => now()->format('Y-m-d'),
+            'file_attachment' => $filePath
+        ];
+
+        $sendEmail = $this->sendEmail($details, $user->email);
+
+        if ($sendEmail) {
+            return $pdf->stream('document.pdf');
+        } else {
+            return redirect()->back()->with('error', 'Gagal mengirim email!');
+        }
+    }
+
+    private function getUserForNotification($proker)
+    {
+        $codeJabatan = 6; // Misalkan jabatan yang Anda tentukan
+        $statusFlow = 8; // Misalkan status flow yang Anda tentukan
+        $namaOrganisasi = $proker->organisasi->nama_organisasi;
+
+        return User::join('jabatan', 'users.jabatan_id', '=', 'jabatan.jabatan_id')
+            ->where('jabatan.code_jabatan', $codeJabatan)
+            ->when($statusFlow <= 8, function ($query) use ($namaOrganisasi) {
+                return $query->whereRaw('LOWER(users.organization) = ?', [strtolower($namaOrganisasi)]);
+            })
+            ->when($statusFlow <= 8, function ($query) {
+                return $query->whereRaw('LOWER(users.organization) LIKE ?', ['%bem%']);
+            })
+            ->when($statusFlow <= 8, function ($query) {
+                return $query->whereRaw('LOWER(users.organization) LIKE ?', ['%bpm%']);
+            })
+            ->select('users.email', 'users.name')
+            ->first();
     }
 
 }

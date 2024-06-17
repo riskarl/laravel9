@@ -513,7 +513,7 @@ class LpjController extends Controller
 
             $details = [
                 'receiver_name' => $nameTarget,
-                'proposal_title' => 'Pemberitahuan Proposal Pengajuan Masuk',
+                'proposal_title' => 'Pemberitahuan LPJ Pengajuan Masuk',
                 'sender_name' => 'Tim IT',
                 'date' => now()->format('Y-m-d')
             ];
@@ -616,6 +616,7 @@ class LpjController extends Controller
             'ttd' => public_path('ttd') . '/' . $proker->ttd_ketupel
         ];
 
+        // Pilih template berdasarkan organisasi
         if ($organisasi == 'BEM') {
             $html = view('pdf.signatures', compact('signatures', 'namaKegiatan', 'ketupel'))->render();
         } elseif (stripos($organisasi, 'UKM') !== false) {
@@ -624,6 +625,7 @@ class LpjController extends Controller
             $html = view('pdf.hima-signature', compact('signatures', 'namaKegiatan', 'ketupel'))->render();
         }
 
+        // Membuat PDF
         $pdf = Pdf::loadHTML($html)->setPaper('A4', 'portrait');
 
         $path = public_path('lpj');
@@ -631,21 +633,60 @@ class LpjController extends Controller
             File::makeDirectory($path, 0755, true);
         }
 
-        // Check if there is already an existing approval file, if so, delete it
+        // Hapus file pengesahan lama jika ada
         $oldFilePath = public_path('lpj/' . $lpj->pengesahan);
         if (File::exists($oldFilePath)) {
             File::delete($oldFilePath);
         }
 
+        // Simpan PDF baru dengan nama file unik
         $fileName = Str::uuid() . '.pdf';
         $newFilePath = $path . '/' . $fileName;
-
         $pdf->save($newFilePath);
+
+        // Perbarui path pengesahan di database
         $lpj->pengesahan = $fileName;
         $lpj->save();
 
-        return $pdf->stream('document.pdf');
+        // Mengambil pengguna untuk notifikasi
+        $user = $this->getUserForNotification($proker);
+
+        // Kirim email dengan menggunakan fungsi `sendEmail`
+        $details = [
+            'receiver_name' => $user->name,
+            'proposal_title' => 'Pemberitahuan Lembar Pertanggungjawaban',
+            'sender_name' => 'Tim IT',
+            'date' => now()->format('Y-m-d'),
+            'file_attachment' => $newFilePath
+        ];
+
+        $sendEmail = $this->sendEmail($details, $user->email);
+
+        if ($sendEmail) {
+            return $pdf->stream('document.pdf');
+        } else {
+            return redirect()->back()->with('error', 'Gagal mengirim email!');
+        }
     }
 
+    private function getUserForNotification($proker)
+    {
+        $codeJabatan = 6; // Misalkan jabatan yang Anda tentukan
+        $statusFlow = 8; // Misalkan status flow yang Anda tentukan
+        $namaOrganisasi = $proker->organisasi->nama_organisasi;
 
+        return User::join('jabatan', 'users.jabatan_id', '=', 'jabatan.jabatan_id')
+            ->where('jabatan.code_jabatan', $codeJabatan)
+            ->when($statusFlow <= 8, function ($query) use ($namaOrganisasi) {
+                return $query->whereRaw('LOWER(users.organization) = ?', [strtolower($namaOrganisasi)]);
+            })
+            ->when($statusFlow <= 8, function ($query) {
+                return $query->whereRaw('LOWER(users.organization) LIKE ?', ['%bem%']);
+            })
+            ->when($statusFlow <= 8, function ($query) {
+                return $query->whereRaw('LOWER(users.organization) LIKE ?', ['%bpm%']);
+            })
+            ->select('users.email', 'users.name')
+            ->first();
+    }
 }
