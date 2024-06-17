@@ -10,6 +10,7 @@ use Illuminate\Support\Str;
 use Illuminate\Support\Facades\File;
 use App\Models\User;
 use App\Models\Proker;
+use App\Models\MappingCheck;
 
 class UploadController extends Controller
 {
@@ -118,10 +119,10 @@ class UploadController extends Controller
         return redirect()->back()->with('success', 'File RAB berhasil diupload!');
     }
 
-    private function processStatusFlow($lpjId, $jabatanId, $organisasi, $jabatan, $namaOrganisasi)
+    private function processStatusFlow($proposalId, $jabatanId, $organisasi, $jabatan, $namaOrganisasi)
     {
-        $mappingCheckLpj = new MappingCheckLpj();
-        $signatures = $mappingCheckLpj->updateStatusFlowLpj($lpjId, $jabatanId, $organisasi, $jabatan);
+        $mappingCheck = new MappingCheck();
+        $signatures = $mappingCheck->updateStatusFlow($proposalId, $jabatanId, $organisasi, $jabatan);
         $status_flow = $signatures['status_flow'] == 0 ? $signatures['status_flow'] + 2 : $signatures['status_flow'] + 1;
         if ($signatures !== false) {
             $signatures = $this->filterTtdList($signatures['ttdList'], $jabatanId, $organisasi);
@@ -182,6 +183,41 @@ class UploadController extends Controller
         }
 
         return false;
+    }
+
+    private function filterTtdList($ttdList, $jabatanId, $organisasi)
+    {
+        foreach ($ttdList as &$ttd) {
+            $isMatch = false;
+    
+            if ($jabatanId == 5) {
+                if (stripos($organisasi, 'HIMA') !== false) {
+                    $isMatch = stripos($ttd['organisasi'], 'HIMA') !== false && $ttd['code_jabatan'] == 5;
+                } elseif (stripos($organisasi, 'UKM') !== false) {
+                    $isMatch = stripos($ttd['organisasi'], 'UKM') !== false && $ttd['code_jabatan'] == 5;
+                } elseif ($organisasi == 'BEM') {
+                    $isMatch = ($ttd['organisasi'] == 'BEM' || stripos($ttd['organisasi'], 'HIMA') !== false || stripos($ttd['organisasi'], 'UKM') !== false) && $ttd['code_jabatan'] == 5;
+                }elseif ($organisasi == 'BPM') {
+                    $isMatch = ($ttd['organisasi'] == 'BPM' || $ttd['organisasi'] == 'BEM' || stripos($ttd['organisasi'], 'HIMA') !== false || stripos($ttd['organisasi'], 'UKM') !== false) && $ttd['code_jabatan'] == 5;
+                }
+            } else if ($jabatanId == 4) {
+                $isMatch = $ttd['code_jabatan'] == 4 || $ttd['code_jabatan'] == 5;
+            } else if ($jabatanId == 8) {
+                $isMatch = $ttd['code_jabatan'] == 8 || $ttd['code_jabatan'] == 4 || $ttd['code_jabatan'] == 5;
+            } else if ($jabatanId == 3) {
+                $isMatch = $ttd['code_jabatan'] == 3 || $ttd['code_jabatan'] == 8 || $ttd['code_jabatan'] == 4 || $ttd['code_jabatan'] == 5;
+            } else if ($jabatanId == 2) {
+                $isMatch = ($ttd['code_jabatan'] == 2 || $ttd['code_jabatan'] == 3 || $ttd['code_jabatan'] == 8 || $ttd['code_jabatan'] == 4 || $ttd['code_jabatan'] == 5) && $ttd['role'] != 1;
+            } else if ($jabatanId == 1) {
+                $isMatch = $ttd['code_jabatan'] == 2 || $ttd['code_jabatan'] == 2 || $ttd['code_jabatan'] == 3 || $ttd['code_jabatan'] == 8 || $ttd['code_jabatan'] == 4 || $ttd['code_jabatan'] == 5;
+            }
+            // Jika tidak cocok, setel semua atribut ke null
+            if (!$isMatch) {
+                $ttd = array_fill_keys(array_keys($ttd), null);
+            }
+        }
+    
+        return $ttdList;
     }
 
 }
