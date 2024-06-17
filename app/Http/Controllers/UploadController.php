@@ -9,6 +9,7 @@ use App\Models\Proposal;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\File;
 use App\Models\User;
+use App\Models\Proker;
 
 class UploadController extends Controller
 {
