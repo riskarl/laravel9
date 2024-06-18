@@ -414,12 +414,13 @@ class ProposalController extends Controller
         // Detail untuk email
         $details = [
             'receiver_name' => $user->name,
-            'proposal_title' => 'Pemberitahuan Proposal Pengajuan Masuk',
+            'proposal_title' => 'Proposal Approval',
             'sender_name' => 'Tim IT',
             'file_type' => 'Proposal Document/pdf',
-            'file_title' => 'Proposal Approval',
-            'date' => now()->format('Y-m-d'),
+            'file_title' => 'Pemberitahuan Proposal Pengajuan Masuk',
+            'approval_date' => now()->format('Y-m-d'),
         ];
+        
 
         // Memanggil fungsi sendPdfEmail dengan parameter yang benar
         $sendEmailSuccess = $this->sendPdfEmail($user->email, $pdfData, $details);
