@@ -73,9 +73,11 @@ class AnggaranController extends Controller
 
         // Query data LPJ yang hanya berada dalam rentang waktu yang berjalan
         $query = LPJ::with(['proker.organisasi'])
-                    ->whereNotNull('file_lpj')
-                    ->whereNotNull('dana_disetujui')
-                    ->whereBetween('created_at', [$tglSetAnggaran, $endDate]); // Filter by created_at
+            ->whereNotNull('file_lpj')
+            ->whereNotNull('dana_disetujui')
+            ->whereHas('proker', function($q) use ($tglSetAnggaran, $endDate) {
+                $q->whereBetween('created_at', [$tglSetAnggaran, $endDate]);
+            }); // Filter by created_at
 
         $lpjData = $query->get();
 
