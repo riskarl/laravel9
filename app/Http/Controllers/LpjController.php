@@ -627,6 +627,7 @@ class LpjController extends Controller
 
         // Membuat PDF
         $pdf = Pdf::loadHTML($html)->setPaper('A4', 'portrait');
+        $pdfData = $pdf->output();
 
         $path = public_path('lpj');
         if (!File::exists($path)) {
