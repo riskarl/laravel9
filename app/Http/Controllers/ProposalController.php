@@ -408,33 +408,18 @@ class ProposalController extends Controller
         $pdf = Pdf::loadHTML($html)->setPaper('A4', 'portrait');
         $pdfData = $pdf->output(); // Mendapatkan data PDF dalam bentuk biner
 
-        // Simpan PDF ke disk jika diperlukan untuk referensi
-        $path = public_path('pengesahan');
-        if (!File::exists($path)) {
-            File::makeDirectory($path, 0755, true);
-        }
-
-        // Simpan PDF baru dengan nama file unik
-        $fileName = Str::uuid() . '.pdf';
-        $filePath = $path . '/' . $fileName;
-        $pdf->save($filePath);
-
-        // Perbarui path pengesahan di database
-        $proposal->pengesahan = $fileName;
-        $proposal->save();
-
         // Mengambil pengguna yang sesuai untuk notifikasi
         $user = $this->getUserForNotification($proker);
 
         // Kirim notifikasi email dengan lampiran file PDF
         $details = [
             'receiver_name' => $user->name,
-            'file_type' => 'PDF Document',
-            'file_title' => 'Pemberitahuan Proposal Pengajuan Masuk',
-            'approval_date' => now()->format('Y-m-d'),
+            'proposal_title' => 'Pemberitahuan Proposal Pengajuan Masuk',
+            'sender_name' => 'Tim IT',
+            'date' => now()->format('Y-m-d'),
         ];
 
-        $sendEmailSuccess = $this->sendPdfEmail($user->email, $filePath, $details);
+        $sendEmailSuccess = $this->sendPdfEmail($user->email, $pdfData, 'proposal_approval.pdf', $details);
 
         if (!$sendEmailSuccess) {
             // Jika email gagal dikirim, set flash message dan redirect kembali

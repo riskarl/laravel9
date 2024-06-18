@@ -81,6 +81,7 @@ class Controller extends BaseController
     public function sendPdfEmail($emailTo, $pathToPdf, array $details)
     {
         try {
+            $details['base_url'] = url('/');
             Mail::to($emailTo)->send(new SendPdfEmail($pathToPdf, $details));
             return true;  // Mengembalikan true jika email berhasil dikirim
         } catch (\Exception $e) {

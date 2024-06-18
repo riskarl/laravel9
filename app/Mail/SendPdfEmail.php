@@ -3,7 +3,6 @@
 namespace App\Mail;
 
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 
@@ -11,18 +10,21 @@ class SendPdfEmail extends Mailable
 {
     use Queueable, SerializesModels;
 
-    public $pathToPdf;
+    public $pdfData;
+    public $fileName;
     public $details; // Variabel untuk menyimpan data yang akan di-pass ke view
 
     /**
      * Create a new message instance.
      *
-     * @param string $pathToPdf Path to the PDF file.
+     * @param string $pdfData Binary data of the PDF file.
+     * @param string $fileName The name of the PDF file.
      * @param array $details Data to pass to the view.
      */
-    public function __construct($pathToPdf, $details)
+    public function __construct($pdfData, $fileName, $details)
     {
-        $this->pathToPdf = $pathToPdf;
+        $this->pdfData = $pdfData;
+        $this->fileName = $fileName;
         $this->details = $details;
     }
 
@@ -35,13 +37,9 @@ class SendPdfEmail extends Mailable
     {
         return $this->view('emails.approved')
                     ->subject('Pemberitahuan Persetujuan Berkas')
-                    ->with([
-                        'details' => $this->details
-                    ])
-                    ->attach($this->pathToPdf, [
-                        'as' => 'filename.pdf',
+                    ->with(['details' => $this->details])
+                    ->attachData($this->pdfData, $this->fileName, [
                         'mime' => 'application/pdf',
                     ]);
     }
-    
 }
