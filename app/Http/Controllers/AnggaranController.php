@@ -29,67 +29,67 @@ class AnggaranController extends Controller
         $jabatanId = $currentUser['jabatan_id'];
         $org = $currentUser['organisasi'];
         $TA = SetAnggaran::all();
-    
+        
         // Dapatkan data SetAnggaran terbaru
         $setAnggaran = SetAnggaran::orderBy('updated_at', 'desc')->first();
         if (!$setAnggaran) {
-            session()->flash('error', 'Tidak ada data anggaran yang ditemukan.');
+            Session::flash('error', 'Tidak ada data anggaran yang ditemukan.');
             return view('anggaran-organisasi', [
-                'anggaran' => collect([]),
+                'anggaran' => collect([]), // Koleksi kosong jika tidak ada data
                 'totalAnggaran' => $TA,
             ]);
         }
-    
+
         // Ambil tanggal mulai periode dari data SetAnggaran
         $tglSetAnggaran = $setAnggaran->tgl_mulai_periode;
         if (!$tglSetAnggaran) {
-            session()->flash('error', 'Tanggal mulai periode tidak ditemukan pada data anggaran.');
+            Session::flash('error', 'Tanggal mulai periode tidak ditemukan pada data anggaran.');
             return view('anggaran-organisasi', [
-                'anggaran' => collect([]),
+                'anggaran' => collect([]), // Koleksi kosong jika tidak ada data
                 'totalAnggaran' => $TA,
             ]);
         }
-    
+
         $periode = $setAnggaran->jenis_periode; // 'bulan' atau 'tahun'
         $total_periode = $setAnggaran->total_periode;
         $totalAnggaran = $setAnggaran->total_anggaran; // Dapatkan total_anggaran
-    
+
         // Menggunakan Carbon untuk mengatur tanggal akhir periode
         $endDate = $periode == 'bulan' 
             ? Carbon::parse($tglSetAnggaran)->addMonths($total_periode) 
             : Carbon::parse($tglSetAnggaran)->addYears($total_periode);
-    
+
         // Tanggal dan waktu sekarang
         $currentDate = Carbon::now();
-    
+
         // Memastikan kita berada dalam rentang periode yang sesuai (>= tanggal mulai dan <= tanggal akhir)
         if ($currentDate->lt(Carbon::parse($tglSetAnggaran)) || $currentDate->gt($endDate)) {
-            session()->flash('error', 'Tidak ada data anggaran yang berlaku untuk periode ini.');
+            Session::flash('error', 'Tidak ada data anggaran yang berlaku untuk periode ini.');
             return view('anggaran-organisasi', [
-                'anggaran' => collect([]),
+                'anggaran' => collect([]), // Koleksi kosong jika tidak ada data valid dalam rentang periode
                 'totalAnggaran' => $TA,
             ]);
         }
-    
+
         // Query data LPJ yang hanya berada dalam rentang waktu yang berjalan
         $query = LPJ::with(['proker.organisasi'])
                     ->whereNotNull('file_lpj')
                     ->whereNotNull('dana_disetujui')
-                    ->whereBetween('created_at', [$tglSetAnggaran, $endDate]);
-    
+                    ->whereBetween('created_at', [$tglSetAnggaran, $endDate]); // Filter by created_at
+
         $lpjData = $query->get();
-    
+
         // Variabel untuk menyimpan total sisa anggaran
         $totalSisaAnggaran = $totalAnggaran;
-    
+
         // Memproses data untuk tampilan
         $data = $lpjData->map(function($lpj) use (&$totalSisaAnggaran) {
             $totalAnggaranOrganisasi = $lpj->proker->organisasi->anggarans->sum('total_anggaran');
             $sisaAnggaran = $totalAnggaranOrganisasi - $lpj->dana_disetujui;
-    
+
             // Mengurangi total sisa anggaran dengan dana disetujui
             $totalSisaAnggaran -= $lpj->dana_disetujui;
-    
+
             return [
                 'id' => $lpj->id,
                 'nama_organisasi' => $lpj->proker->organisasi->nama_organisasi,
@@ -100,23 +100,21 @@ class AnggaranController extends Controller
                 'total_sisa_anggaran' => $totalSisaAnggaran, // Total sisa anggaran setelah pengurangan bertahap
             ];
         });
-    
+
         // Filter data berdasarkan organisasi jika bukan admin
-        if ($jabatanId != 1) {
+        if ($jabatanId != 1) { // Asumsikan jabatan ID 1 adalah admin
             $dataFiltered = $data->filter(function($item) use ($org) {
                 return $item['nama_organisasi'] == $org;
             });
         } else {
             $dataFiltered = $data;
         }
-    
+
         return view('anggaran-organisasi', [
             'anggaran' => $dataFiltered,
             'totalAnggaran' => $TA,
         ]);
     }
-    
-
 
     public function store(Request $request)
     {
