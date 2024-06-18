@@ -251,14 +251,63 @@ class ProkerController extends Controller
 
     public function ShowLaporanProker()
     {
-        $listproker = Proker::all();
+        // Mengambil data organisasi
         $organisasi = Organisasi::all();
-        $uniqueOrganisasi = Organisasi::whereHas('proker')
-            ->pluck('nama_organisasi')
-            ->unique();
 
-        // Kemudian kirimkan variabel $uniqueOrganisasi ke view
-        return view('laporan-proker', ['listproker' => $listproker, 'uniqueOrganisasi' => $uniqueOrganisasi, 'organisasi' => $organisasi]);
+        // Ambil data SetAnggaran terbaru
+        $setAnggaran = SetAnggaran::orderBy('updated_at', 'desc')->first();
+        if (!$setAnggaran) {
+            session()->flash('error', 'Tidak ada data anggaran yang ditemukan.');
+            return view('laporan-proker', [
+                'listproker' => collect([]), // Koleksi kosong jika tidak ada data
+                'uniqueOrganisasi' => collect([]),
+                'organisasi' => $organisasi
+            ]);
+        }
+
+        // Ambil tanggal mulai periode dari data SetAnggaran
+        $tglSetAnggaran = $setAnggaran->tgl_mulai_periode;
+        if (!$tglSetAnggaran) {
+            session()->flash('error', 'Tanggal mulai periode tidak ditemukan pada data anggaran.');
+            return view('laporan-proker', [
+                'listproker' => collect([]), // Koleksi kosong jika tidak ada data
+                'uniqueOrganisasi' => collect([]),
+                'organisasi' => $organisasi
+            ]);
+        }
+
+        // Menentukan periode akhir
+        $periode = $setAnggaran->jenis_periode; // 'bulan' atau 'tahun'
+        $total_periode = $setAnggaran->total_periode;
+        $endDate = $periode == 'bulan' 
+            ? Carbon::parse($tglSetAnggaran)->addMonths($total_periode)
+            : Carbon::parse($tglSetAnggaran)->addYears($total_periode);
+
+        // Tanggal dan waktu sekarang
+        $currentDate = Carbon::now();
+
+        // Memastikan kita berada dalam rentang periode yang sesuai (>= tanggal mulai dan <= tanggal akhir)
+        if ($currentDate->lt(Carbon::parse($tglSetAnggaran)) || $currentDate->gt($endDate)) {
+            session()->flash('error', 'Tidak ada data proker yang berlaku untuk periode ini.');
+            return view('laporan-proker', [
+                'listproker' => collect([]), // Koleksi kosong jika tidak ada data valid dalam rentang periode
+                'uniqueOrganisasi' => collect([]),
+                'organisasi' => $organisasi
+            ]);
+        }
+
+        // Filter data Proker yang berada dalam rentang periode aktif
+        $listproker = Proker::whereBetween('created_at', [$tglSetAnggaran, $endDate])->get();
+        $uniqueOrganisasi = Organisasi::whereHas('proker', function ($query) use ($tglSetAnggaran, $endDate) {
+            $query->whereBetween('created_at', [$tglSetAnggaran, $endDate]);
+        })->pluck('nama_organisasi')->unique();
+
+        // Kirimkan data ke view
+        return view('laporan-proker', [
+            'listproker' => $listproker,
+            'uniqueOrganisasi' => $uniqueOrganisasi,
+            'organisasi' => $organisasi
+        ]);
     }
 
     public function cetakLaporan(Request $request)
