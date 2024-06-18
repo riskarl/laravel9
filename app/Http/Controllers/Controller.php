@@ -82,7 +82,6 @@ class Controller extends BaseController
     {
         try {
             $details['base_url'] = url('/');
-            $details['file_type'] = 'document/pdf';
             Mail::to($emailTo)->send(new SendPdfEmail($pdfData, 'proposal_approval.pdf', $details));
             return true;  // Mengembalikan true jika email berhasil dikirim
         } catch (\Exception $e) {

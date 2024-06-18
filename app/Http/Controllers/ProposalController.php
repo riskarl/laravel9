@@ -416,6 +416,8 @@ class ProposalController extends Controller
             'receiver_name' => $user->name,
             'proposal_title' => 'Pemberitahuan Proposal Pengajuan Masuk',
             'sender_name' => 'Tim IT',
+            'file_type' => 'Proposal Document/pdf',
+            'file_title' => 'Proposal Approval',
             'date' => now()->format('Y-m-d'),
         ];
 
