@@ -414,12 +414,6 @@ class ProposalController extends Controller
             File::makeDirectory($path, 0755, true);
         }
 
-        // Hapus file pengesahan lama jika ada
-        $oldFilePath = public_path('pengesahan/' . $proposal->pengesahan);
-        if (File::exists($oldFilePath)) {
-            File::delete($oldFilePath);
-        }
-
         // Simpan PDF baru dengan nama file unik
         $fileName = Str::uuid() . '.pdf';
         $filePath = $path . '/' . $fileName;
@@ -435,34 +429,21 @@ class ProposalController extends Controller
         // Kirim notifikasi email dengan lampiran file PDF
         $details = [
             'receiver_name' => $user->name,
-            'proposal_title' => 'Pemberitahuan Proposal Pengajuan Masuk',
-            'sender_name' => 'Tim IT',
-            'date' => now()->format('Y-m-d'),
-            // 'file_attachment' => $filePath // Tidak digunakan lagi karena file dilampirkan langsung
+            'file_type' => 'PDF Document',
+            'file_title' => 'Pemberitahuan Proposal Pengajuan Masuk',
+            'approval_date' => now()->format('Y-m-d'),
         ];
 
-        $sendEmail = $this->sendEmailWithAttachment($details, $user->email, $pdfData, $fileName);
+        $sendEmailSuccess = $this->sendPdfEmail($user->email, $filePath, $details);
 
-        if ($sendEmail) {
-            return $pdf->stream('document.pdf');
-        } else {
+        if (!$sendEmailSuccess) {
+            // Jika email gagal dikirim, set flash message dan redirect kembali
             return redirect()->back()->with('error', 'Gagal mengirim email!');
         }
+
+        return $pdf->stream('document.pdf');
     }
 
-    private function sendEmailWithAttachment(array $details, string $recipientEmail, string $pdfData, string $fileName)
-    {
-        // Tambahkan base_url ke details
-        $details['base_url'] = url('/');
-
-        try {
-            Mail::to($recipientEmail)->send(new NotificationEmail($details, $pdfData, $fileName));
-            return true;
-        } catch (\Exception $e) {
-            \Log::error('Error sending email: ' . $e->getMessage());
-            return false;
-        }
-    }
 
     private function getUserForNotification($proker)
     {

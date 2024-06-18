@@ -76,5 +76,17 @@ class Controller extends BaseController
             return false;
         }
     }
+
+    public function sendPdfEmail($emailTo, $pathToPdf, array $details)
+    {
+        try {
+            Mail::to($emailTo)->send(new SendPdfEmail($pathToPdf, $details));
+            return true;  // Mengembalikan true jika email berhasil dikirim
+        } catch (\Exception $e) {
+            \Log::error("Error sending email: " . $e->getMessage());
+            return false;  // Mengembalikan false jika terjadi kesalahan
+        }
+    }
+
     
 }
