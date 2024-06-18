@@ -648,25 +648,28 @@ class LpjController extends Controller
         $lpj->pengesahan = $fileName;
         $lpj->save();
 
-        // Mengambil pengguna untuk notifikasi
+        // Mengambil pengguna yang sesuai untuk notifikasi
         $user = $this->getUserForNotification($proker);
 
-        // Kirim email dengan menggunakan fungsi `sendEmail`
+        // Detail untuk email
         $details = [
             'receiver_name' => $user->name,
-            'proposal_title' => 'Pemberitahuan Lembar Pertanggungjawaban',
+            'proposal_title' => 'Proposal Approval',
             'sender_name' => 'Tim IT',
-            'date' => now()->format('Y-m-d'),
-            'file_attachment' => $newFilePath
+            'file_type' => 'Proposal Document/pdf',
+            'file_title' => 'Pemberitahuan Proposal Pengajuan Masuk',
+            'approval_date' => now()->format('Y-m-d'),
         ];
+        
 
-        $sendEmail = $this->sendEmail($details, $user->email);
+        // Memanggil fungsi sendPdfEmail dengan parameter yang benar
+        $sendEmailSuccess = $this->sendPdfEmail($user->email, $pdfData, $details);
 
-        if ($sendEmail) {
-            return $pdf->stream('document.pdf');
-        } else {
+        if (!$sendEmailSuccess) {
             return redirect()->back()->with('error', 'Gagal mengirim email!');
         }
+
+        return $pdf->stream('document.pdf');
     }
 
     private function getUserForNotification($proker)
