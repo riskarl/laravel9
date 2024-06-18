@@ -8,16 +8,67 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Validator;
+use App\Models\SetAnggaran;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\Session;
 
 class RabController extends Controller
 {
     public function index()
     {
         $currentUser = $this->getCurrentUser();
-        $proker = Proker::with('rab')->get();
         $organisasiUser = $currentUser['organisasi'];
+
+        // Dapatkan data SetAnggaran terbaru
+        $setAnggaran = SetAnggaran::orderBy('updated_at', 'desc')->first();
+        if (!$setAnggaran) {
+            Session::flash('error', 'Tidak ada data anggaran yang ditemukan.');
+            return view('upload-rab', [
+                'listproker' => collect([]), // Koleksi kosong jika tidak ada data
+                'orguser' => $organisasiUser,
+            ]);
+        }
+
+        // Ambil tanggal mulai periode dari data SetAnggaran
+        $tglSetAnggaran = $setAnggaran->tgl_mulai_periode;
+        if (!$tglSetAnggaran) {
+            Session::flash('error', 'Tanggal mulai periode tidak ditemukan pada data anggaran.');
+            return view('upload-rab', [
+                'listproker' => collect([]), // Koleksi kosong jika tidak ada data
+                'orguser' => $organisasiUser,
+            ]);
+        }
+
+        $periode = $setAnggaran->jenis_periode; // 'bulan' atau 'tahun'
+        $total_periode = $setAnggaran->total_periode;
+
+        // Menggunakan Carbon untuk mengatur tanggal akhir periode
+        $endDate = $periode == 'bulan' 
+            ? Carbon::parse($tglSetAnggaran)->addMonths($total_periode) 
+            : Carbon::parse($tglSetAnggaran)->addYears($total_periode);
+
+        // Tanggal dan waktu sekarang
+        $currentDate = Carbon::now();
+
+        // Memastikan kita berada dalam rentang periode yang sesuai (>= tanggal mulai dan <= tanggal akhir)
+        if ($currentDate->lt(Carbon::parse($tglSetAnggaran)) || $currentDate->gt($endDate)) {
+            Session::flash('error', 'Tidak ada data proker yang berlaku untuk periode ini.');
+            return view('upload-rab', [
+                'listproker' => collect([]), // Koleksi kosong jika tidak ada data valid dalam rentang periode
+                'orguser' => $organisasiUser,
+            ]);
+        }
+
+        // Query data Proker yang berada dalam rentang waktu yang berjalan
+        $proker = Proker::with('rab')
+                        ->whereBetween('created_at', [$tglSetAnggaran, $endDate])
+                        ->get();
+
         // Mengirim data pengguna ke view 'upload-rab'
-        return view('upload-rab', ['listproker' => $proker, 'orguser' => $organisasiUser]);
+        return view('upload-rab', [
+            'listproker' => $proker,
+            'orguser' => $organisasiUser,
+        ]);
     }
 
     public function unduhsrpd()
