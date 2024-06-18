@@ -405,13 +405,13 @@ class ProposalController extends Controller
         }
 
         // Membuat PDF di memori
-        $pdf = Pdf::loadHTML($html)->setPaper('A4', 'portrait');
+        $pdf = PDF::loadHTML($html)->setPaper('A4', 'portrait');
         $pdfData = $pdf->output(); // Mendapatkan data PDF dalam bentuk biner
 
         // Mengambil pengguna yang sesuai untuk notifikasi
         $user = $this->getUserForNotification($proker);
 
-        // Kirim notifikasi email dengan lampiran file PDF
+        // Detail untuk email
         $details = [
             'receiver_name' => $user->name,
             'proposal_title' => 'Pemberitahuan Proposal Pengajuan Masuk',
@@ -419,10 +419,10 @@ class ProposalController extends Controller
             'date' => now()->format('Y-m-d'),
         ];
 
-        $sendEmailSuccess = $this->sendPdfEmail($user->email, $pdfData, 'proposal_approval.pdf', $details);
+        // Memanggil fungsi sendPdfEmail dengan parameter yang benar
+        $sendEmailSuccess = $this->sendPdfEmail($user->email, $pdfData, $details);
 
         if (!$sendEmailSuccess) {
-            // Jika email gagal dikirim, set flash message dan redirect kembali
             return redirect()->back()->with('error', 'Gagal mengirim email!');
         }
 

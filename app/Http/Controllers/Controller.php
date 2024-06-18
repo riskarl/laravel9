@@ -78,17 +78,15 @@ class Controller extends BaseController
         }
     }
 
-    public function sendPdfEmail($emailTo, $pathToPdf, array $details)
+    public function sendPdfEmail($emailTo, $pdfData, array $details)
     {
         try {
             $details['base_url'] = url('/');
-            Mail::to($emailTo)->send(new SendPdfEmail($pathToPdf, $details));
+            Mail::to($emailTo)->send(new SendPdfEmail($pdfData, 'proposal_approval.pdf', $details));
             return true;  // Mengembalikan true jika email berhasil dikirim
         } catch (\Exception $e) {
             \Log::error("Error sending email: " . $e->getMessage());
             return false;  // Mengembalikan false jika terjadi kesalahan
         }
     }
-
-    
 }

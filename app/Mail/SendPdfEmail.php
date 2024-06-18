@@ -12,7 +12,7 @@ class SendPdfEmail extends Mailable
 
     public $pdfData;
     public $fileName;
-    public $details; // Variabel untuk menyimpan data yang akan di-pass ke view
+    public $details;
 
     /**
      * Create a new message instance.
@@ -21,7 +21,7 @@ class SendPdfEmail extends Mailable
      * @param string $fileName The name of the PDF file.
      * @param array $details Data to pass to the view.
      */
-    public function __construct($pdfData, $fileName, $details)
+    public function __construct($pdfData, $fileName, array $details)
     {
         $this->pdfData = $pdfData;
         $this->fileName = $fileName;
