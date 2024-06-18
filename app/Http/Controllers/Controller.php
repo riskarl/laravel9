@@ -10,6 +10,7 @@ use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\NotificationEmail;
+use App\Mail\sendPdfEmail;
 
 class Controller extends BaseController
 {
