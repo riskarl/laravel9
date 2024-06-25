@@ -92,12 +92,7 @@ class LpjController extends Controller
 
     public function indexlpj()
     {
-        $proker = Proker::with(['lpj'])
-            ->whereHas('lpj', function ($query) {
-                $query->where('status_flow_lpj', 9);
-            })
-            ->get(); // Mengambil hasil query
-        return view('lihat-lpj',['listproker' => $proker]);
+        return view('lihat-lpj');
     }
 
     public function pengecekanlpj()
@@ -395,9 +390,6 @@ class LpjController extends Controller
             Session::flash('error', 'LPJ file not found.');
             return redirect()->back();
         }
-
-        $mappingCheckLpj = new MappingCheckLpj();
-        $signatures = $mappingCheckLpj->updateStatusFlowLpj($lpjId, $jabatanId, $organisasi, $jabatan);
     
         $proker = Proker::where('id', $lpj->id_proker)->first();
         if (!$proker) {
