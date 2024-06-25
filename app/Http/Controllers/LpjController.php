@@ -373,61 +373,101 @@ class LpjController extends Controller
         $jabatanId = $currentUser['code_jabatan'];
         $jabatan = $currentUser['jabatan'];
         $organisasi = $currentUser['organisasi'];
-    
-        $lpjFolderPath = public_path('lpj');
-        if (!File::exists($lpjFolderPath)) {
-            File::makeDirectory($lpjFolderPath, 0755, true);
-        }
-    
+
         $lpj = LPJ::with('proker.organisasi')->find($lpjId);
         if (!$lpj) {
             Session::flash('error', 'LPJ not found.');
             return redirect()->back();
         }
-    
+
         $filePath = public_path('lpj/' . $lpj->file_lpj);
         if (!File::exists($filePath)) {
             Session::flash('error', 'LPJ file not found.');
             return redirect()->back();
         }
-    
+
         $proker = Proker::where('id', $lpj->id_proker)->first();
         if (!$proker) {
             return redirect()->back()->with('error', 'Proker not found');
         }
-    
+
         if (empty($proker->ttd_ketupel)) {
             return redirect()->back()->with('error', 'TTD Ketupel tidak lengkap');
         }
-    
-        $namaOrganisasi = $proker->organisasi->nama_organisasi;
-        
-        $user = $this->processStatusFlow($lpjId, $jabatanId, $organisasi, $jabatan, $namaOrganisasi);
+
         $mappingCheckLpj = new MappingCheckLpj();
         $signatures = $mappingCheckLpj->updateStatusFlowLpj($lpjId, $jabatanId, $organisasi, $jabatan);
+
         if ($signatures !== false) {
+            $status_flow = $signatures['status_flow'] == 0 ? $signatures['status_flow'] + 2 : $signatures['status_flow'] + 1;
             $signatures = $this->filterTtdList($signatures['ttdList'], $jabatanId, $organisasi);
-        }
-    
-        if ($user) {
-            $result = $this->sendNotificationEmail($user);
-    
-            if ($result) {
-                Session::flash('success', 'Email has been sent.');
-            } else {
-                Session::flash('error', 'Failed to sent the email.');
-                return redirect()->back();
+
+            $namaOrganisasi = $proker->organisasi->nama_organisasi;
+            
+            $status_code_mapping = [
+                0 => 6, // SEKRETARIS
+                1 => 6, // REVISI
+                2 => stripos($namaOrganisasi, 'UKM') !== false ? 5 : 5, // KETUA UKM atau KETUA HIMA
+                3 => 5, // KETUA BEM
+                4 => 5, // KETUA BPM
+                5 => 4, // PEMBINA
+                6 => 8, // KETUA PRODI
+                7 => 3, // KETUA JURUSAN
+                8 => 2, // KOORDINATOR SUB BAGIAN
+                9 => 1  // WAKIL DIREKTUR
+            ];
+            
+            $codeJabatan = $status_code_mapping[$status_flow] ?? null;
+            
+            if ($codeJabatan !== null) {
+                $user = User::join('jabatan', 'users.jabatan_id', '=', 'jabatan.jabatan_id')
+                ->where('jabatan.code_jabatan', $codeJabatan)
+                ->when($status_flow == 2, function($query) use ($namaOrganisasi) {
+                    return $query->whereRaw('LOWER(users.organization) = ?', [strtolower($namaOrganisasi)]);
+                })
+                ->when($status_flow == 3, function($query) {
+                    return $query->whereRaw('LOWER(users.organization) LIKE ?', ['%bem%']);
+                })
+                ->when($status_flow == 4, function($query) {
+                    return $query->whereRaw('LOWER(users.organization) LIKE ?', ['%bpm%']);
+                })
+                ->select('users.email', 'users.name')
+                ->first();
+        
+                if ($user) {
+                    $emailTarget = $user->email;
+                    $nameTarget = $user->name;
+
+                    //penggunaan sistem Email
+                    $details = [
+                        'receiver_name' => $nameTarget,
+                        'proposal_title' => 'Pemberitahuan LPJ Pengajuan Masuk',
+                        'sender_name' => 'Tim IT',
+                        'date' => now()->format('Y-m-d')
+                    ];
+                            
+                    $recipientEmail = $emailTarget;
+                    
+                    $result = $this->sendEmail($details, $recipientEmail);
+                    
+                    if ($result) {
+                        Session::flash('success', 'Email has been sent.');
+                    } else {
+                        Session::flash('error', 'Failed to sent the email.');
+                        return redirect()->back();
+                    }
+                }
             }
         }
-    
+
         $ketupel = [
             'name' => $proker->nama_ketupel,
             'nim' => $proker->nim_ketupel,
             'ttd' => public_path('ttd') . '/' . $proker->ttd_ketupel
         ];
-    
+
         $namaKegiatan = $proker->nama_proker;
-    
+
         if ($proker->organisasi->nama_organisasi == 'BEM') {
             $html = view('pdf.signatures', compact('signatures', 'namaKegiatan', 'ketupel'))->render();
         } elseif (stripos($proker->organisasi->nama_organisasi, 'UKM') !== false) {
@@ -435,35 +475,36 @@ class LpjController extends Controller
         } else {
             $html = view('pdf.hima-signature', compact('signatures', 'namaKegiatan', 'ketupel'))->render();
         }
-    
+
         $pdf = Pdf::loadHTML($html)->setPaper('A4', 'portrait');
-    
+
         $path = public_path('lpj');
         if (!File::exists($path)) {
             File::makeDirectory($path, 0755, true);
         }
-    
+
+        // Cek apakah sudah ada file pengesahan sebelumnya, jika ada maka hapus
         $oldFilePath = public_path('lpj/' . $lpj->pengesahan);
         if (File::exists($oldFilePath)) {
             File::delete($oldFilePath);
         }
-    
+
         $fileName = Str::uuid() . '.pdf';
         $newFilePath = $path . '/' . $fileName;
-    
+
         $pdf->save($newFilePath);
         $lpj->pengesahan = $fileName;
         $save = $lpj->save();
-    
+
         if ($signatures != false && $save) {
             Session::flash('success', 'LPJ has been successfully approved.');
         } else {
             Session::flash('error', 'Failed to approve the LPJ.');
         }
-    
+
         return redirect()->back();
     }
-    
+
 
     private function processStatusFlow($lpjId, $jabatanId, $organisasi, $jabatan, $namaOrganisasi)
     {
