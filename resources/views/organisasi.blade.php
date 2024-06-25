@@ -2,12 +2,25 @@
 
 @section('kontainer')
 
+<head>
+  <style>
+    .btn-margin-left {
+      margin-left: 10px;
+    }
+    .btn-large {
+      padding: 6px 12px; /* Sesuaikan padding untuk memperbesar ukuran tombol */
+      font-size: 1rem; /* Sesuaikan ukuran font untuk memperbesar teks tombol */
+    }
+  </style>
+</head>
+
+
 <div class="row">
     <div class="col-lg-12 mb-4">
       <!-- Simple Tables -->
       <div class="card">
         <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-          <h6 class="m-0 font-weight-bold text-primary">Manajemen Organisasi</h6>
+          <h4 class="m-0 font-weight-bold text-primary">Manajemen Organisasi</h4>
         </div>
         @if(session('success'))
         <div class="alert alert-success">
@@ -15,8 +28,8 @@
         </div>
         @endif
         <div class="table-responsive">
-          <table class="table align-items-center table-flush">
-            <a href="{{ url('/organisasi/create') }}" class="btn btn-primary btn-sm" title="Tambah Organisasi">
+          <table id="myDataTable" class="table align-items-center table-flush">
+            <a href="{{ url('/organisasi/create') }}" class="btn btn-primary btn-sm btn-margin-left btn-large" title="Tambah Organisasi">
               Tambah Organisasi
             </a>
             <thead class="thead-light">

@@ -12,6 +12,8 @@
   <link href="{{ asset('AdminLTE') }}/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
   <link href="{{ asset('AdminLTE') }}/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css">
   <link href="{{ asset('AdminLTE') }}/css/ruang-admin.min.css" rel="stylesheet">
+
+  <link rel="stylesheet" href="https://cdn.datatables.net/2.0.8/css/dataTables.dataTables.css">
 </head>
 
 <body id="page-top">
@@ -319,6 +321,12 @@
       function openLogoutModal() {
           $('#logoutModal').modal('show'); // Menampilkan modal
       }
+  </script>
+  <script src="https://cdn.datatables.net/2.0.8/js/dataTables.js"></script>
+  <script>
+      $(document).ready( function (){
+        $('#myDataTable').DataTable();
+      });
   </script>
   </body>
   

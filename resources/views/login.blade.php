@@ -2,7 +2,6 @@
 <html lang="en">
 
 <head>
-
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -15,50 +14,60 @@
   <link href="{{ asset('AdminLTE') }}/css/ruang-admin.min.css" rel="stylesheet">
   <style>
     .center {
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
-    width: 30%;
+      display: block;
+      margin-top: 20px;
+      margin-left: auto;
+      margin-right: auto;
+      width: 30%;
     }
-    </style>
+
+    .login-form .form-group {
+      position: relative;
+    }
+
+    .right-align {
+      position: absolute;
+      right: 0;
+      bottom: -20px;
+      font-size: 18px; /* Sesuaikan ukuran font jika diperlukan */
+    }
+  </style>
 </head>
 
 <body class="bg-gradient-login">
   <!-- Login Content -->
   <div class="container-login">
     <div class="row justify-content-center">
-      <div class="col-xl-5 col-lg-12 col-md-9">
+      <div class="col-xl-5 col-lg-13 col-md-9">
         <div class="card shadow-sm my-5">
-        <img src="{{ asset('AdminLTE') }}/img/logo/logo pnc.png" class="center"/>
+          <img src="{{ asset('AdminLTE') }}/img/logo/logo pnc.png" class="center" />
           <div class="card-body p-0">
             <div class="row">
               <div class="col-lg-12">
                 <div class="login-form">
                   <div class="text-center">
-                    <h1 class="h4 text-gray-900 mb-4">Login SIPROKER</h1>
+                    <h1 class="h4 text-gray-900 mb-4">SIPROKER</h1>
                   </div>
                   @if (session('loginError'))
                   <div class="alert alert-danger">
-                  {{ session('loginError') }}
-                 </div>
+                    {{ session('loginError') }}
+                  </div>
                   @endif
                   <form class="user" method="POST" action="{{ url('login') }}">
-                    @csrf 
+                    @csrf
                     <div class="form-group">
-                      <input type="text" name="username" class="form-control" id="username" 
-                        placeholder="Masukkan Username">
+                      <input type="text" name="username" class="form-control" id="username" placeholder="Username">
                     </div>
                     <div class="form-group">
-                      <input type="password" name="password" class="form-control" id="password" placeholder="Masukkan Password">
+                      <input type="password" name="password" class="form-control" id="password" placeholder="Password">
                     </div>
                     <div class="form-group">
                       <button type="submit" class="btn btn-primary btn-block">Login</button>
+                      <hr>
+                      <a href="{{ '/forgot-password' }}" class="right-align">Forget Password?</a>
                     </div>
-                    <div class="right-align"><a href="{{ '/forgot-password' }}">Forget Password?</a></div>
-                    <hr>
                   </form>
                   <hr>
-                  </div>
                 </div>
               </div>
             </div>

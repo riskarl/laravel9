@@ -390,6 +390,9 @@ class LpjController extends Controller
             Session::flash('error', 'LPJ file not found.');
             return redirect()->back();
         }
+
+        $mappingCheckLpj = new MappingCheckLpj();
+        $signatures = $mappingCheckLpj->updateStatusFlowLpj($lpjId, $jabatanId, $organisasi, $jabatan);
     
         $proker = Proker::where('id', $lpj->id_proker)->first();
         if (!$proker) {

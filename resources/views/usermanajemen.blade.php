@@ -6,10 +6,10 @@
       <!-- Simple Tables -->
       <div class="card">
         <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-          <h6 class="m-0 font-weight-bold text-primary">Manajemen Akun</h6>
+          <h4 class="m-0 font-weight-bold text-primary">Manajemen Akun</h4>
         </div>
         <div class="table-responsive">
-          <table class="table align-items-center table-flush">
+          <table id="myDataTable" class="table align-items-center table-flush">
             <a href="{{ url('/usermanajemen/create') }}" class="btn btn-primary btn-sm" title="Tambah Akun">
               Tambah Akun
             </a>
