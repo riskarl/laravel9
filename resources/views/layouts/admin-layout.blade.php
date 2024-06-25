@@ -328,6 +328,7 @@
         $('#myDataTable').DataTable();
       });
   </script>
+  @yield('script')
   </body>
   
   </html>
