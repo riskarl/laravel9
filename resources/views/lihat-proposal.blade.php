@@ -7,7 +7,7 @@
       <!-- Simple Tables -->
       <div class="card">
         <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-          <h6 class="m-0 font-weight-bold text-primary">Arsip Proposal</h6>
+          <h5 class="m-0 font-weight-bold text-primary">Arsip Proposal</h5>
         </div>
         <div class="table-responsive">
           <table class="table align-items-center table-flush">
@@ -16,21 +16,26 @@
                 <th>NO</th>
                 <th>Nama Organisasi</th>
                 <th>Nama Program Kerja</th>
-                <th>File</th>
+                <th>File Proposal</th>
               </tr>
             </thead>
             <tbody>
-              {{-- @foreach ($listproker as $proker) --}}
+              @foreach ($listproker as $index => $proker)
               <tr>
-                {{-- <td>{{ $proker->id }}</td>
+                <td>{{ $index + 1 }}</td>
                 <td>{{ $proker->organisasi ? $proker->organisasi->nama_organisasi : 'Tidak ada organisasi' }}</td>
                 <td>{{ $proker->nama_proker }}</td>
-                <td>{{ $proker->nama_ketupel }}</td>
-                <td>{{ $proker->tanggal }}</td>
-                <td>{{ $proker->tempat }}</td>
-                <td>{{ $proker->dana_diajukan }}</td> --}}              
+                  <td>
+                    @if ($proker->proposal && $proker->proposal->file_proposal)
+                    <a href="{{ asset('files/' . $proker->proposal->file_proposal) }}" target="_blank">
+                        {{ $proker->proposal->file_proposal }}
+                    </a>
+                     @else
+                    Tidak ada file
+                     @endif
+                  </td>    
               </tr> 
-              {{-- @endforeach --}}
+              @endforeach
             </tbody>
           </table>
         </div>

@@ -92,7 +92,12 @@ class LpjController extends Controller
 
     public function indexlpj()
     {
-        return view('lihat-lpj');
+        $proker = Proker::with(['lpj'])
+            ->whereHas('lpj', function ($query) {
+                $query->where('status_flow_lpj', 9);
+            })
+            ->get(); // Mengambil hasil query
+        return view('lihat-lpj',['listproker' => $proker]);
     }
 
     public function pengecekanlpj()

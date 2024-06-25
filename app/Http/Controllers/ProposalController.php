@@ -88,8 +88,13 @@ class ProposalController extends Controller
 
     public function indexproposal()
     {
+        $proker = Proker::with(['proposal'])
+            ->whereHas('proposal', function ($query) {
+                $query->where('status_flow', 9);
+            })
+            ->get(); // Mengambil hasil query
         // Mengirim data pengguna ke view 'lihat-proposal'
-        return view('lihat-proposal');
+        return view('lihat-proposal',[ 'listproker' => $proker]);
     }
 
     public function pengecekanproposal()
