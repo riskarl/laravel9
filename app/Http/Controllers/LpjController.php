@@ -403,6 +403,11 @@ class LpjController extends Controller
         $namaOrganisasi = $proker->organisasi->nama_organisasi;
         
         $user = $this->processStatusFlow($lpjId, $jabatanId, $organisasi, $jabatan, $namaOrganisasi);
+        $mappingCheckLpj = new MappingCheckLpj();
+        $signatures = $mappingCheckLpj->updateStatusFlowLpj($lpjId, $jabatanId, $organisasi, $jabatan);
+        if ($signatures !== false) {
+            $signatures = $this->filterTtdList($signatures['ttdList'], $jabatanId, $organisasi);
+        }
     
         if ($user) {
             $result = $this->sendNotificationEmail($user);
