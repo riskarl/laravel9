@@ -37,29 +37,52 @@ class HomeController extends Controller
         $currentUser = $this->getCurrentUser();
         $jabatan = $currentUser['jabatan'];
         $organisasiUser = $currentUser['organisasi'];
-
+    
         // Filter berdasarkan nama_organisasi dari organisasi user yang sedang login
         $totalproposal = Proposal::whereHas('proker.organisasi', function ($query) use ($organisasiUser) {
             $query->where('nama_organisasi', $organisasiUser);
         })->count();
-
+    
         // Menghitung jumlah LPJ berdasarkan nama_organisasi di Organisasi
         $totallpj = LPJ::whereHas('proker.organisasi', function ($query) use ($organisasiUser) {
             $query->where('nama_organisasi', $organisasiUser);
         })->count();
-
+    
         $totalproker = Proker::whereHas('organisasi', function ($query) use ($organisasiUser) {
             $query->where('nama_organisasi', $organisasiUser);
         })->count();
-
+    
+        // Menghitung proposal yang diproses dan disetujui
+        $processedProposals = Proposal::whereHas('proker.organisasi', function ($query) use ($organisasiUser) {
+            $query->where('nama_organisasi', $organisasiUser);
+        })->where('status_flow', '!=', 9)->count();
+    
+        $approvedProposals = Proposal::whereHas('proker.organisasi', function ($query) use ($organisasiUser) {
+            $query->where('nama_organisasi', $organisasiUser);
+        })->where('status_flow', 9)->count();
+    
+        // Menghitung LPJ yang diproses dan disetujui
+        $processedLpj = LPJ::whereHas('proker.organisasi', function ($query) use ($organisasiUser) {
+            $query->where('nama_organisasi', $organisasiUser);
+        })->where('status_flow_lpj', '!=', 9)->count();
+    
+        $approvedLpj = LPJ::whereHas('proker.organisasi', function ($query) use ($organisasiUser) {
+            $query->where('nama_organisasi', $organisasiUser);
+        })->where('status_flow_lpj', 9)->count();
+    
         return view('dashboard-organisasi', [
             'jabatan' => $jabatan,
             'totalproker' => $totalproker,
             'organisasiUser' => $organisasiUser,
             'totalproposal' => $totalproposal,
-            'totallpj' => $totallpj
+            'totallpj' => $totallpj,
+            'processedProposals' => $processedProposals,
+            'approvedProposals' => $approvedProposals,
+            'processedLpj' => $processedLpj,
+            'approvedLpj' => $approvedLpj
         ]);
     }
+    
     public function indexbpm()
     {
         $totalAllocation = 85000000;

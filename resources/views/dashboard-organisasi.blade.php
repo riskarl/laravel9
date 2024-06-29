@@ -53,10 +53,96 @@
         </div>
     </div>
 </div>
-    
+
+<div class="row">
+    <div class="col-xl-6 col-md-12 mb-4">
+        <div class="card h-100">
+            <div class="card-body">
+                <h5 class="card-title text-center">Status Proposal</h5>
+                <div style="max-width: 300px; margin: auto;">
+                    <canvas id="pieChartProposal"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-6 col-md-12 mb-4">
+        <div class="card h-100">
+            <div class="card-body">
+                <h5 class="card-title text-center">Status LPJ</h5>
+                <div style="max-width: 300px; margin: auto;">
+                    <canvas id="pieChartLpj"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 @endsection
 
+@section('script')
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
+<script>
+    var ctxProposal = document.getElementById('pieChartProposal').getContext('2d');
+    var pieChartProposal = new Chart(ctxProposal, {
+        type: 'pie',
+        data: {
+            labels: ['Diproses', 'Disetujui'],
+            datasets: [{
+                data: [{{ $processedProposals }}, {{ $approvedProposals }}],
+                backgroundColor: ['#FF6384', '#36A2EB']
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                datalabels: {
+                    formatter: (value, ctx) => {
+                        let sum = ctx.chart.data.datasets[0].data.reduce((a, b) => a + b, 0);
+                        let percentage = (value * 100 / sum).toFixed(2) + "%";
+                        return percentage;
+                    },
+                    color: '#fff',
+                    font: {
+                        weight: 'bold',
+                        size: 14
+                    }
+                }
+            }
+        },
+        plugins: [ChartDataLabels]
+    });
 
-
-    
-
+    var ctxLpj = document.getElementById('pieChartLpj').getContext('2d');
+    var pieChartLpj = new Chart(ctxLpj, {
+        type: 'pie',
+        data: {
+            labels: ['Diproses', 'Disetujui'],
+            datasets: [{
+                data: [{{ $processedLpj }}, {{ $approvedLpj }}],
+                backgroundColor: ['#FF6384', '#36A2EB']
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                datalabels: {
+                    formatter: (value, ctx) => {
+                        let sum = ctx.chart.data.datasets[0].data.reduce((a, b) => a + b, 0);
+                        let percentage = (value * 100 / sum).toFixed(2) + "%";
+                        return percentage;
+                    },
+                    color: '#fff',
+                    font: {
+                        weight: 'bold',
+                        size: 14
+                    }
+                }
+            }
+        },
+        plugins: [ChartDataLabels]
+    });
+</script>
+@endsection
