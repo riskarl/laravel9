@@ -389,9 +389,9 @@ class ProposalController extends Controller
 
         // Attempt to update the status flow
         if ($mappingCheck->updateRevisi($proposalId, $jabatanId, $organisasi, $jabatan, $catatan)) {
-            Session::flash('success', 'Proposal has been successfully approved.');
+            Session::flash('success', 'Proposal status has been updated to revised.');
         } else {
-            Session::flash('error', 'Failed to approve the proposal.');
+            Session::flash('error', 'Failed to update the proposal.');
         }
 
         return redirect()->back();
