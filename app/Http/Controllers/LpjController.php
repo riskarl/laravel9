@@ -258,6 +258,11 @@ class LpjController extends Controller
             $lpj->dana_disetujui = $validatedData['dana_disetujui'];
             $lpj->status = 'Pending';
             $lpj->catatan = 'Belum ada catatan';
+           
+            if($lpj->status_flow_lpj == 1)
+            {
+                $lpj->status_flow_lpj = 0;
+            }
         } else {
             // Jika tidak ada, buat data baru
             $lpj = new LPJ();
