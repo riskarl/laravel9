@@ -43,8 +43,8 @@ class RabController extends Controller
         $total_periode = $setAnggaran->total_periode;
 
         // Menggunakan Carbon untuk mengatur tanggal akhir periode
-        $endDate = $periode == 'bulan' 
-            ? Carbon::parse($tglSetAnggaran)->addMonths($total_periode) 
+        $endDate = $periode == 'bulan'
+            ? Carbon::parse($tglSetAnggaran)->addMonths($total_periode)
             : Carbon::parse($tglSetAnggaran)->addYears($total_periode);
 
         // Tanggal dan waktu sekarang
@@ -61,8 +61,8 @@ class RabController extends Controller
 
         // Query data Proker yang berada dalam rentang waktu yang berjalan
         $proker = Proker::with('rab')
-                        ->whereBetween('created_at', [$tglSetAnggaran, $endDate])
-                        ->get();
+            ->whereBetween('created_at', [$tglSetAnggaran, $endDate])
+            ->get();
 
         // Mengirim data pengguna ke view 'upload-rab'
         return view('upload-rab', [
@@ -84,16 +84,55 @@ class RabController extends Controller
     {
         // $rab = Rab::find();
         $proker = Proker::with(['organisasi', 'rab', 'srpd'])->get();
-        // Mengirim data pengguna ke view 'pengecekan-rab'
-        return view('pengecekan-rab', ['listproker' => $proker]);
+
+        // Filter data yang hanya memiliki file RAB dan file SRPD
+        $filteredProker = $proker->filter(function ($item) {
+            return $item->rab && $item->rab->file_rab;
+        });
+
+        // Mengirim data yang telah difilter ke view 'pengecekan-rab'
+        return view('pengecekan-rab', ['listproker' => $filteredProker]);
     }
 
     public function uploadrab(Request $request)
     {
         $validatedData = $request->validate([
-            'file_rab' => 'required|file|mimes:pdf,doc,docx|max:2048',
+            'file_rab' => 'required|file|mimes:pdf,doc,docx,xlsx|max:2048',
             'id_proker' => 'required',
         ]);
+
+        // Ambil data pengguna saat ini
+        $currentUser = $this->getCurrentUser();
+        $organisasiUser = $currentUser['organisasi'];
+
+        $setAnggaran = SetAnggaran::orderBy('updated_at', 'desc')->first();
+        if (!$setAnggaran) {
+            return redirect()->back()->with('error', 'Tidak ada data anggaran yang ditemukan.');
+        }
+
+        $tglSetAnggaran = $setAnggaran->tgl_mulai_periode;
+        if (!$tglSetAnggaran) {
+            return redirect()->back()->with('error', 'Tanggal mulai periode tidak ditemukan pada data anggaran.');
+        }
+
+        $periode = $setAnggaran->jenis_periode; // 'bulan' atau 'tahun'
+        $total_periode = $setAnggaran->total_periode;
+
+        // // Menggunakan Carbon untuk mengatur tanggal akhir periode
+        $endDate = $periode == 'bulan'
+            ? Carbon::parse($tglSetAnggaran)->addMonths($total_periode)
+            : Carbon::parse($tglSetAnggaran)->addYears($total_periode);
+
+        // Tanggal dan waktu sekarang
+        $currentDate = Carbon::now();
+
+        // // Memastikan kita berada dalam rentang periode yang sesuai (>= tanggal mulai dan <= tanggal akhir)
+        if ($currentDate->lt(Carbon::parse($tglSetAnggaran)) || $currentDate->gt($endDate)) {
+            return redirect()->back()->with('error', 'Tidak ada data proker yang berlaku untuk periode ini.');
+        }
+
+        // Cek apakah RAB sudah ada berdasarkan id_proker
+        $existingRab = Rab::where('id_proker', $validatedData['id_proker'])->first();
 
         $file = $request->file('file_rab');
         $filename = Str::uuid() . '.' . $file->getClientOriginalExtension();
@@ -130,14 +169,41 @@ class RabController extends Controller
         return redirect()->back()->with('success', 'File RAB berhasil diupload!');
     }
 
-
-
     public function upsrpd(Request $request, $id)
     {
         // Validasi file
         $request->validate([
             'file_srpd' => 'required|file|mimes:pdf,doc,docx|max:2048',
         ]);
+
+        $currentUser = $this->getCurrentUser();
+        $organisasiUser = $currentUser['organisasi'];
+
+        $setAnggaran = SetAnggaran::orderBy('updated_at', 'desc')->first();
+        if (!$setAnggaran) {
+            return redirect()->back()->with('error', 'Tidak ada data anggaran yang ditemukan.');
+        }
+
+        $tglSetAnggaran = $setAnggaran->tgl_mulai_periode;
+        if (!$tglSetAnggaran) {
+            return redirect()->back()->with('error', 'Tanggal mulai periode tidak ditemukan pada data anggaran.');
+        }
+
+        $periode = $setAnggaran->jenis_periode; // 'bulan' atau 'tahun'
+        $total_periode = $setAnggaran->total_periode;
+
+        // // Menggunakan Carbon untuk mengatur tanggal akhir periode
+        $endDate = $periode == 'bulan'
+            ? Carbon::parse($tglSetAnggaran)->addMonths($total_periode)
+            : Carbon::parse($tglSetAnggaran)->addYears($total_periode);
+
+        // Tanggal dan waktu sekarang
+        $currentDate = Carbon::now();
+
+        // // Memastikan kita berada dalam rentang periode yang sesuai (>= tanggal mulai dan <= tanggal akhir)
+        if ($currentDate->lt(Carbon::parse($tglSetAnggaran)) || $currentDate->gt($endDate)) {
+            return redirect()->back()->with('error', 'Tidak ada data proker yang berlaku untuk periode ini.');
+        }
 
         // Dapatkan file dari request
         $file = $request->file('file_srpd');

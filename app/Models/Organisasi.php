@@ -17,6 +17,17 @@ class Organisasi extends Model
         return $this->hasMany(Proker::class, 'id_organisasi', 'id');
     }
 
+    public function proposals()
+    {
+        return $this->hasMany(Proposal::class, 'id');
+    }
+
+    // Definisikan relasi ke model LPJ
+    public function lpjs()
+    {
+        return $this->hasMany(LPJ::class, 'id');
+    }
+
     public function anggarans()
     {
         return $this->hasMany(Anggaran::class, 'id_organisasi', 'id');

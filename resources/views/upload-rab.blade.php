@@ -26,16 +26,17 @@
       <!-- Simple Tables -->
       <div class="card">
         <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-          <h6 class="m-0 font-weight-bold text-primary">Manajemen Rencana Anggaran Biaya</h6>
+          <h4 class="m-0 font-weight-bold text-primary">Manajemen Rencana Anggaran Biaya</h4>
         </div>
         <div class="table-responsive">
-          <table class="table align-items-center table-flush">
+          <table id="" class="table align-items-center table-flush">
             <thead class="thead-light">
               <tr>
                 <th>NO</th>
                 <th>Nama Organisasi</th>
                 <th>Nama Program Kerja</th>
                 <th>File RAB</th>
+                <th>File SRPD</th>
                 <th>Aksi</th>
               </tr>
             </thead>
@@ -55,6 +56,15 @@
                     @else
                         Tidak ada file
                     @endif
+                  </td>
+                  <td>
+                    @if(isset($proker->rab->file_srpd) && $proker->rab->file_srpd)
+                    <a href="{{ asset('srpd/' . $proker->rab->file_srpd) }}" target="_blank">
+                      {{ $proker->rab->file_srpd }}
+                    </a>
+                    @else
+                      Tidak ada file
+                    @endif        
                   </td>
                   <td>
                     <button type="button" class="btn btn-primary mr-2 btnModal" data-toggle="modal" data-target="#uploadModal{{ $proker->id }}" data-id="{{ $proker->id }}">

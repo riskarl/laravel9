@@ -2,12 +2,24 @@
 
 @section('konteng')
 
+<head>
+    <style>
+      .btn-margin-left {
+        margin-left: 10px;
+      }
+      .btn-large {
+        padding: 6px 12px; /* Sesuaikan padding untuk memperbesar ukuran tombol */
+        font-size: 1rem; /* Sesuaikan ukuran font untuk memperbesar teks tombol */
+      }
+    </style>
+  </head>
+
 <div class="row">
     <div class="col-lg-12 mb-4">
         <!-- Simple Tables -->
         <div class="card">
             <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                <h6 class="m-0 font-weight-bold text-primary">Manajemen Format</h6>
+                <h4 class="m-0 font-weight-bold text-primary">Manajemen Format</h4>
             </div>
             @if(session('success'))
             <div class="alert alert-success">
@@ -19,9 +31,18 @@
                 {{ session('error') }}
             </div>
             @endif
+            {{-- @if($errors->any())
+            <div class="alert alert-danger">
+                <ul>
+                    @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+            @endif --}}
             <div class="table-responsive">
                 <table class="table align-items-center table-flush">
-                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#formatModal" onclick="openAddModal()">
+                    <button type="button" class="btn btn-primary btn-sm btn-margin-left btn-large" data-toggle="modal" data-target="#formatModal" onclick="openAddModal()">
                         Tambah Format
                     </button>
                     <!-- The Modal -->
@@ -41,8 +62,14 @@
                                      @csrf
                                         <input type="hidden" id="formatId" name="id_format">
                                         <div class="form-group">
-                                            <label for="jenisFile">Jenis File:</label>
+                                            <label for="jenisFile">Jenis Format:</label>
                                             <input type="text" class="form-control" id="jenisFile" name="jenis_format" required>
+                                            {{-- <input type="text" name="jenis_format" class="form-control @error('jenis_format') is-invalid @enderror" id="jenis_format" value="{{ old('jenis_format') }}" required>
+                                                            @error('jenis_format')
+                                                            <span class="invalid-feedback" role="alert">
+                                                                <strong>{{ $message }}</strong>
+                                                            </span>
+                                                            @enderror --}}
                                         </div>
                                         <div class="form-group">
                                             <label for="fileFormat">File Format:</label>

@@ -2,6 +2,18 @@
 
 @section('content')
 
+<head>
+  <style>
+    .btn-margin-left {
+      margin-left: 10px;
+    }
+    .btn-large {
+      padding: 6px 12px; /* Sesuaikan padding untuk memperbesar ukuran tombol */
+      font-size: 1rem; /* Sesuaikan ukuran font untuk memperbesar teks tombol */
+    }
+  </style>
+</head>
+
 <div class="row">
     <div class="col-lg-12 mb-4">
       @if (session('error'))
@@ -24,11 +36,11 @@
       <!-- Simple Tables -->
       <div class="card">
         <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-          <h6 class="m-0 font-weight-bold text-primary">Manajemen Program Kerja</h6>
+          <h4 class="m-0 font-weight-bold text-primary">Manajemen Program Kerja</h4>
         </div>
         <div class="table-responsive">
-          <table class="table align-items-center table-flush">
-            <a href="{{ url('/proker/create') }}" class="btn btn-primary btn-sm" title="Tambah Organisasi">
+          <table id="myDataTable" class="table align-items-center table-flush">
+            <a href="{{ url('/proker/create') }}" class="btn btn-primary btn-sm btn-margin-left btn-large" title="Tambah Organisasi">
               Tambah Program Kerja
             </a>
             <thead class="thead-light">
@@ -64,7 +76,7 @@
                               <div class="modal-dialog" role="document">
                                   <div class="modal-content">
                                       <div class="modal-header">
-                                          <h5 class="modal-title" id="deleteModalLabel{{ $proker->id }}">Konfirmasi Hapus Organisasi</h5>
+                                          <h5 class="modal-title" id="deleteModalLabel{{ $proker->id }}">Konfirmasi Hapus Program Kerja</h5>
                                           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                               <span aria-hidden="true">&times;</span>
                                           </button>

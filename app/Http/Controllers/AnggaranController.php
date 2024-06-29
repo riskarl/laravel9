@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\File;
 use Barryvdh\DomPDF\Facade\Pdf;
 use App\Models\SetAnggaran;
 use Carbon\Carbon;
+use Session;
 
 class AnggaranController extends Controller
 {
@@ -19,8 +20,55 @@ class AnggaranController extends Controller
         $anggaran = Anggaran::with('organisasi')->get();
         $organisasis = Organisasi::All();
         $totalAnggaran = SetAnggaran::All();
+        // Ambil data SetAnggaran terbaru
+        $setAnggaran = SetAnggaran::orderBy('updated_at', 'desc')->first();
+        if (!$setAnggaran) {
+            session()->flash('error', 'Tidak ada data anggaran yang ditemukan.');
+            return view('anggaran-bpm', [
+                'anggaran' => collect([]), // Koleksi kosong jika tidak ada data
+                'organisasis' => $organisasis,
+                'jabatan' => $totalAnggaran,
+            ]);
+        }
 
-        return view('anggaran-bpm', ['anggaran' => $anggaran, 'organisasis' => $organisasis, 'totalAnggaran' => $totalAnggaran]);
+        // Ambil tanggal mulai periode dari data SetAnggaran
+        $tglSetAnggaran = $setAnggaran->tgl_mulai_periode;
+        if (!$tglSetAnggaran) {
+            session()->flash('error', 'Tanggal mulai periode tidak ditemukan pada data anggaran.');
+            return view('anggaran-bpm', [
+                'anggaran' => collect([]), // Koleksi kosong jika tidak ada data
+                'organisasis' => $organisasis,
+                'jabatan' => $totalAnggaran,
+            ]);
+        }
+        $periode = $setAnggaran->jenis_periode; // 'bulan' atau 'tahun'
+        $total_periode = $setAnggaran->total_periode;
+
+        // Menggunakan Carbon untuk mengatur tanggal akhir periode
+        $endDate = $periode == 'bulan'
+            ? Carbon::parse($tglSetAnggaran)->addMonths($total_periode)
+            : Carbon::parse($tglSetAnggaran)->addYears($total_periode);
+
+        // Tanggal dan waktu sekarang
+        $currentDate = Carbon::now();
+
+        // Memastikan kita berada dalam rentang periode yang sesuai (>= tanggal mulai dan <= tanggal akhir)
+        if ($currentDate->lt(Carbon::parse($tglSetAnggaran)) || $currentDate->gt($endDate)) {
+            session()->flash('error', 'Tidak ada data proker yang berlaku untuk periode ini.');
+            return view('anggaran-bpm', [
+                'anggaran' => collect([]), // Koleksi kosong jika tidak ada data
+                'organisasis' => $organisasis,
+                'jabatan' => $totalAnggaran,
+            ]);
+        }
+        $anggaran = Anggaran::with('organisasi')->whereBetween('created_at', [$tglSetAnggaran, $endDate])->get();
+        $totalAnggaran = SetAnggaran::all();
+
+        return view('anggaran-bpm', [
+            'anggaran' => $anggaran,
+            'organisasis' => $organisasis,
+            'jabatan' => $totalAnggaran,
+        ]);
     }
 
     public function indexanggaranorganisasi()
@@ -29,7 +77,7 @@ class AnggaranController extends Controller
         $jabatanId = $currentUser['jabatan_id'];
         $org = $currentUser['organisasi'];
         $TA = SetAnggaran::all();
-        
+
         // Dapatkan data SetAnggaran terbaru
         $setAnggaran = SetAnggaran::orderBy('updated_at', 'desc')->first();
         if (!$setAnggaran) {
@@ -55,8 +103,8 @@ class AnggaranController extends Controller
         $totalAnggaran = $setAnggaran->total_anggaran; // Dapatkan total_anggaran
 
         // Menggunakan Carbon untuk mengatur tanggal akhir periode
-        $endDate = $periode == 'bulan' 
-            ? Carbon::parse($tglSetAnggaran)->addMonths($total_periode) 
+        $endDate = $periode == 'bulan'
+            ? Carbon::parse($tglSetAnggaran)->addMonths($total_periode)
             : Carbon::parse($tglSetAnggaran)->addYears($total_periode);
 
         // Tanggal dan waktu sekarang
@@ -75,7 +123,7 @@ class AnggaranController extends Controller
         $query = LPJ::with(['proker.organisasi'])
             ->whereNotNull('file_lpj')
             ->whereNotNull('dana_disetujui')
-            ->whereHas('proker', function($q) use ($tglSetAnggaran, $endDate) {
+            ->whereHas('proker', function ($q) use ($tglSetAnggaran, $endDate) {
                 $q->whereBetween('created_at', [$tglSetAnggaran, $endDate]);
             }); // Filter by created_at
 
@@ -85,7 +133,7 @@ class AnggaranController extends Controller
         $totalSisaAnggaran = $totalAnggaran;
 
         // Memproses data untuk tampilan
-        $data = $lpjData->map(function($lpj) use (&$totalSisaAnggaran) {
+        $data = $lpjData->map(function ($lpj) use (&$totalSisaAnggaran) {
             $totalAnggaranOrganisasi = $lpj->proker->organisasi->anggarans->sum('total_anggaran');
             $sisaAnggaran = $totalAnggaranOrganisasi - $lpj->dana_disetujui;
 
@@ -105,7 +153,7 @@ class AnggaranController extends Controller
 
         // Filter data berdasarkan organisasi jika bukan admin
         if ($jabatanId != 1) { // Asumsikan jabatan ID 1 adalah admin
-            $dataFiltered = $data->filter(function($item) use ($org) {
+            $dataFiltered = $data->filter(function ($item) use ($org) {
                 return $item['nama_organisasi'] == $org;
             });
         } else {
@@ -148,7 +196,7 @@ class AnggaranController extends Controller
         $jumlah_anggaran = $setAnggaran->total_anggaran;
 
         // Menggunakan Carbon untuk mengatur tanggal akhir periode
-        $endDate = $periode == 'bulan' 
+        $endDate = $periode == 'bulan'
             ? Carbon::parse($tglSetAnggaran)->addMonths($total_periode)
             : Carbon::parse($tglSetAnggaran)->addYears($total_periode);
 
@@ -160,8 +208,8 @@ class AnggaranController extends Controller
 
         // Mendapatkan total anggaran yang telah digunakan dalam periode tersebut
         $totalUsedAnggaran = Anggaran::where('created_at', '>=', $tglSetAnggaran)
-                                    ->where('created_at', '<=', $endDate)
-                                    ->sum('total_anggaran');
+            ->where('created_at', '<=', $endDate)
+            ->sum('total_anggaran');
 
         // Pastikan jumlah anggaran yang diinput tidak melebihi anggaran total yang tersedia
         if ($totalUsedAnggaran + $request->jumlah_anggaran > $jumlah_anggaran) {
@@ -181,35 +229,35 @@ class AnggaranController extends Controller
     }
 
 
-    
+
 
     public function update(Request $request, $id)
     {
-    // Validasi input jika diperlukan
-    $validatedData = $request->validate([
-        'id_organisasi' => 'required|exists:tb_organisasi,id',
-        'jumlah_mhs' => 'required|numeric',
-        'jumlah_anggaran' => 'required|numeric',
-        'total_anggaran' => 'required|numeric',
-    ]);
+        // Validasi input jika diperlukan
+        $validatedData = $request->validate([
+            'id_organisasi' => 'required|exists:tb_organisasi,id',
+            'jumlah_mhs' => 'required|numeric',
+            'jumlah_anggaran' => 'required|numeric',
+            'total_anggaran' => 'required|numeric',
+        ]);
 
-    // Cari data anggaran berdasarkan id
-    $anggaran = Anggaran::find($id);
+        // Cari data anggaran berdasarkan id
+        $anggaran = Anggaran::find($id);
 
-    if (!$anggaran) {
-        // Jika data tidak ditemukan, kirim respon error
-        return redirect('/anggaran')->with('error', 'Data Anggaran tidak ditemukan!');
-    }
+        if (!$anggaran) {
+            // Jika data tidak ditemukan, kirim respon error
+            return redirect('/anggaran')->with('error', 'Data Anggaran tidak ditemukan!');
+        }
 
-    // Update data di dalam database
-    $anggaran->id_organisasi = $request->id_organisasi;
-    $anggaran->jumlah_mhs = $request->jumlah_mhs;
-    $anggaran->jumlah_anggaran = $request->jumlah_anggaran;
-    $anggaran->total_anggaran = $request->total_anggaran;
-    $anggaran->save();
+        // Update data di dalam database
+        $anggaran->id_organisasi = $request->id_organisasi;
+        $anggaran->jumlah_mhs = $request->jumlah_mhs;
+        $anggaran->jumlah_anggaran = $request->jumlah_anggaran;
+        $anggaran->total_anggaran = $request->total_anggaran;
+        $anggaran->save();
 
-    // Berhasil, kirim respon
-    return redirect('/anggaran')->with('success', 'Data Anggaran berhasil diupdate!');
+        // Berhasil, kirim respon
+        return redirect('/anggaran')->with('success', 'Data Anggaran berhasil diupdate!');
     }
 
     public function delete($id)
@@ -256,8 +304,8 @@ class AnggaranController extends Controller
         $totalAnggaran = $setAnggaran->total_anggaran; // Dapatkan total_anggaran
 
         // Menggunakan Carbon untuk mengatur tanggal dan waktu akhir periode
-        $endDate = $periode == 'bulan' 
-            ? Carbon::parse($tglSetAnggaran)->addMonths($total_periode) 
+        $endDate = $periode == 'bulan'
+            ? Carbon::parse($tglSetAnggaran)->addMonths($total_periode)
             : Carbon::parse($tglSetAnggaran)->addYears($total_periode);
 
         // Tanggal dan waktu sekarang
@@ -270,9 +318,9 @@ class AnggaranController extends Controller
 
         // Query data LPJ yang hanya berada dalam rentang waktu yang berjalan
         $query = LPJ::with(['proker.organisasi'])
-                    ->whereNotNull('file_lpj')
-                    ->whereNotNull('dana_disetujui')
-                    ->whereBetween('created_at', [$tglSetAnggaran, $endDate]);
+            ->whereNotNull('file_lpj')
+            ->whereNotNull('dana_disetujui')
+            ->whereBetween('created_at', [$tglSetAnggaran, $endDate]);
 
         $lpjData = $query->get();
 
@@ -283,7 +331,7 @@ class AnggaranController extends Controller
         $totalAnggaranDisetujui = 0;
 
         // Memproses data untuk tampilan
-        $data = $lpjData->map(function($lpj) use (&$totalSisaAnggaran, &$totalAnggaranDisetujui) {
+        $data = $lpjData->map(function ($lpj) use (&$totalSisaAnggaran, &$totalAnggaranDisetujui) {
             $totalAnggaranOrganisasi = $lpj->proker->organisasi->anggarans->sum('total_anggaran');
             $sisaAnggaran = $totalAnggaranOrganisasi - $lpj->dana_disetujui;
 
@@ -306,7 +354,7 @@ class AnggaranController extends Controller
 
         // Filter data berdasarkan organisasi jika nama organisasi bukan 'semua'
         if ($namaOrganisasi != 'semua') {
-            $dataFiltered = $data->filter(function($item) use ($namaOrganisasi) {
+            $dataFiltered = $data->filter(function ($item) use ($namaOrganisasi) {
                 return $item['nama_organisasi'] == $namaOrganisasi;
             });
         } else {
@@ -334,7 +382,7 @@ class AnggaranController extends Controller
         return $pdf->download($fileName);
     }
 
-    
+
     public function setAnggaran(Request $request)
     {
         // Validasi input
@@ -344,12 +392,12 @@ class AnggaranController extends Controller
             'total_periode' => 'required|numeric|min:1',
             'tgl_mulai_periode' => 'required|date', // Validasi untuk tanggal mulai periode
         ]);
-    
+
         // Proses penyimpanan atau pembaruan data
         try {
             // Cek apakah ada data setAnggaran yang sudah ada di database
             $setAnggaran = SetAnggaran::first(); // Mengambil data pertama yang ditemukan
-    
+
             if ($setAnggaran) {
                 // Jika data sudah ada, lakukan pembaruan
                 $setAnggaran->total_anggaran = $request->input('total_anggaran');
@@ -368,11 +416,11 @@ class AnggaranController extends Controller
                 $setAnggaran->save(); // Simpan data baru ke dalam tabel set_anggaran
                 $message = 'Anggaran berhasil disimpan!';
             }
-    
+
             return redirect()->back()->with('success', $message);
         } catch (\Exception $e) {
             return redirect()->back()->with('error', 'Terjadi kesalahan saat menyimpan anggaran: ' . $e->getMessage());
         }
     }
-    
+
 }

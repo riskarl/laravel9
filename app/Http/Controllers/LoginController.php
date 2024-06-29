@@ -39,7 +39,7 @@ class LoginController extends Controller
                 case 2:
                     return redirect()->intended('/dashboard/organisasi');
                 case 3:
-                    return redirect()->intended('/dashboard/pengecek');
+                    return redirect()->intended('/pengecekanproposal');
                 case 4:
                     return redirect()->intended('/dashboard/bpm');
                 default:

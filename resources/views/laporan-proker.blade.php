@@ -7,6 +7,18 @@
 
 @section($content)
 
+<head>
+    <style>
+      .btn-margin-left {
+        margin-left: 10px;
+      }
+      .btn-large {
+        padding: 6px 12px; /* Sesuaikan padding untuk memperbesar ukuran tombol */
+        font-size: 1rem; /* Sesuaikan ukuran font untuk memperbesar teks tombol */
+      }
+    </style>
+  </head>
+
 <div class="row">
     <div class="col-lg-12 mb-4">
 
@@ -30,13 +42,13 @@
 
         <div class="card">
             <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                <h6 class="m-0 font-weight-bold text-primary">Laporan Program Kerja</h6>
-                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#cetakModal">
+                <h4 class="m-0 font-weight-bold text-primary">Laporan Program Kerja</h4>
+                <button type="button" class="btn btn-primary btn-sm btn-margin-left btn-large" data-toggle="modal" data-target="#cetakModal">
                     Cetak Laporan 
                 </button>
             </div>
             <div class="table-responsive">
-                <table class="table align-items-center table-flush">
+                <table id="myDataTable" class="table align-items-center table-flush">
                     <thead class="thead-light">
                         <tr>
                             <th>No</th>

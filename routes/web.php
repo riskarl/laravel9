@@ -44,6 +44,8 @@ Route::post('login', [LoginController::class, 'signin']);
 Route::post('logout', [LoginController::class, 'logout'])->name('logout');
 
 Route::get('/dashboard', [HomeController::class, 'index'])->middleware('role:1');
+Route::get('/dashboard/organisasi', [HomeController::class, 'indexorganisasi'])->middleware('role:2');
+Route::get('/dashboard/bpm', [HomeController::class, 'indexbpm'])->middleware('role:4');
 
 Route::get('/usermanajemen/create', [UsermanajemenController::class, 'createform'])->middleware('role:1');
 Route::post('/usermanajemen', [UsermanajemenController::class, 'store'])->middleware('role:1');
@@ -51,17 +53,11 @@ Route::get('/usermanajemen', [UsermanajemenController::class, 'create'])->middle
 Route::get('/usermanajemen/{user}', [UsermanajemenController::class, 'edit'])->middleware('role:1');
 Route::put('/usermanajemen/{user}', [UsermanajemenController::class, 'update'])->middleware('role:1');
 
-Route::get('/dashboard/organisasi', function () {
-    return view('dashboard-organisasi');
-})->middleware('role:2');
 
 Route::get('/dashboard/pengecek', function () {
     return view('dashboard-pengecek');
 })->middleware('role:3');
 
-Route::get('/dashboard/bpm', function () {
-    return view('dashboard-bpm');
-})->middleware('role:4');
 
 Route::get('/organisasi/create', function () {
     return view('organisasi-create');

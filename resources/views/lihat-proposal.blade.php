@@ -10,7 +10,7 @@
           <h5 class="m-0 font-weight-bold text-primary">Arsip Proposal</h5>
         </div>
         <div class="table-responsive">
-          <table class="table align-items-center table-flush">
+          <table id="myDataTable" class="table align-items-center table-flush">
             <thead class="thead-light">
               <tr>
                 <th>NO</th>

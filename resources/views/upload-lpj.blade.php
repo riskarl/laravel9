@@ -25,10 +25,10 @@
         <!-- Simple Tables -->
         <div class="card">
             <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                <h6 class="m-0 font-weight-bold text-primary">Manajemen Laporan Pertanggungjawaban</h6>
+                <h4 class="m-0 font-weight-bold text-primary">Manajemen Laporan Pertanggungjawaban</h4>
             </div>
             <div class="table-responsive">
-                <table class="table align-items-center table-flush">
+                <table id="" class="table align-items-center table-flush">
                     <thead class="thead-light">
                         <tr>
                             <th>No</th>

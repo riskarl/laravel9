@@ -37,6 +37,7 @@
                         </span>
                         @enderror
     </div>
+    <button type="button" class="btn btn-secondary" onclick="window.location.href='/organisasi'">Batal</button>
     <button type="submit" class="btn btn-primary">Submit</button>
   </form>
 

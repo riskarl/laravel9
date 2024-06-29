@@ -67,6 +67,7 @@
       <label for="ttd">Upload Tanda Tangan Ketua Pelaksana</label>
       <input type="file" name="ttd_ketupel" class="form-control-file" id="ttd_ketupel">
     </div>
+    <button type="button" class="btn btn-secondary" onclick="window.location.href='/proker'">Batal</button>
     <button type="submit" name="submit" class="btn btn-primary">Submit</button>
   </form>
 

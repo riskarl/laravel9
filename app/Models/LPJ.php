@@ -24,4 +24,9 @@ class LPJ extends Model
     {
         return $this->belongsTo(Proker::class, 'id_proker');
     }
+
+    public function organisasi()
+    {
+        return $this->belongsTo(Proker::class,'id');
+    }
 }

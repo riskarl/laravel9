@@ -87,27 +87,38 @@
 </div>
 
 <div class="row">
-    <div class="col-xl-6 col-md-6 mb-4">
+    <div class="col-xl-4 col-md-6 mb-4">
         <div class="card h-100">
             <div class="card-body">
-                <h5 class="card-title">Chart Status Proposal</h5>
+                <h5 class="card-title text-center">Status Proposal</h5>
                 <div style="max-width: 300px; margin: auto;">
                     <canvas id="pieChart1"></canvas>
                 </div>
             </div>
         </div>
     </div>
-    <div class="col-xl-6 col-md-6 mb-4">
+    <div class="col-xl-4 col-md-6 mb-4">
         <div class="card h-100">
             <div class="card-body">
-                <h5 class="card-title">Chart Status LPJ</h5>
+                <h5 class="card-title text-center">Status LPJ</h5>
                 <div style="max-width: 300px; margin: auto;">
                     <canvas id="pieChart2"></canvas>
                 </div>
             </div>
         </div>
     </div>
+    <div class="col-xl-4 col-md-6 mb-4">
+        <div class="card h-100">
+            <div class="card-body">
+                <h5 class="card-title text-center">Program Kerja</h5>
+                <div style="max-width: 300px; margin: auto;">
+                    <canvas id="pieChart3"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
+
 
 @endsection
 
@@ -121,7 +132,7 @@
         data: {
             labels: ['Diproses', 'Disetujui'],
             datasets: [{
-                data: [60, 40], // Ganti dengan data aktual Anda
+                data: [{{ $processedProposals }}, {{ $approvedProposals }}], 
                 backgroundColor: ['#FF6384', '#36A2EB']
             }]
         },
@@ -156,8 +167,43 @@
         data: {
             labels: ['Diproses', 'Disetujui'],
             datasets: [{
-                data: [70, 30], // Ganti dengan data aktual Anda
+                data: [{{ $processedLpj }}, {{ $approvedLpj }}], // Ganti dengan data aktual Anda
                 backgroundColor: ['#FF6384', '#36A2EB']
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                datalabels: {
+                    formatter: (value, ctx) => {
+                        let sum = 0;
+                        let dataArr = ctx.chart.data.datasets[0].data;
+                        dataArr.map(data => {
+                            sum += data;
+                        });
+                        let percentage = (value * 100 / sum).toFixed(2) + "%";
+                        return percentage;
+                    },
+                    color: '#fff',
+                    font: {
+                        weight: 'bold',
+                        size: 14
+                    }
+                }
+            }
+        },
+        plugins: [ChartDataLabels]
+    });
+
+    var ctx1 = document.getElementById('pieChart3').getContext('2d');
+    var pieChart1 = new Chart(ctx1, {
+        type: 'pie',
+        data: {
+            labels: ['Terlaksana', 'Belum Selesai', 'Belum Terlaksana'],
+            datasets: [{
+                data: [{{ $approvedLpj }}, {{ $approvedProposals }}, {{ $prokerTanpaProposal }}], 
+                backgroundColor: ['#28a745', '#ffc107', '#dc3545']
             }]
         },
         options: {

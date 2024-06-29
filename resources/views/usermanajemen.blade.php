@@ -21,6 +21,11 @@
         <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
           <h5 class="m-0 font-weight-bold text-primary">Manajemen Akun</h5>
         </div>
+        @if(session('success'))
+        <div class="alert alert-success">
+        {{ session('success') }}
+        </div>
+        @endif
         <div class="table-responsive">
           <table id="myDataTable" class="table align-items-center table-flush">
             <a href="{{ url('/usermanajemen/create') }}" class="btn btn-primary btn-sm btn-margin-left btn-large" title="Tambah Akun">

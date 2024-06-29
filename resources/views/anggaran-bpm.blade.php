@@ -2,11 +2,23 @@
 
 @section('konteng')
 
+<head>
+    <style>
+      .btn-margin-left {
+        margin-left: 10px;
+      }
+      .btn-large {
+        padding: 6px 12px; /* Sesuaikan padding untuk memperbesar ukuran tombol */
+        font-size: 1rem; /* Sesuaikan ukuran font untuk memperbesar teks tombol */
+      }
+    </style>
+  </head>
+
 <div class="row">
     <div class="col-lg-12 mb-4">
         <div class="card">
             <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                <h6 class="m-0 font-weight-bold text-primary">Manajemen Anggaran</h6>
+                <h4 class="m-0 font-weight-bold text-primary">Manajemen Anggaran</h4>
             </div>
             @if(session('success'))
             <div class="alert alert-success">
@@ -19,7 +31,7 @@
             </div>
             @endif
             <div class="table-responsive">
-                <button type="button" class="btn btn-primary" onclick="openAddModal()">
+                <button type="button" class="btn btn-primary btn-sm btn-margin-left btn-large" onclick="openAddModal()">
                     Tambah Anggaran
                 </button>
                 <!-- The Modal -->
@@ -93,7 +105,7 @@
                     </div>
                 </div>
 
-                <table class="table align-items-center table-flush">
+                <table id="myDataTable" class="table align-items-center table-flush">
                     <thead class="thead-light">
                         <tr>
                             <th>No</th>
@@ -110,8 +122,8 @@
                             <td>{{ $index + 1 }}</td>
                             <td>{{ $anggarans->organisasi ? $anggarans->organisasi->nama_organisasi : 'Tidak ada organisasi' }}</td>
                             <td>{{ $anggarans->jumlah_mhs }}</td>    
-                            <td>{{ $anggarans->jumlah_anggaran }}</td>
-                            <td>{{ $anggarans->total_anggaran }}</td>        
+                            <td>{{ number_format($anggarans->jumlah_anggaran, 0, ',', '.') }}</td>
+                            <td>{{ number_format($anggarans->total_anggaran, 0, ',', '.') }}</td>          
                             <td>
                                 <button type="button" class="btn btn-warning" data-id="{{ $anggarans->id_anggaran }}"
                                     data-id_organisasi="{{ $anggarans->id_organisasi }}" data-jumlah_mhs="{{ $anggarans->jumlah_mhs }}"

@@ -49,7 +49,7 @@ class LpjController extends Controller
         $total_periode = $setAnggaran->total_periode;
 
         // Menggunakan Carbon untuk mengatur tanggal akhir periode
-        $endDate = $periode == 'bulan' 
+        $endDate = $periode == 'bulan'
             ? Carbon::parse($tglSetAnggaran)->addMonths($total_periode)
             : Carbon::parse($tglSetAnggaran)->addYears($total_periode);
 
@@ -92,7 +92,43 @@ class LpjController extends Controller
 
     public function indexlpj()
     {
-        return view('lihat-lpj');
+        // Ambil data SetAnggaran terbaru
+        $setAnggaran = SetAnggaran::orderBy('updated_at', 'desc')->first();
+        if (!$setAnggaran) {
+            session()->flash('error', 'Tidak ada data anggaran yang ditemukan.');
+            return view('lihat-lpj', [
+                'listproker' => collect([]),
+            ]);
+        }
+
+        // Ambil tanggal mulai periode dari data SetAnggaran
+        $tglSetAnggaran = $setAnggaran->tgl_mulai_periode;
+        if (!$tglSetAnggaran) {
+            session()->flash('error', 'Tanggal mulai periode tidak ditemukan pada data anggaran.');
+            return view('lihat-lpj', [
+                'listproker' => collect([]),
+            ]);
+        }
+
+        $periode = $setAnggaran->jenis_periode; // 'bulan' atau 'tahun'
+        $total_periode = $setAnggaran->total_periode;
+
+        // Menggunakan Carbon untuk mengatur tanggal akhir periode
+        $endDate = $periode == 'bulan'
+            ? Carbon::parse($tglSetAnggaran)->addMonths($total_periode)
+            : Carbon::parse($tglSetAnggaran)->addYears($total_periode);
+
+        // Filter data Proker yang berada dalam rentang periode aktif
+        $proker = Proker::with(['lpj'])
+            ->whereHas('lpj', function ($query) {
+                $query->where('status_flow_lpj', 9);
+            })
+            ->whereBetween('created_at', [$tglSetAnggaran, $endDate])
+            ->get();
+
+        return view('lihat-lpj', [
+            'listproker' => $proker,
+        ]);
     }
 
     public function pengecekanlpj()
@@ -100,7 +136,7 @@ class LpjController extends Controller
         $currentUser = $this->getCurrentUser();
         $organisasiUser = $currentUser['organisasi'];
         $codeJabatan = $currentUser['code_jabatan'];
-    
+
         // Ambil data SetAnggaran terbaru
         $setAnggaran = SetAnggaran::orderBy('updated_at', 'desc')->first();
         if (!$setAnggaran) {
@@ -111,7 +147,7 @@ class LpjController extends Controller
                 'codeJabatan' => $codeJabatan
             ]);
         }
-    
+
         // Ambil tanggal mulai periode dari data SetAnggaran
         $tglSetAnggaran = $setAnggaran->tgl_mulai_periode;
         if (!$tglSetAnggaran) {
@@ -122,18 +158,18 @@ class LpjController extends Controller
                 'codeJabatan' => $codeJabatan
             ]);
         }
-    
+
         $periode = $setAnggaran->jenis_periode; // 'bulan' atau 'tahun'
         $total_periode = $setAnggaran->total_periode;
-    
+
         // Menggunakan Carbon untuk mengatur tanggal akhir periode
-        $endDate = $periode == 'bulan' 
+        $endDate = $periode == 'bulan'
             ? Carbon::parse($tglSetAnggaran)->addMonths($total_periode)
             : Carbon::parse($tglSetAnggaran)->addYears($total_periode);
-    
+
         // Tanggal dan waktu sekarang
         $currentDate = Carbon::now();
-    
+
         // Memastikan kita berada dalam rentang periode yang sesuai (>= tanggal mulai dan <= tanggal akhir)
         if ($currentDate->lt(Carbon::parse($tglSetAnggaran)) || $currentDate->gt($endDate)) {
             session()->flash('error', 'Tidak ada data proker yang berlaku untuk periode ini.');
@@ -143,19 +179,19 @@ class LpjController extends Controller
                 'codeJabatan' => $codeJabatan
             ]);
         }
-    
+
         // Mengambil data proker dengan organisasi dan lpj terkait yang berada dalam rentang periode aktif
         $proker = Proker::with(['organisasi', 'lpj'])
             ->whereBetween('created_at', [$tglSetAnggaran, $endDate])
             ->get();
-    
+
         // Mengirim data pengguna ke view 'pengecekan-lpj'
         return view('pengecekan-lpj', [
             'listproker' => $proker,
             'orguser' => $organisasiUser,
             'codeJabatan' => $codeJabatan
         ]);
-    }    
+    }
 
     public function pengecekanlpjbpm()
     {
@@ -189,7 +225,7 @@ class LpjController extends Controller
         $total_periode = $setAnggaran->total_periode;
 
         // Menggunakan Carbon untuk mengatur tanggal akhir periode
-        $endDate = $periode == 'bulan' 
+        $endDate = $periode == 'bulan'
             ? Carbon::parse($tglSetAnggaran)->addMonths($total_periode)
             : Carbon::parse($tglSetAnggaran)->addYears($total_periode);
 
@@ -240,18 +276,18 @@ class LpjController extends Controller
         if (!$proker) {
             return redirect()->back()->with('error', 'Proker not found');
         }
-    
+
         if (empty($proker->ttd_ketupel)) {
             return redirect()->back()->with('error', 'TTD Ketupel tidak lengkap');
         }
-    
+
         $namaOrganisasi = $proker->organisasi->nama_organisasi;
-        
+
         $proker = Proker::where('id', $request->id_proker)->first();
         if (!$proker) {
             return redirect()->back()->with('error', 'Proker not found');
         }
-    
+
         if (empty($proker->ttd_ketupel)) {
             return redirect()->back()->with('error', 'TTD Ketupel tidak lengkap');
         }
@@ -263,27 +299,27 @@ class LpjController extends Controller
         if ($codeJabatan !== null) {
             $user = User::join('jabatan', 'users.jabatan_id', '=', 'jabatan.jabatan_id')
                 ->where('jabatan.code_jabatan', $codeJabatan)
-                ->when($status_flow == 2, function($query) use ($namaOrganisasi) {
+                ->when($status_flow == 2, function ($query) use ($namaOrganisasi) {
                     return $query->whereRaw('LOWER(users.organization) = ?', [strtolower($namaOrganisasi)]);
                 })
-                ->when($status_flow == 3, function($query) {
+                ->when($status_flow == 3, function ($query) {
                     return $query->whereRaw('LOWER(users.organization) LIKE ?', ['%bem%']);
                 })
-                ->when($status_flow == 4, function($query) {
+                ->when($status_flow == 4, function ($query) {
                     return $query->whereRaw('LOWER(users.organization) LIKE ?', ['%bpm%']);
                 })
                 ->select('users.email', 'users.name')
                 ->first();
 
-                $sendEmail = $this->sendNotificationEmail($user);
+            $sendEmail = $this->sendNotificationEmail($user);
 
-                if($sendEmail){
-                   // Simpan perubahan atau data baru
-                    $lpj->save();
-                    return redirect()->back()->with('success', 'File LPJ berhasil diupload!');
-                }else{
-                    return redirect()->back()->with('error', 'gagal kirim email!');
-                }
+            if ($sendEmail) {
+                // Simpan perubahan atau data baru
+                $lpj->save();
+                return redirect()->back()->with('success', 'File LPJ berhasil diupload!');
+            } else {
+                return redirect()->back()->with('error', 'gagal kirim email!');
+            }
         }
 
         return redirect()->back()->with('error', 'File LPJ Gagal  diupload!');
@@ -323,7 +359,7 @@ class LpjController extends Controller
         $total_periode = $setAnggaran->total_periode;
 
         // Menggunakan Carbon untuk mengatur tanggal akhir periode
-        $endDate = $periode == 'bulan' 
+        $endDate = $periode == 'bulan'
             ? Carbon::parse($tglSetAnggaran)->addMonths($total_periode)
             : Carbon::parse($tglSetAnggaran)->addYears($total_periode);
 
@@ -403,7 +439,7 @@ class LpjController extends Controller
             $signatures = $this->filterTtdList($signatures['ttdList'], $jabatanId, $organisasi);
 
             $namaOrganisasi = $proker->organisasi->nama_organisasi;
-            
+
             $status_code_mapping = [
                 0 => 6, // SEKRETARIS
                 1 => 6, // REVISI
@@ -416,24 +452,24 @@ class LpjController extends Controller
                 8 => 2, // KOORDINATOR SUB BAGIAN
                 9 => 1  // WAKIL DIREKTUR
             ];
-            
+
             $codeJabatan = $status_code_mapping[$status_flow] ?? null;
-            
+
             if ($codeJabatan !== null) {
                 $user = User::join('jabatan', 'users.jabatan_id', '=', 'jabatan.jabatan_id')
-                ->where('jabatan.code_jabatan', $codeJabatan)
-                ->when($status_flow == 2, function($query) use ($namaOrganisasi) {
-                    return $query->whereRaw('LOWER(users.organization) = ?', [strtolower($namaOrganisasi)]);
-                })
-                ->when($status_flow == 3, function($query) {
-                    return $query->whereRaw('LOWER(users.organization) LIKE ?', ['%bem%']);
-                })
-                ->when($status_flow == 4, function($query) {
-                    return $query->whereRaw('LOWER(users.organization) LIKE ?', ['%bpm%']);
-                })
-                ->select('users.email', 'users.name')
-                ->first();
-        
+                    ->where('jabatan.code_jabatan', $codeJabatan)
+                    ->when($status_flow == 2, function ($query) use ($namaOrganisasi) {
+                        return $query->whereRaw('LOWER(users.organization) = ?', [strtolower($namaOrganisasi)]);
+                    })
+                    ->when($status_flow == 3, function ($query) {
+                        return $query->whereRaw('LOWER(users.organization) LIKE ?', ['%bem%']);
+                    })
+                    ->when($status_flow == 4, function ($query) {
+                        return $query->whereRaw('LOWER(users.organization) LIKE ?', ['%bpm%']);
+                    })
+                    ->select('users.email', 'users.name')
+                    ->first();
+
                 if ($user) {
                     $emailTarget = $user->email;
                     $nameTarget = $user->name;
@@ -445,11 +481,11 @@ class LpjController extends Controller
                         'sender_name' => 'Tim IT',
                         'date' => now()->format('Y-m-d')
                     ];
-                            
+
                     $recipientEmail = $emailTarget;
-                    
+
                     $result = $this->sendEmail($details, $recipientEmail);
-                    
+
                     if ($result) {
                         Session::flash('success', 'Email has been sent.');
                     } else {
@@ -533,13 +569,13 @@ class LpjController extends Controller
         if ($codeJabatan !== null) {
             $user = User::join('jabatan', 'users.jabatan_id', '=', 'jabatan.jabatan_id')
                 ->where('jabatan.code_jabatan', $codeJabatan)
-                ->when($status_flow == 2, function($query) use ($namaOrganisasi) {
+                ->when($status_flow == 2, function ($query) use ($namaOrganisasi) {
                     return $query->whereRaw('LOWER(users.organization) = ?', [strtolower($namaOrganisasi)]);
                 })
-                ->when($status_flow == 3, function($query) {
+                ->when($status_flow == 3, function ($query) {
                     return $query->whereRaw('LOWER(users.organization) LIKE ?', ['%bem%']);
                 })
-                ->when($status_flow == 4, function($query) {
+                ->when($status_flow == 4, function ($query) {
                     return $query->whereRaw('LOWER(users.organization) LIKE ?', ['%bpm%']);
                 })
                 ->select('users.email', 'users.name')
@@ -547,7 +583,7 @@ class LpjController extends Controller
 
             return $user;
         }
-        
+
         return null;
     }
 
@@ -577,7 +613,7 @@ class LpjController extends Controller
     {
         foreach ($ttdList as &$ttd) {
             $isMatch = false;
-    
+
             if ($jabatanId == 5) {
                 if (stripos($organisasi, 'HIMA') !== false) {
                     $isMatch = stripos($ttd['organisasi'], 'HIMA') !== false && $ttd['code_jabatan'] == 5;
@@ -585,7 +621,7 @@ class LpjController extends Controller
                     $isMatch = stripos($ttd['organisasi'], 'UKM') !== false && $ttd['code_jabatan'] == 5;
                 } elseif ($organisasi == 'BEM') {
                     $isMatch = ($ttd['organisasi'] == 'BEM' || stripos($ttd['organisasi'], 'HIMA') !== false || stripos($ttd['organisasi'], 'UKM') !== false) && $ttd['code_jabatan'] == 5;
-                }elseif ($organisasi == 'BPM') {
+                } elseif ($organisasi == 'BPM') {
                     $isMatch = ($ttd['organisasi'] == 'BPM' || $ttd['organisasi'] == 'BEM' || stripos($ttd['organisasi'], 'HIMA') !== false || stripos($ttd['organisasi'], 'UKM') !== false) && $ttd['code_jabatan'] == 5;
                 }
             } else if ($jabatanId == 4) {
@@ -604,7 +640,7 @@ class LpjController extends Controller
                 $ttd = array_fill_keys(array_keys($ttd), null);
             }
         }
-    
+
         return $ttdList;
     }
 
@@ -707,7 +743,7 @@ class LpjController extends Controller
             'file_title' => 'Pemberitahuan Proposal Pengajuan Masuk',
             'approval_date' => now()->format('Y-m-d'),
         ];
-        
+
 
         // Memanggil fungsi sendPdfEmail dengan parameter yang benar
         $sendEmailSuccess = $this->sendPdfEmail($user->email, $pdfData, $details);

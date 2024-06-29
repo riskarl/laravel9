@@ -9,21 +9,30 @@
 
 @section($content)
 
+<head>
+  <style>
+    .btn-margin-left {
+      margin-left: 10px;
+    }
+    .btn-large {
+      padding: 6px 12px; /* Sesuaikan padding untuk memperbesar ukuran tombol */
+      font-size: 1rem; /* Sesuaikan ukuran font untuk memperbesar teks tombol */
+    }
+  </style>
+</head>
+
 <div class="row">
     <div class="col-lg-12 mb-4">
       <!-- Simple Tables -->
       <div class="card">
         <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-          <h6 class="m-0 font-weight-bold text-primary">Rincian Anggaran Organisasi</h6>
+          <h4 class="m-0 font-weight-bold text-primary">Rincian Anggaran Organisasi</h4>
         </div>
         <div class="table-responsive">
           @if ($button)
           <div class="d-flex justify-content-between mb-2">
-            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#cetakModal">
+            <button type="button" class="btn btn-primary btn-sm btn-margin-left btn-large" data-toggle="modal" data-target="#cetakModal">
               Cetak
-            </button>
-            <button type="button" class="btn btn-success" data-toggle="modal" data-target="#setAnggaranModal">
-              Set Anggaran
             </button>
           </div>
 
@@ -36,16 +45,23 @@
                 <th>Jenis Periode</th>
                 <th>Total Periode</th>
                 <th>Tanggal Set</th>
+                <th>Aksi</th>
               </tr>
             </thead>
             <tbody id="anggaranTableBody">
               @foreach ($totalAnggaran as $idx => $i)
               <tr>
                   <td>{{ $idx + 1 }}</td>
-                  <td>{{ $i['total_anggaran'] }}</td>
+                  {{-- <td>{{ $i['total_anggaran'] }}</td> --}}
+                  <td>{{ number_format($i['total_anggaran'], 0, ',', '.') }}</td>
                   <td>{{ $i['jenis_periode'] }}</td>
                   <td>{{ $i['total_periode'] }}</td>
                   <td>{{ $i['tgl_mulai_periode'] ?? null }}</td>
+                  <td> 
+                    <button type="button" class="btn btn-warning btn-sm btn-margin-left btn-large" data-toggle="modal" data-target="#setAnggaranModal">
+                    Set Anggaran
+                  </button>
+                  </td>
               </tr>
               @endforeach
             </tbody>
@@ -54,7 +70,7 @@
 
           @endif
 
-          <table class="table align-items-center table-flush">
+          <table id="myDataTable" class="table align-items-center table-flush">
             <thead class="thead-light">
               <tr>
                 <th>NO</th>
@@ -74,11 +90,15 @@
                   <td>{{ $index + 1 }}</td>
                   <td>{{ $item['nama_organisasi'] }}</td>
                   <td>{{ $item['nama_proker'] }}</td>
-                  <td>{{ $item['dana_diajukan'] }}</td>
+                  <td>{{ number_format($item['dana_diajukan'], 0, ',', '.') }}</td>
+                  <td>{{ number_format($item['dana_disetujui'], 0, ',', '.') }}</td>
+                  <td>{{ number_format($item['sisa_anggaran'], 0, ',', '.') }}</td>
+                  {{-- <td>{{ $item['dana_diajukan'] }}</td>
                   <td>{{ $item['dana_disetujui'] }}</td>
-                  <td>{{ $item['sisa_anggaran'] }}</td>
+                  <td>{{ $item['sisa_anggaran'] }}</td> --}}
                   @if ($button)
-                  <td>{{ $item['total_sisa_anggaran'] }}</td>
+                  <td>{{ number_format($item['total_sisa_anggaran'], 0, ',', '.') }}</td>
+                  {{-- <td>{{ $item['total_sisa_anggaran'] }}</td> --}}
                   @endif
               </tr>
               @endforeach

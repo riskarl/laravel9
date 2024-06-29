@@ -27,7 +27,7 @@ class ProposalController extends Controller
         $currentUser = $this->getCurrentUser();
         $jabatan = $currentUser['jabatan'];
         $organisasiUser = $currentUser['organisasi'];
-    
+
         // Ambil data SetAnggaran terbaru
         $setAnggaran = SetAnggaran::orderBy('updated_at', 'desc')->first();
         if (!$setAnggaran) {
@@ -38,7 +38,7 @@ class ProposalController extends Controller
                 'orguser' => $organisasiUser
             ]);
         }
-    
+
         // Ambil tanggal mulai periode dari data SetAnggaran
         $tglSetAnggaran = $setAnggaran->tgl_mulai_periode;
         if (!$tglSetAnggaran) {
@@ -49,18 +49,18 @@ class ProposalController extends Controller
                 'orguser' => $organisasiUser
             ]);
         }
-    
+
         $periode = $setAnggaran->jenis_periode; // 'bulan' atau 'tahun'
         $total_periode = $setAnggaran->total_periode;
-    
+
         // Menggunakan Carbon untuk mengatur tanggal akhir periode
-        $endDate = $periode == 'bulan' 
+        $endDate = $periode == 'bulan'
             ? Carbon::parse($tglSetAnggaran)->addMonths($total_periode)
             : Carbon::parse($tglSetAnggaran)->addYears($total_periode);
-    
+
         // Tanggal dan waktu sekarang
         $currentDate = Carbon::now();
-    
+
         // Memastikan kita berada dalam rentang periode yang sesuai (>= tanggal mulai dan <= tanggal akhir)
         if ($currentDate->lt(Carbon::parse($tglSetAnggaran)) || $currentDate->gt($endDate)) {
             session()->flash('error', 'Tidak ada data proker yang berlaku untuk periode ini.');
@@ -70,12 +70,12 @@ class ProposalController extends Controller
                 'orguser' => $organisasiUser
             ]);
         }
-    
+
         // Mengambil data proker dengan organisasi dan proposal terkait yang berada dalam rentang periode aktif
         $proker = Proker::with(['organisasi', 'proposal'])
             ->whereBetween('created_at', [$tglSetAnggaran, $endDate])
             ->get();
-    
+
         // Mengirim data pengguna ke view 'upload-proposal'
         return view('upload-proposal', [
             'listproker' => $proker,
@@ -83,18 +83,47 @@ class ProposalController extends Controller
             'orguser' => $organisasiUser
         ]);
     }
-    
+
 
 
     public function indexproposal()
     {
+        // Ambil data SetAnggaran terbaru
+        $setAnggaran = SetAnggaran::orderBy('updated_at', 'desc')->first();
+        if (!$setAnggaran) {
+            session()->flash('error', 'Tidak ada data anggaran yang ditemukan.');
+            return view('lihat-proposal', [
+                'listproker' => collect([]),
+            ]);
+        }
+
+        // Ambil tanggal mulai periode dari data SetAnggaran
+        $tglSetAnggaran = $setAnggaran->tgl_mulai_periode;
+        if (!$tglSetAnggaran) {
+            session()->flash('error', 'Tanggal mulai periode tidak ditemukan pada data anggaran.');
+            return view('lihat-proposal', [
+                'listproker' => collect([]),
+            ]);
+        }
+
+        $periode = $setAnggaran->jenis_periode; // 'bulan' atau 'tahun'
+        $total_periode = $setAnggaran->total_periode;
+
+        // Menggunakan Carbon untuk mengatur tanggal akhir periode
+        $endDate = $periode == 'bulan'
+            ? Carbon::parse($tglSetAnggaran)->addMonths($total_periode)
+            : Carbon::parse($tglSetAnggaran)->addYears($total_periode);
+
         $proker = Proker::with(['proposal'])
             ->whereHas('proposal', function ($query) {
                 $query->where('status_flow', 9);
             })
+            ->whereBetween('created_at', [$tglSetAnggaran, $endDate])
             ->get(); // Mengambil hasil query
         // Mengirim data pengguna ke view 'lihat-proposal'
-        return view('lihat-proposal',[ 'listproker' => $proker]);
+        return view('lihat-proposal', [
+            'listproker' => $proker,
+        ]);
     }
 
     public function pengecekanproposal()
@@ -102,7 +131,7 @@ class ProposalController extends Controller
         $currentUser = $this->getCurrentUser();
         $organisasiUser = $currentUser['organisasi'];
         $codeJabatan = $currentUser['code_jabatan'];
-    
+
         // Ambil data SetAnggaran terbaru
         $setAnggaran = SetAnggaran::orderBy('updated_at', 'desc')->first();
         if (!$setAnggaran) {
@@ -113,7 +142,7 @@ class ProposalController extends Controller
                 'codeJabatan' => $codeJabatan
             ]);
         }
-    
+
         // Ambil tanggal mulai periode dari data SetAnggaran
         $tglSetAnggaran = $setAnggaran->tgl_mulai_periode;
         if (!$tglSetAnggaran) {
@@ -124,18 +153,18 @@ class ProposalController extends Controller
                 'codeJabatan' => $codeJabatan
             ]);
         }
-    
+
         $periode = $setAnggaran->jenis_periode; // 'bulan' atau 'tahun'
         $total_periode = $setAnggaran->total_periode;
-    
+
         // Menggunakan Carbon untuk mengatur tanggal akhir periode
-        $endDate = $periode == 'bulan' 
+        $endDate = $periode == 'bulan'
             ? Carbon::parse($tglSetAnggaran)->addMonths($total_periode)
             : Carbon::parse($tglSetAnggaran)->addYears($total_periode);
-    
+
         // Tanggal dan waktu sekarang
         $currentDate = Carbon::now();
-    
+
         // Memastikan kita berada dalam rentang periode yang sesuai (>= tanggal mulai dan <= tanggal akhir)
         if ($currentDate->lt(Carbon::parse($tglSetAnggaran)) || $currentDate->gt($endDate)) {
             session()->flash('error', 'Tidak ada data proker yang berlaku untuk periode ini.');
@@ -145,12 +174,12 @@ class ProposalController extends Controller
                 'codeJabatan' => $codeJabatan
             ]);
         }
-    
+
         // Mengambil data proker dengan organisasi dan proposal terkait yang berada dalam rentang periode aktif
         $proker = Proker::with(['organisasi', 'proposal'])
             ->whereBetween('created_at', [$tglSetAnggaran, $endDate])
             ->get();
-    
+
         // Mengirim data pengguna ke view 'pengecekan-proposal'
         return view('pengecekan-proposal', [
             'listproker' => $proker,
@@ -158,7 +187,7 @@ class ProposalController extends Controller
             'codeJabatan' => $codeJabatan
         ]);
     }
-    
+
 
     public function pengecekanproposalbpm()
     {
@@ -173,41 +202,41 @@ class ProposalController extends Controller
         $jabatanId = $currentUser['code_jabatan'];
         $jabatan = $currentUser['jabatan'];
         $organisasi = $currentUser['organisasi'];
-    
+
         $proposal = Proposal::find($proposalId);
         if (!$proposal) {
             Session::flash('error', 'Proposal not found.');
             return redirect()->back();
         }
-    
+
         $filePath = public_path('files/' . $proposal->file_proposal);
         if (!File::exists($filePath)) {
             Session::flash('error', 'Proposal file not found.');
             return redirect()->back();
         }
-    
+
         $proker = Proker::where('id', $proposal->id_proker)->first();
         if (!$proker) {
             return redirect()->back()->with('error', 'Proker not found');
         }
-    
+
         if (empty($proker->ttd_ketupel)) {
             return redirect()->back()->with('error', 'TTD Ketupel tidak lengkap');
         }
 
         $mappingCheck = new MappingCheck();
         $signatures = $mappingCheck->updateStatusFlow($proposalId, $jabatanId, $organisasi, $jabatan);
-    
+
         if ($signatures !== false) {
             $status_flow = $signatures['status_flow'] == 0 ? $signatures['status_flow'] + 2 : $signatures['status_flow'] + 1;
             $signatures = $this->filterTtdList($signatures['ttdList'], $jabatanId, $organisasi);
 
-            $ruteBem = [5,5,4,2,1];
-            $ruteHima = [5,5,5,4,8,3,2,1];
-            $ruteUkm = [5,5,5,4,2,1];
+            $ruteBem = [5, 5, 4, 2, 1];
+            $ruteHima = [5, 5, 5, 4, 8, 3, 2, 1];
+            $ruteUkm = [5, 5, 5, 4, 2, 1];
 
             $namaOrganisasi = $proker->organisasi->nama_organisasi;
-            
+
             $status_code_mapping = [
                 0 => 6, // SEKRETARIS
                 1 => 6, // REVISI
@@ -220,24 +249,24 @@ class ProposalController extends Controller
                 8 => 2, // KOORDINATOR SUB BAGIAN
                 9 => 1  // WAKIL DIREKTUR
             ];
-            
+
             $codeJabatan = $status_code_mapping[$status_flow] ?? null;
-            
+
             if ($codeJabatan !== null) {
                 $user = User::join('jabatan', 'users.jabatan_id', '=', 'jabatan.jabatan_id')
-                ->where('jabatan.code_jabatan', $codeJabatan)
-                ->when($status_flow == 2, function($query) use ($namaOrganisasi) {
-                    return $query->whereRaw('LOWER(users.organization) = ?', [strtolower($namaOrganisasi)]);
-                })
-                ->when($status_flow == 3, function($query) {
-                    return $query->whereRaw('LOWER(users.organization) LIKE ?', ['%bem%']);
-                })
-                ->when($status_flow == 4, function($query) {
-                    return $query->whereRaw('LOWER(users.organization) LIKE ?', ['%bpm%']);
-                })
-                ->select('users.email', 'users.name')
-                ->first();
-        
+                    ->where('jabatan.code_jabatan', $codeJabatan)
+                    ->when($status_flow == 2, function ($query) use ($namaOrganisasi) {
+                        return $query->whereRaw('LOWER(users.organization) = ?', [strtolower($namaOrganisasi)]);
+                    })
+                    ->when($status_flow == 3, function ($query) {
+                        return $query->whereRaw('LOWER(users.organization) LIKE ?', ['%bem%']);
+                    })
+                    ->when($status_flow == 4, function ($query) {
+                        return $query->whereRaw('LOWER(users.organization) LIKE ?', ['%bpm%']);
+                    })
+                    ->select('users.email', 'users.name')
+                    ->first();
+
                 if ($user) {
                     $emailTarget = $user->email;
                     $nameTarget = $user->name;
@@ -249,23 +278,23 @@ class ProposalController extends Controller
                         'sender_name' => 'Tim IT',
                         'date' => now()->format('Y-m-d')
                     ];
-                            
+
                     $recipientEmail = $emailTarget;
-                    
+
                     $result = $this->sendEmail($details, $recipientEmail);
-                    
+
                     if ($result) {
                         Session::flash('success', 'Email has been sent.');
                     } else {
                         Session::flash('error', 'Failed to sent the email.');
                         return redirect()->back();
                     }
-                    
+
                 }
             }
         }
 
-    
+
         $ketupel = [
             'name' => $proker->nama_ketupel,
             'nim' => $proker->nim_ketupel,
@@ -273,7 +302,7 @@ class ProposalController extends Controller
         ];
 
         $namaKegiatan = $proker->nama_proker;
-    
+
         if ($proker->organisasi->nama_organisasi == 'BEM') {
             $html = view('pdf.signatures', compact('signatures', 'namaKegiatan', 'ketupel'))->render();
         } elseif (stripos($proker->organisasi->nama_organisasi, 'UKM') !== false) {
@@ -283,39 +312,39 @@ class ProposalController extends Controller
         }
 
         $pdf = Pdf::loadHTML($html)->setPaper('A4', 'portrait');
-    
+
         $path = public_path('pengesahan');
         if (!File::exists($path)) {
             File::makeDirectory($path, 0755, true);
         }
-    
+
         // Cek apakah sudah ada file pengesahan sebelumnya, jika ada maka hapus
         $oldFilePath = public_path('pengesahan/' . $proposal->pengesahan);
         if (File::exists($oldFilePath)) {
             File::delete($oldFilePath);
         }
-    
+
         $fileName = Str::uuid() . '.pdf';
         $newFilePath = $path . '/' . $fileName;
-    
+
         $pdf->save($newFilePath);
         $proposal->pengesahan = $fileName;
         $save = $proposal->save();
-    
+
         if ($signatures != false && $save) {
             Session::flash('success', 'Proposal has been successfully approved.');
         } else {
             Session::flash('error', 'Failed to approve the proposal.');
         }
-    
+
         return redirect()->back();
     }
-    
+
     private function filterTtdList($ttdList, $jabatanId, $organisasi)
     {
         foreach ($ttdList as &$ttd) {
             $isMatch = false;
-    
+
             if ($jabatanId == 5) {
                 if (stripos($organisasi, 'HIMA') !== false) {
                     $isMatch = stripos($ttd['organisasi'], 'HIMA') !== false && $ttd['code_jabatan'] == 5;
@@ -323,7 +352,7 @@ class ProposalController extends Controller
                     $isMatch = stripos($ttd['organisasi'], 'UKM') !== false && $ttd['code_jabatan'] == 5;
                 } elseif ($organisasi == 'BEM') {
                     $isMatch = ($ttd['organisasi'] == 'BEM' || stripos($ttd['organisasi'], 'HIMA') !== false || stripos($ttd['organisasi'], 'UKM') !== false) && $ttd['code_jabatan'] == 5;
-                }elseif ($organisasi == 'BPM') {
+                } elseif ($organisasi == 'BPM') {
                     $isMatch = ($ttd['organisasi'] == 'BPM' || $ttd['organisasi'] == 'BEM' || stripos($ttd['organisasi'], 'HIMA') !== false || stripos($ttd['organisasi'], 'UKM') !== false) && $ttd['code_jabatan'] == 5;
                 }
             } else if ($jabatanId == 4) {
@@ -342,7 +371,7 @@ class ProposalController extends Controller
                 $ttd = array_fill_keys(array_keys($ttd), null);
             }
         }
-    
+
         return $ttdList;
     }
 
@@ -425,7 +454,7 @@ class ProposalController extends Controller
             'file_title' => 'Pemberitahuan Proposal Pengajuan Masuk',
             'approval_date' => now()->format('Y-m-d'),
         ];
-        
+
 
         // Memanggil fungsi sendPdfEmail dengan parameter yang benar
         $sendEmailSuccess = $this->sendPdfEmail($user->email, $pdfData, $details);

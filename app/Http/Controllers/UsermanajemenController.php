@@ -17,17 +17,18 @@ class UsermanajemenController extends Controller
 {
     public function store(Request $request)
     {
+
         // Validasi input
         $validatedData = $request->validate([
-            'name' => 'required|max:30',
-            'username' => 'required|max:15|unique:users,username',
-            'email' => 'required',
-            'password' => 'required',
-            'organization' => 'required',
+            'name' => 'required|string|max:30',
+            'username' => 'required|string|max:15|unique:users,username',
+            'email' => 'required|string|max:50',
+            'password' => 'required|string|max:100',
+            'organization' => 'required|string|max:30',
             'jabatan_id' => 'required|exists:jabatan,jabatan_id',
-            'role' => 'required',
-            'code_id' => 'required',
-            'number_id' => 'required',
+            'role' => 'required|integer|digits:1',
+            'code_id' => 'required|string|max:5',
+            'number_id' => 'required|string|max:25',
             'ttd' => 'file|mimes:jpeg,png,jpg,gif'
         ]);
 
@@ -57,10 +58,14 @@ class UsermanajemenController extends Controller
             $validatedData['ttd'] = $ttdFilename;
         }
 
-        // Simpan data ke database
-        User::create($validatedData);
+        try {
+            // Simpan data ke database
+            User::create($validatedData);
 
-        return redirect('/usermanajemen')->with('success', 'Pengguna berhasil ditambahkan.');
+            return redirect('/usermanajemen')->with('success', 'Pengguna berhasil ditambahkan.');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Gagal Menyimpan Data Pengguna. Silahkan Coba Lagi');
+        }
     }
 
 
@@ -89,16 +94,27 @@ class UsermanajemenController extends Controller
     function update(Request $request, User $user)
     {
         $validatedData = $request->validate([
-            'name' => "required|max:35",
-            'username' => "required|max:15",
-            'email' => 'required',
-            'organization' => "required",
-            'jabatan_id' => "required|exists:jabatan,jabatan_id",
-            'role' => "required",
-            'code_id' => 'required', // Menambahkan validasi untuk jenis_id
-            'number_id' => 'required', // Menambahkan validasi untuk nomer_id
-            'ttd' => 'file|mimes:jpeg,png,jpg,gif|max:2048'
+            'name' => 'required|string|max:30',
+            'username' => 'required|string|max:15|unique:users,username',
+            'email' => 'required|string|max:50',
+            'organization' => 'required|string|max:30',
+            'jabatan_id' => 'required|exists:jabatan,jabatan_id',
+            'role' => 'required|integer|digits:1',
+            'code_id' => 'required|string|max:5',
+            'number_id' => 'required|string|max:25',
+            'ttd' => 'file|mimes:jpeg,png,jpg,gif'
         ]);
+
+        if ($request->hasFile('ttd')) {
+            $ttdFile = $request->file('ttd');
+            $maxSize = 2048; // 2MB in KB
+
+            if ($ttdFile->getSize() > $maxSize * 1024) {
+                // Redirect kembali dengan session flash untuk error message
+                return redirect()->back()
+                    ->withInput()
+                    ->with('error', 'File tanda tangan tidak boleh lebih dari 2 MB.');
+            }}
 
         // Cek dan buat folder ttd jika belum ada
         $ttdPath = public_path('ttd');
@@ -122,14 +138,24 @@ class UsermanajemenController extends Controller
         }
 
         // Update user dengan data yang divalidasi
-        $user->update($validatedData);
-        return redirect('/usermanajemen');
+        try {
+            // Update user dengan data yang divalidasi
+            $user->update($validatedData);
+            return redirect('/usermanajemen')->with('success', 'Data Pengguna berhasil diupdate.');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Gagal Mengubah Data Pengguna. Silahkan Coba Lagi');
+        }
     }
 
     function delete($id)
     {
+        try {
         $user = User::find($id);
         $user->delete();
-        return redirect('/usermanajemen');
+        return redirect('/usermanajemen')->with('success', 'Data Akun berhasil dihapus.');
+        } catch (\Exception $e) {
+            // Handle error if any exception occurs
+            return redirect()->back()->with('error', 'Gagal menghapus data Akun. Silakan coba lagi.');
+        }
     }
 }

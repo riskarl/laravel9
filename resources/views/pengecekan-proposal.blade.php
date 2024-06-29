@@ -25,10 +25,10 @@
       <!-- Simple Tables -->
       <div class="card">
         <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-          <h6 class="m-0 font-weight-bold text-primary">Pengecekan Proposal</h6>
+          <h4 class="m-0 font-weight-bold text-primary">Pengecekan Proposal</h4>
         </div>
         <div class="table-responsive">
-          <table class="table align-items-center table-flush">
+          <table id="myDataTable" class="table align-items-center table-flush">
             <thead class="thead-light">
               <tr>
                 <th>No</th>
@@ -115,9 +115,9 @@
                     @endif
                     @else
                     @if($proker->proposal->status_flow != 9)
-                    Diproses
+                    <span class="badge badge-warning">Diproses</span>
                     @else
-                    Selesai
+                    <span class="badge badge-success">Selesai</span>
                     @endif
                     @endif
                 </td>
