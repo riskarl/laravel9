@@ -38,14 +38,14 @@ class HomeController extends Controller
         $jabatan = $currentUser['jabatan'];
         $organisasiUser = $currentUser['organisasi'];
 
-        // Filter berdasarkan organisasi user yang sedang login
-        $totalproposal = Proposal::whereHas('proker', function ($query) use ($organisasiUser) {
-            $query->where('id_proker', $organisasiUser);
+        // Filter berdasarkan nama_organisasi dari organisasi user yang sedang login
+        $totalproposal = Proposal::whereHas('proker.organisasi', function ($query) use ($organisasiUser) {
+            $query->where('nama_organisasi', $organisasiUser);
         })->count();
 
-        // Menghitung jumlah LPJ berdasarkan id_proker di Proker
-        $totallpj = LPJ::whereHas('proker', function ($query) use ($organisasiUser) {
-            $query->where('id_proker', $organisasiUser);
+        // Menghitung jumlah LPJ berdasarkan nama_organisasi di Organisasi
+        $totallpj = LPJ::whereHas('proker.organisasi', function ($query) use ($organisasiUser) {
+            $query->where('nama_organisasi', $organisasiUser);
         })->count();
 
         $totalproker = Proker::whereHas('organisasi', function ($query) use ($organisasiUser) {
