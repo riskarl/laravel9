@@ -120,10 +120,14 @@
           <div class="form-group">
             <label for="organisasiDropdown">Pilih Organisasi</label>
             <select class="form-control" id="organisasiDropdown" name="nama_organisasi">
+              @if (!empty($uniqueOrganisasi))
               <option value="semua">Semua</option>
               @foreach ($uniqueOrganisasi as $namaOrganisasi)
                 <option value="{{ $namaOrganisasi }}">{{ $namaOrganisasi }}</option>
               @endforeach
+              @else
+              <option value="semua" disabled>Tidak Ada Organisasi</option>
+              @endif
             </select>
           </div>
       </div>
