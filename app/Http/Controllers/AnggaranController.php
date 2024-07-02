@@ -129,29 +129,32 @@ class AnggaranController extends Controller
 
             $lpjData = $query->get();
 
-            // Variabel untuk menyimpan total sisa anggaran
-            $totalSisaAnggaran = $totalAnggaran;
+        // Variabel untuk menyimpan total sisa anggaran
+        $totalSisaAnggaran = $totalAnggaran;
 
-            // Memproses data untuk tampilan
-            $data = $lpjData->map(function ($lpj) use (&$totalSisaAnggaran) {
-                // Menghitung sisa anggaran untuk organisasi tersebut
-                $totalAnggaranOrganisasi = $lpj->proker->organisasi->anggarans->sum('total_anggaran');
-                $sisaAnggaran = $totalAnggaranOrganisasi - $lpj->dana_disetujui;
+        // Variabel untuk menyimpan data hasil
+        $data = [];
 
-                // Mengurangi total sisa anggaran dengan dana disetujui
-                $currentTotalSisaAnggaran = $totalSisaAnggaran;
-                $totalSisaAnggaran -= $lpj->dana_disetujui;
+        // Proses data untuk tampilan dengan perulangan eksplisit
+        foreach ($lpjData as $lpj) {
+            // Menghitung sisa anggaran untuk organisasi tersebut
+            $totalAnggaranOrganisasi = $lpj->proker->organisasi->anggarans->sum('total_anggaran');
+            $sisaAnggaran = $totalAnggaranOrganisasi - $lpj->dana_disetujui;
 
-                return [
-                    'id' => $lpj->id,
-                    'nama_organisasi' => $lpj->proker->organisasi->nama_organisasi,
-                    'nama_proker' => $lpj->proker->nama_proker,
-                    'dana_diajukan' => $lpj->proker->dana_diajukan,
-                    'dana_disetujui' => $lpj->dana_disetujui,
-                    'sisa_anggaran' => $sisaAnggaran, // Sisa anggaran untuk organisasi tersebut
-                    'total_sisa_anggaran' => $currentTotalSisaAnggaran, // Total sisa anggaran setelah pengurangan bertahap
-                ];
-            });
+            // Menghitung total sisa anggaran yang diperbarui setelah pengurangan bertahap
+            $data[] = [
+                'id' => $lpj->id,
+                'nama_organisasi' => $lpj->proker->organisasi->nama_organisasi,
+                'nama_proker' => $lpj->proker->nama_proker,
+                'dana_diajukan' => $lpj->proker->dana_diajukan,
+                'dana_disetujui' => $lpj->dana_disetujui,
+                'sisa_anggaran' => $sisaAnggaran, // Sisa anggaran untuk organisasi tersebut
+                'total_sisa_anggaran' => $totalSisaAnggaran, // Total sisa anggaran sebelum pengurangan bertahap
+            ];
+
+            // Mengurangi total sisa anggaran dengan dana disetujui
+            $totalSisaAnggaran -= $lpj->dana_disetujui;
+        }
             
 
         // Filter data berdasarkan organisasi jika bukan admin
