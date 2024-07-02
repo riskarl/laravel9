@@ -127,29 +127,30 @@ class AnggaranController extends Controller
                 $q->whereBetween('created_at', [$tglSetAnggaran, $endDate]);
             }); // Filter by created_at
 
-        $lpjData = $query->get();
+            $lpjData = $query->get();
 
-        // Variabel untuk menyimpan total sisa anggaran
-        $totalSisaAnggaran = $totalAnggaran;
-
-        // Memproses data untuk tampilan
-        $data = $lpjData->map(function ($lpj) use (&$totalSisaAnggaran) {
-            $totalAnggaranOrganisasi = $lpj->proker->organisasi->anggarans->sum('total_anggaran');
-            $sisaAnggaran = $totalAnggaranOrganisasi - $lpj->dana_disetujui;
-        
-            // Mengurangi total sisa anggaran dengan dana disetujui
-            $totalSisaAnggaran -= $lpj->dana_disetujui;
-        
-            return [
-                'id' => $lpj->id,
-                'nama_organisasi' => $lpj->proker->organisasi->nama_organisasi,
-                'nama_proker' => $lpj->proker->nama_proker,
-                'dana_diajukan' => $lpj->proker->dana_diajukan,
-                'dana_disetujui' => $lpj->dana_disetujui,
-                'sisa_anggaran' => $sisaAnggaran, // Sisa anggaran untuk organisasi tersebut
-                'total_sisa_anggaran' => $totalSisaAnggaran, // Total sisa anggaran setelah pengurangan bertahap
-            ];
-        });
+            // Variabel untuk menyimpan total sisa anggaran
+            $totalSisaAnggaran = $totalAnggaran;
+            
+            // Memproses data untuk tampilan
+            $data = $lpjData->map(function ($lpj) use (&$totalSisaAnggaran) {
+                // Mengurangi total sisa anggaran dengan dana disetujui
+                $totalSisaAnggaran -= $lpj->dana_disetujui;
+            
+                // Menghitung sisa anggaran untuk organisasi tersebut
+                $sisaAnggaran = $lpj->proker->organisasi->anggarans->sum('total_anggaran') - $lpj->dana_disetujui;
+            
+                return [
+                    'id' => $lpj->id,
+                    'nama_organisasi' => $lpj->proker->organisasi->nama_organisasi,
+                    'nama_proker' => $lpj->proker->nama_proker,
+                    'dana_diajukan' => $lpj->proker->dana_diajukan,
+                    'dana_disetujui' => $lpj->dana_disetujui,
+                    'sisa_anggaran' => $sisaAnggaran, // Sisa anggaran untuk organisasi tersebut
+                    'total_sisa_anggaran' => $totalSisaAnggaran, // Total sisa anggaran setelah pengurangan bertahap
+                ];
+            });
+            
 
         // Filter data berdasarkan organisasi jika bukan admin
         if ($jabatanId != 1) { // Asumsikan jabatan ID 1 adalah admin
