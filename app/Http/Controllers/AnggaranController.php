@@ -136,10 +136,10 @@ class AnggaranController extends Controller
         $data = $lpjData->map(function ($lpj) use (&$totalSisaAnggaran) {
             $totalAnggaranOrganisasi = $lpj->proker->organisasi->anggarans->sum('total_anggaran');
             $sisaAnggaran = $totalAnggaranOrganisasi - $lpj->dana_disetujui;
-
+        
             // Mengurangi total sisa anggaran dengan dana disetujui
             $totalSisaAnggaran -= $lpj->dana_disetujui;
-
+        
             return [
                 'id' => $lpj->id,
                 'nama_organisasi' => $lpj->proker->organisasi->nama_organisasi,
