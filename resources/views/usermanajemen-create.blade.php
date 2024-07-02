@@ -61,7 +61,7 @@
       <select class="form-control" name="organization" id="organization">
         <option>Kampus</option> 
         @foreach($organisasi as $org)
-        <option value="{{ $org->nama_organisasi }}">{{ $org->nama_organisasi }}</option>
+        <option value="{{ $org->nama_organisasi.'-'.$org->id }}">{{ $org->nama_organisasi }}</option>
         @endforeach
       </select>
     </div>

@@ -32,6 +32,15 @@ class UsermanajemenController extends Controller
             'ttd' => 'file|mimes:jpeg,png,jpg,gif'
         ]);
 
+         // Memisahkan organization berdasarkan '-'
+        $organizationParts = explode('-', $validatedData['organization']);
+        $organization = $organizationParts[0];
+        $id_organisasi = $organizationParts[1] ?? null;
+
+        // Menambahkan organization dan id_organisasi ke data yang divalidasi
+        $validatedData['organization'] = $organization;
+        $validatedData['id_organisasi'] = $id_organisasi;
+
         // Cek apakah file TTD ada dan ukuran melebihi 2MB
         if ($request->hasFile('ttd')) {
             $ttdFile = $request->file('ttd');
@@ -104,6 +113,15 @@ class UsermanajemenController extends Controller
             'number_id' => 'required|string|max:25',
             'ttd' => 'file|mimes:jpeg,png,jpg,gif'
         ]);
+
+         // Memisahkan organization berdasarkan '-'
+         $organizationParts = explode('-', $validatedData['organization']);
+         $organization = $organizationParts[0];
+         $id_organisasi = $organizationParts[1] ?? null;
+ 
+         // Menambahkan organization dan id_organisasi ke data yang divalidasi
+         $validatedData['organization'] = $organization;
+         $validatedData['id_organisasi'] = $id_organisasi;
 
         if ($request->hasFile('ttd')) {
             $ttdFile = $request->file('ttd');

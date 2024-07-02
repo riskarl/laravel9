@@ -23,6 +23,7 @@ class User extends Authenticatable
         'password',
         'role',
         'organization',
+        'id_organisasi',
         'status',
         'jabatan_id',
         'ttd',
