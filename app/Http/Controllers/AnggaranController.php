@@ -119,59 +119,67 @@ class AnggaranController extends Controller
             ]);
         }
 
-        // Query data LPJ yang hanya berada dalam rentang waktu yang berjalan
+       // Query data LPJ yang hanya berada dalam rentang waktu yang berjalan
         $query = LPJ::with(['proker.organisasi'])
             ->whereNotNull('file_lpj')
             ->whereNotNull('dana_disetujui')
             ->whereHas('proker', function ($q) use ($tglSetAnggaran, $endDate) {
                 $q->whereBetween('created_at', [$tglSetAnggaran, $endDate]);
-            }); // Filter by created_at
+        }); // Filter by created_at
 
-            $lpjData = $query->get();
+        $lpjData = $query->get();
 
-            // Variabel untuk menyimpan total sisa anggaran
-            $totalSisaAnggaran = $totalAnggaran;
-            
-            // Variabel untuk menyimpan data hasil
-            $data = [];
-            
-            // Proses data untuk tampilan dengan perulangan eksplisit
-            foreach ($lpjData as $lpj) {
-                // Menghitung sisa anggaran untuk organisasi tersebut
-                $totalAnggaranOrganisasi = $lpj->proker->organisasi->anggarans->sum('total_anggaran');
-                $sisaAnggaran = $totalAnggaranOrganisasi - $lpj->dana_disetujui;
-            
-                // Menghitung total sisa anggaran yang diperbarui setelah pengurangan bertahap
-                $data[] = [
-                    'id' => $lpj->id,
-                    'nama_organisasi' => $lpj->proker->organisasi->nama_organisasi,
-                    'nama_proker' => $lpj->proker->nama_proker,
-                    'dana_diajukan' => $lpj->proker->dana_diajukan,
-                    'dana_disetujui' => $lpj->dana_disetujui,
-                    'sisa_anggaran' => $sisaAnggaran, // Sisa anggaran untuk organisasi tersebut
-                    'total_sisa_anggaran' => $totalSisaAnggaran, // Total sisa anggaran sebelum pengurangan bertahap
-                ];
-            
-                // Mengurangi total sisa anggaran dengan dana disetujui
-                $totalSisaAnggaran -= $lpj->dana_disetujui;
-            }
-            
-            if ($jabatanId != 1) { 
-                $dataFiltered = array_filter($data, function ($item) use ($org) {
-                    return $item['nama_organisasi'] == $org;
-                });
-            } else {
-                $dataFiltered = $data;
+        // Variabel untuk menyimpan total sisa anggaran dan sisa anggaran per organisasi
+        $totalSisaAnggaran = $totalAnggaran;
+        $sisaAnggaranOrganisasi = [];
+
+        // Variabel untuk menyimpan data hasil
+        $data = [];
+
+        // Proses data untuk tampilan dengan perulangan eksplisit
+        foreach ($lpjData as $lpj) {
+            $organisasi = $lpj->proker->organisasi->nama_organisasi;
+
+            // Menghitung sisa anggaran untuk organisasi tersebut jika belum ada dalam array
+            if (!isset($sisaAnggaranOrganisasi[$organisasi])) {
+                $sisaAnggaranOrganisasi[$organisasi] = $lpj->proker->organisasi->anggarans->sum('total_anggaran');
             }
 
-            $uniqueOrganisasi = array_unique(array_column($dataFiltered, 'nama_organisasi'));
+            // Mengurangi sisa anggaran organisasi dengan dana disetujui
+            $sisaAnggaranOrganisasi[$organisasi] -= $lpj->dana_disetujui;
 
+            // Menghitung total sisa anggaran yang diperbarui setelah pengurangan bertahap
+            $data[] = [
+                'id' => $lpj->id,
+                'nama_organisasi' => $organisasi,
+                'nama_proker' => $lpj->proker->nama_proker,
+                'dana_diajukan' => $lpj->proker->dana_diajukan,
+                'dana_disetujui' => $lpj->dana_disetujui,
+                'sisa_anggaran' => $sisaAnggaranOrganisasi[$organisasi], // Sisa anggaran untuk organisasi tersebut
+                'total_sisa_anggaran' => $totalSisaAnggaran, // Total sisa anggaran sebelum pengurangan bertahap
+            ];
+
+            // Mengurangi total sisa anggaran dengan dana disetujui
+            $totalSisaAnggaran -= $lpj->dana_disetujui;
+        }
+
+        if ($jabatanId != 1) { 
+            $dataFiltered = array_filter($data, function ($item) use ($org) {
+            return $item['nama_organisasi'] == $org;
+        });
+        } else {
+            $dataFiltered = $data;
+        }
+
+        // Mengambil nama organisasi unik
+        $uniqueOrganisasi = array_unique(array_column($dataFiltered, 'nama_organisasi'));
 
         return view('anggaran-organisasi', [
             'anggaran' => $dataFiltered,
             'totalAnggaran' => $TA,
             'uniqueOrganisasi' => $uniqueOrganisasi,
         ]);
+
     }
 
     public function store(Request $request)
