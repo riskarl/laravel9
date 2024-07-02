@@ -156,14 +156,15 @@ class AnggaranController extends Controller
                 $totalSisaAnggaran -= $lpj->dana_disetujui;
             }
             
-            // Filter data berdasarkan organisasi jika bukan admin
-            if ($jabatanId != 1) { // Asumsikan jabatan ID 1 adalah admin
+            if ($jabatanId != 1) { 
                 $dataFiltered = array_filter($data, function ($item) use ($org) {
                     return $item['nama_organisasi'] == $org;
                 });
             } else {
                 $dataFiltered = $data;
             }
+
+            var_dump($dataFiltered);die;
 
         return view('anggaran-organisasi', [
             'anggaran' => $dataFiltered,
