@@ -129,42 +129,41 @@ class AnggaranController extends Controller
 
             $lpjData = $query->get();
 
-        // Variabel untuk menyimpan total sisa anggaran
-        $totalSisaAnggaran = $totalAnggaran;
-
-        // Variabel untuk menyimpan data hasil
-        $data = [];
-
-        // Proses data untuk tampilan dengan perulangan eksplisit
-        foreach ($lpjData as $lpj) {
-            // Menghitung sisa anggaran untuk organisasi tersebut
-            $totalAnggaranOrganisasi = $lpj->proker->organisasi->anggarans->sum('total_anggaran');
-            $sisaAnggaran = $totalAnggaranOrganisasi - $lpj->dana_disetujui;
-
-            // Menghitung total sisa anggaran yang diperbarui setelah pengurangan bertahap
-            $data[] = [
-                'id' => $lpj->id,
-                'nama_organisasi' => $lpj->proker->organisasi->nama_organisasi,
-                'nama_proker' => $lpj->proker->nama_proker,
-                'dana_diajukan' => $lpj->proker->dana_diajukan,
-                'dana_disetujui' => $lpj->dana_disetujui,
-                'sisa_anggaran' => $sisaAnggaran, // Sisa anggaran untuk organisasi tersebut
-                'total_sisa_anggaran' => $totalSisaAnggaran, // Total sisa anggaran sebelum pengurangan bertahap
-            ];
-
-            // Mengurangi total sisa anggaran dengan dana disetujui
-            $totalSisaAnggaran -= $lpj->dana_disetujui;
-        }
+            // Variabel untuk menyimpan total sisa anggaran
+            $totalSisaAnggaran = $totalAnggaran;
             
-
-        // Filter data berdasarkan organisasi jika bukan admin
-        if ($jabatanId != 1) { // Asumsikan jabatan ID 1 adalah admin
-            $dataFiltered = $data->filter(function ($item) use ($org) {
-                return $item['nama_organisasi'] == $org;
-            });
-        } else {
-            $dataFiltered = $data;
-        }
+            // Variabel untuk menyimpan data hasil
+            $data = [];
+            
+            // Proses data untuk tampilan dengan perulangan eksplisit
+            foreach ($lpjData as $lpj) {
+                // Menghitung sisa anggaran untuk organisasi tersebut
+                $totalAnggaranOrganisasi = $lpj->proker->organisasi->anggarans->sum('total_anggaran');
+                $sisaAnggaran = $totalAnggaranOrganisasi - $lpj->dana_disetujui;
+            
+                // Menghitung total sisa anggaran yang diperbarui setelah pengurangan bertahap
+                $data[] = [
+                    'id' => $lpj->id,
+                    'nama_organisasi' => $lpj->proker->organisasi->nama_organisasi,
+                    'nama_proker' => $lpj->proker->nama_proker,
+                    'dana_diajukan' => $lpj->proker->dana_diajukan,
+                    'dana_disetujui' => $lpj->dana_disetujui,
+                    'sisa_anggaran' => $sisaAnggaran, // Sisa anggaran untuk organisasi tersebut
+                    'total_sisa_anggaran' => $totalSisaAnggaran, // Total sisa anggaran sebelum pengurangan bertahap
+                ];
+            
+                // Mengurangi total sisa anggaran dengan dana disetujui
+                $totalSisaAnggaran -= $lpj->dana_disetujui;
+            }
+            
+            // Filter data berdasarkan organisasi jika bukan admin
+            if ($jabatanId != 1) { // Asumsikan jabatan ID 1 adalah admin
+                $dataFiltered = array_filter($data, function ($item) use ($org) {
+                    return $item['nama_organisasi'] == $org;
+                });
+            } else {
+                $dataFiltered = $data;
+            }
 
         return view('anggaran-organisasi', [
             'anggaran' => $dataFiltered,
