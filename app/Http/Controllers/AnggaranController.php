@@ -131,15 +131,17 @@ class AnggaranController extends Controller
 
             // Variabel untuk menyimpan total sisa anggaran
             $totalSisaAnggaran = $totalAnggaran;
-            
+
             // Memproses data untuk tampilan
             $data = $lpjData->map(function ($lpj) use (&$totalSisaAnggaran) {
-                // Mengurangi total sisa anggaran dengan dana disetujui
-                $totalSisaAnggaran -= $lpj->dana_disetujui;
-            
                 // Menghitung sisa anggaran untuk organisasi tersebut
-                $sisaAnggaran = $lpj->proker->organisasi->anggarans->sum('total_anggaran') - $lpj->dana_disetujui;
-            
+                $totalAnggaranOrganisasi = $lpj->proker->organisasi->anggarans->sum('total_anggaran');
+                $sisaAnggaran = $totalAnggaranOrganisasi - $lpj->dana_disetujui;
+
+                // Mengurangi total sisa anggaran dengan dana disetujui
+                $currentTotalSisaAnggaran = $totalSisaAnggaran;
+                $totalSisaAnggaran -= $lpj->dana_disetujui;
+
                 return [
                     'id' => $lpj->id,
                     'nama_organisasi' => $lpj->proker->organisasi->nama_organisasi,
@@ -147,7 +149,7 @@ class AnggaranController extends Controller
                     'dana_diajukan' => $lpj->proker->dana_diajukan,
                     'dana_disetujui' => $lpj->dana_disetujui,
                     'sisa_anggaran' => $sisaAnggaran, // Sisa anggaran untuk organisasi tersebut
-                    'total_sisa_anggaran' => $totalSisaAnggaran, // Total sisa anggaran setelah pengurangan bertahap
+                    'total_sisa_anggaran' => $currentTotalSisaAnggaran, // Total sisa anggaran setelah pengurangan bertahap
                 ];
             });
             
