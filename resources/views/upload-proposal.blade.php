@@ -40,11 +40,12 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach ($listproker as $index => $proker)
+                        <?php $index = 1; // Mulai dari 1 atau nomor awal yang diinginkan ?>
+                        @foreach ($listproker as $proker)
                             {{-- Hanya tampilkan jika organisasi cocok dengan orguser --}}
                             @if (($proker->organisasi && $proker->organisasi->nama_organisasi == $orguser))
                                 <tr>
-                                    <td>{{ $index + 1 }}</td>
+                                    <td>{{ $index }}</td>
                                     <td>{{ $proker->organisasi ? $proker->organisasi->nama_organisasi : 'Tidak ada organisasi' }}</td>
                                     <td>{{ $proker->nama_proker }}</td>
                                     <td> 
@@ -80,6 +81,7 @@
                                         @endif
                                     </td>
                                 </tr>
+                                <?php $index++; // Increment index ?>
                             @endif
                         @endforeach
                     </tbody>

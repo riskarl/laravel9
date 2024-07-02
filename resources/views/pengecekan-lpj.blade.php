@@ -62,7 +62,7 @@
                     <td>{{ $proker->nama_proker }}</td>
                     <td>{{ $proker->organisasi->nama_organisasi }}</td>
                     <td>
-                      @if ($proker->lpj)
+                      @if ($proker->lpj && $proker->lpj->file_lpj)
                           <a href="{{ asset('lpj/' . $proker->lpj->file_lpj) }}" target="_blank">
                               {{ $proker->lpj->file_lpj }}</a>
                       @else
@@ -70,7 +70,7 @@
                       @endif
                   </td>
                   <td>
-                    @if ($proker->lpj)
+                    @if ($proker->lpj && $proker->lpj->pengesahan)
                         <a href="{{ asset('lpj/' . $proker->lpj->pengesahan) }}" target="_blank">
                             {{ $proker->lpj->pengesahan }}</a>
                     @else

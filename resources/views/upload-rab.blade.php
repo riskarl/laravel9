@@ -29,7 +29,7 @@
           <h4 class="m-0 font-weight-bold text-primary">Manajemen Rencana Anggaran Biaya</h4>
         </div>
         <div class="table-responsive">
-          <table id="" class="table align-items-center table-flush">
+          <table id="myDataTable" class="table align-items-center table-flush">
             <thead class="thead-light">
               <tr>
                 <th>NO</th>
@@ -41,10 +41,11 @@
               </tr>
             </thead>
             <tbody>
-              @foreach ($listproker as $index => $proker)
+              <?php $index = 1; // Mulai dari 1 atau nomor awal yang diinginkan ?>
+              @foreach ($listproker as $proker)
+              @if (($proker->organisasi && $proker->organisasi->nama_organisasi == $orguser))
               <tr>
-                @if (($proker->organisasi && $proker->organisasi->nama_organisasi == $orguser))
-                  <td>{{ $index + 1 }}</td>
+                  <td>{{ $index }}</td>
                   <td>{{ $proker->organisasi ? $proker->organisasi->nama_organisasi : 'Tidak ada organisasi' }}</td>
                   <td>{{ $proker->nama_proker }}</td>
                
@@ -95,6 +96,7 @@
                     </div>
                 </td>
                 </tr>
+                <?php $index++; // Increment index ?>
                 @endif
               @endforeach
           </tbody>

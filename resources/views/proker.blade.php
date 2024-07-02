@@ -57,17 +57,18 @@
               </tr>
             </thead>
             <tbody>
-              @foreach ($listproker as $index => $proker)
+              <?php $index = 1; // Mulai dari 1 atau nomor awal yang diinginkan ?>
+              @foreach ($listproker as $proker)
                 @if (($proker->organisasi && $proker->organisasi->nama_organisasi == $orguser))
                       <tr>
-                          <td>{{ $index + 1 }}</td>
+                          <td>{{ $index }}</td>
                           <td>{{ $proker->organisasi ? $proker->organisasi->nama_organisasi : 'Tidak ada organisasi' }}</td>
                           <td>{{ $proker->nama_proker }}</td>
                           <td>{{ $proker->nama_ketupel }}</td>
                           <td>{{ $proker->nim_ketupel }}</td>
                           <td>{{ $proker->tanggal }}</td>
                           <td>{{ $proker->tempat }}</td>
-                          <td>{{ $proker->dana_diajukan }}</td>
+                          <td>{{ number_format($proker->dana_diajukan, 0, ',', '.') }}</td>
                           <td class="d-flex">
                             <a href="/proker/{{ $proker->id }}" class="btn btn-warning mr-2">Edit</a>
                             <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteModal{{ $proker->id }}">Hapus</button>
@@ -97,6 +98,7 @@
                             </div>
                           </td>                
                       </tr>
+                      <?php $index++; // Increment index ?>
                   @endif
               @endforeach
           </tbody>          

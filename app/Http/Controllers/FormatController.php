@@ -15,42 +15,42 @@ class FormatController extends Controller
     {
         $format = Format::all();
         // Ambil data SetAnggaran terbaru
-    $setAnggaran = SetAnggaran::orderBy('updated_at', 'desc')->first();
-    if (!$setAnggaran) {
-        session()->flash('error', 'Tidak ada data anggaran yang ditemukan.');
-        return view('format', [
-            'format' => collect([]) // Koleksi kosong jika tidak ada data
-        ]);
-    }
+        $setAnggaran = SetAnggaran::orderBy('updated_at', 'desc')->first();
+        if (!$setAnggaran) {
+            session()->flash('error', 'Tidak ada data anggaran yang ditemukan.');
+            return view('format', [
+                'format' => collect([]) // Koleksi kosong jika tidak ada data
+            ]);
+        }
 
-    // Ambil tanggal mulai periode dari data SetAnggaran
-    $tglSetAnggaran = $setAnggaran->tgl_mulai_periode;
-    if (!$tglSetAnggaran) {
-        session()->flash('error', 'Tanggal mulai periode tidak ditemukan pada data anggaran.');
-        return view('format', [
-            'format' => collect([]) // Koleksi kosong jika tidak ada data
-        ]);
-    }
-    $periode = $setAnggaran->jenis_periode; // 'bulan' atau 'tahun'
-    $total_periode = $setAnggaran->total_periode;
+        // Ambil tanggal mulai periode dari data SetAnggaran
+        $tglSetAnggaran = $setAnggaran->tgl_mulai_periode;
+        if (!$tglSetAnggaran) {
+            session()->flash('error', 'Tanggal mulai periode tidak ditemukan pada data anggaran.');
+            return view('format', [
+                'format' => collect([]) // Koleksi kosong jika tidak ada data
+            ]);
+        }
+        $periode = $setAnggaran->jenis_periode; // 'bulan' atau 'tahun'
+        $total_periode = $setAnggaran->total_periode;
 
-    // Menggunakan Carbon untuk mengatur tanggal akhir periode
-    $endDate = $periode == 'bulan' 
-        ? Carbon::parse($tglSetAnggaran)->addMonths($total_periode)
-        : Carbon::parse($tglSetAnggaran)->addYears($total_periode);
+        // Menggunakan Carbon untuk mengatur tanggal akhir periode
+        $endDate = $periode == 'bulan'
+            ? Carbon::parse($tglSetAnggaran)->addMonths($total_periode)
+            : Carbon::parse($tglSetAnggaran)->addYears($total_periode);
 
-    // Tanggal dan waktu sekarang
-    $currentDate = Carbon::now();
-    // Memastikan kita berada dalam rentang periode yang sesuai (>= tanggal mulai dan <= tanggal akhir)
-    if ($currentDate->lt(Carbon::parse($tglSetAnggaran)) || $currentDate->gt($endDate)) {
-        session()->flash('error', 'Tidak ada data format yang berlaku untuk periode ini.');
-        return view('format', [
-            'format' => collect([]) // Koleksi kosong jika tidak ada data valid dalam rentang periode
-        ]);
-    }
+        // Tanggal dan waktu sekarang
+        $currentDate = Carbon::now();
+        // Memastikan kita berada dalam rentang periode yang sesuai (>= tanggal mulai dan <= tanggal akhir)
+        if ($currentDate->lt(Carbon::parse($tglSetAnggaran)) || $currentDate->gt($endDate)) {
+            session()->flash('error', 'Tidak ada data format yang berlaku untuk periode ini.');
+            return view('format', [
+                'format' => collect([]) // Koleksi kosong jika tidak ada data valid dalam rentang periode
+            ]);
+        }
 
-    // Filter data Format yang berada dalam rentang periode aktif
-    $format = Format::whereBetween('created_at', [$tglSetAnggaran, $endDate])->get();
+        // Filter data Format yang berada dalam rentang periode aktif
+        $format = Format::whereBetween('created_at', [$tglSetAnggaran, $endDate])->get();
 
         // Mengirim data pengguna ke view 'lihat-proposal'
         return view('format', ['format' => $format]);
@@ -101,8 +101,8 @@ class FormatController extends Controller
         $total_periode = $setAnggaran->total_periode;
 
         // Menggunakan Carbon untuk mengatur tanggal akhir periode
-        $endDate = $periode == 'bulan' 
-            ? Carbon::parse($tglSetAnggaran)->addMonths($total_periode) 
+        $endDate = $periode == 'bulan'
+            ? Carbon::parse($tglSetAnggaran)->addMonths($total_periode)
             : Carbon::parse($tglSetAnggaran)->addYears($total_periode);
 
         // Tanggal dan waktu sekarang
@@ -114,13 +114,13 @@ class FormatController extends Controller
         }
 
         try {
-        // Menyimpan data ke dalam database
-        Format::create([
-            'jenis_format' => $validatedData['jenis_format'],
-            'file_format' => $filename,
-        ]);
+            // Menyimpan data ke dalam database
+            Format::create([
+                'jenis_format' => $validatedData['jenis_format'],
+                'file_format' => $filename,
+            ]);
 
-        return redirect('/file-format')->with('success', 'Format berhasil ditambahkan!');
+            return redirect('/file-format')->with('success', 'Format berhasil ditambahkan!');
         } catch (\Exception $e) {
             return redirect()->back()->with('error', 'Gagal Menyimpan Data Format. Silahkan Coba Lagi');
         }
@@ -181,8 +181,8 @@ class FormatController extends Controller
         $total_periode = $setAnggaran->total_periode;
 
         // Menggunakan Carbon untuk mengatur tanggal akhir periode
-        $endDate = $periode == 'bulan' 
-            ? Carbon::parse($tglSetAnggaran)->addMonths($total_periode) 
+        $endDate = $periode == 'bulan'
+            ? Carbon::parse($tglSetAnggaran)->addMonths($total_periode)
             : Carbon::parse($tglSetAnggaran)->addYears($total_periode);
 
         // Tanggal dan waktu sekarang
@@ -194,11 +194,11 @@ class FormatController extends Controller
         }
 
         try {
-        // Perbarui kolom jenis_format
-        $format->jenis_format = $validatedData['jenis_format'];
-        $format->save();
+            // Perbarui kolom jenis_format
+            $format->jenis_format = $validatedData['jenis_format'];
+            $format->save();
 
-        return redirect('/file-format')->with('success', 'Format File berhasil diperbarui!');
+            return redirect('/file-format')->with('success', 'Format File berhasil diperbarui!');
         } catch (\Exception $e) {
             return redirect()->back()->with('error', 'Gagal Mengubah Data Format. Silahkan Coba Lagi');
         }
@@ -207,24 +207,24 @@ class FormatController extends Controller
     public function delete($id_format)
     {
         try {
-        // Temukan entri Format berdasarkan id
-        $format = Format::find($id_format);
+            // Temukan entri Format berdasarkan id
+            $format = Format::find($id_format);
 
-        if (!$format) {
-            return redirect()->back()->with('error', 'Data tidak ditemukan');
-        }
+            if (!$format) {
+                return redirect()->back()->with('error', 'Data tidak ditemukan');
+            }
 
-        $directory = public_path('format');
+            $directory = public_path('format');
 
-        // Hapus file jika ada
-        if ($format->file_format && File::exists($directory . '/' . $format->file_format)) {
-            File::delete($directory . '/' . $format->file_format);
-        }
+            // Hapus file jika ada
+            if ($format->file_format && File::exists($directory . '/' . $format->file_format)) {
+                File::delete($directory . '/' . $format->file_format);
+            }
 
-        // Hapus data dari database
-        $format->delete();
+            // Hapus data dari database
+            $format->delete();
 
-        return redirect('/file-format')->with('success', 'Format berhasil dihapus!');
+            return redirect('/file-format')->with('success', 'Format berhasil dihapus!');
         } catch (\Exception $e) {
             // Handle error if any exception occurs
             return redirect()->back()->with('error', 'Gagal menghapus data format. Silakan coba lagi.');

@@ -28,7 +28,7 @@
                 <h4 class="m-0 font-weight-bold text-primary">Manajemen Laporan Pertanggungjawaban</h4>
             </div>
             <div class="table-responsive">
-                <table id="" class="table align-items-center table-flush">
+                <table id="myDataTable" class="table align-items-center table-flush">
                     <thead class="thead-light">
                         <tr>
                             <th>No</th>
@@ -43,21 +43,22 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach ($listproker as $index => $proker)
+                        <?php $index = 1; // Mulai dari 1 atau nomor awal yang diinginkan ?>
+                        @foreach ($listproker as $proker)
+                        @if (($proker->organisasi && $proker->organisasi->nama_organisasi == $orguser))
                         <tr>
-                            @if (($proker->organisasi && $proker->organisasi->nama_organisasi == $orguser))
-                            <td>{{ $index + 1 }}</td>
+                            <td>{{ $index }}</td>
                             <td>{{ $proker->organisasi ? $proker->organisasi->nama_organisasi : 'Tidak ada organisasi' }}</td>
                             <td>{{ $proker->nama_proker }}</td>
                             <td>
-                                @if ($proker->lpj)
+                                @if ($proker->lpj && $proker->lpj->file_lpj)
                                     <a href="{{ asset('lpj/' . $proker->lpj->file_lpj) }}" target="_blank">{{ $proker->lpj->file_lpj }}</a>
                                 @else
                                     Tidak ada file
                                 @endif
                             </td>
                             <td>
-                                @if ($proker->lpj)
+                                @if ($proker->lpj && $proker->lpj->pengesahan)
                                     <a href="{{ asset('lpj/' . $proker->lpj->pengesahan) }}" target="_blank">{{ $proker->lpj->pengesahan }}</a>
                                 @else
                                     Tidak ada file
@@ -65,7 +66,8 @@
                             </td>
                             <td>{{ $proker->lpj ? $proker->lpj->status : 'Pending'}}</td>
                             <td>{{ $proker->lpj ? $proker->lpj->catatan : 'Tidak Ada Catatan' }}</td> 
-                            <td>{{ $proker->lpj ? $proker->lpj->dana_disetujui : 'Tidak ada dana' }}</td> 
+                            {{-- <td>{{ $proker->lpj ? $proker->lpj->dana_disetujui : 'Tidak ada dana' }}</td>  --}}
+                            <td>{{ $proker->lpj ? number_format($proker->lpj->dana_disetujui, 0, ',', '.') : 'Tidak ada dana' }}</td>
                             <td>
                                 @if ($proker->lpj)
                                     @if ($proker->lpj->status_flow_lpj == 0 || $proker->lpj->status_flow_lpj == 1)
@@ -81,7 +83,7 @@
                                     @elseif ($proker->lpj->status_flow_lpj == 9)
                                     <span class="badge badge-success">Selesai</span>
                                     @else
-                                        Diproses
+                                    <span class="badge badge-warning"> Diproses</span>
                                     @endif
                                 @else
                                 <div class="btn-group" role="group" aria-label="Basic example">
@@ -97,6 +99,7 @@
                             </td>
                             
                         </tr> 
+                        <?php $index++; // Increment index ?>
                         @endif
                         @endforeach
                     </tbody>
