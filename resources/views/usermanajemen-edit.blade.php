@@ -51,7 +51,7 @@
     <div class="form-group">
         <label for="exampleFormControlSelect1">Pilih Organisasi</label>
         <select class="form-control @error('organization') is-invalid @enderror" name="organization" id="organization">
-            <option {{ old('organization', $user->organization) == 'Kampus' ? 'selected' : '' }}>Kampus</option>
+            <option value="Kampus" {{ old('organization', $user->organization) == 'Kampus' ? 'selected' : '' }}>Kampus</option>
             @foreach($organisasi as $org)
             <option value="{{ $org->nama_organisasi.'-'.$org->id }}" {{ $org->nama_organisasi == old('organization', $user->organization) ? 'selected' : '' }}>
                 {{ $org->nama_organisasi }}

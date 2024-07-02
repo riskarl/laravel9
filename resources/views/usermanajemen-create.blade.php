@@ -59,7 +59,7 @@
     <div class="form-group">
       <label for="exampleFormControlSelect1">Pilih Organisasi</label>
       <select class="form-control" name="organization" id="organization">
-        <option>Kampus</option> 
+        <option value="Kampus">Kampus</option> 
         @foreach($organisasi as $org)
         <option value="{{ $org->nama_organisasi.'-'.$org->id }}">{{ $org->nama_organisasi }}</option>
         @endforeach
