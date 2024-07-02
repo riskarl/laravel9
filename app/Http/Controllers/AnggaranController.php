@@ -164,11 +164,13 @@ class AnggaranController extends Controller
                 $dataFiltered = $data;
             }
 
-            var_dump($dataFiltered);die;
+            $uniqueOrganisasi = array_unique(array_column($dataFiltered, 'nama_organisasi'));
+
 
         return view('anggaran-organisasi', [
             'anggaran' => $dataFiltered,
             'totalAnggaran' => $TA,
+            'uniqueOrganisasi' => $uniqueOrganisasi,
         ]);
     }
 

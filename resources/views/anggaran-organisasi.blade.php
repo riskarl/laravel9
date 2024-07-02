@@ -2,7 +2,6 @@
     $button = session('jabatan.code_jabatan') == 1 ? true : false;
     $content = session('jabatan.code_jabatan') == 1 ? 'konten' : 'content';
     $layout = session('jabatan.code_jabatan') == 1 ? 'layouts.pengecek-layout' : 'layouts.organisasi-layout';
-    $uniqueOrganisasi = $anggaran->pluck('nama_organisasi')->unique();
 @endphp
 
 @extends($layout)
@@ -52,7 +51,6 @@
               @foreach ($totalAnggaran as $idx => $i)
               <tr>
                   <td>{{ $idx + 1 }}</td>
-                  {{-- <td>{{ $i['total_anggaran'] }}</td> --}}
                   <td>{{ number_format($i['total_anggaran'], 0, ',', '.') }}</td>
                   <td>{{ $i['jenis_periode'] }}</td>
                   <td>{{ $i['total_periode'] }}</td>
@@ -93,12 +91,8 @@
                   <td>{{ number_format($item['dana_diajukan'], 0, ',', '.') }}</td>
                   <td>{{ number_format($item['dana_disetujui'], 0, ',', '.') }}</td>
                   <td>{{ number_format($item['sisa_anggaran'], 0, ',', '.') }}</td>
-                  {{-- <td>{{ $item['dana_diajukan'] }}</td>
-                  <td>{{ $item['dana_disetujui'] }}</td>
-                  <td>{{ $item['sisa_anggaran'] }}</td> --}}
                   @if ($button)
                   <td>{{ number_format($item['total_sisa_anggaran'], 0, ',', '.') }}</td>
-                  {{-- <td>{{ $item['total_sisa_anggaran'] }}</td> --}}
                   @endif
               </tr>
               @endforeach
@@ -188,6 +182,5 @@
     </div>
   </div>
 </div>
-
 
 @endsection
