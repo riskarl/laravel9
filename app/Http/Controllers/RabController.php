@@ -126,7 +126,10 @@ class RabController extends Controller
         }
 
         // Query data Proker yang berada dalam rentang waktu yang berjalan
-        $proker = Proker::with(['organisasi', 'rab', 'srpd'])
+        $proker = Proker::with(['proposal'])
+            ->whereHas('proposal', function ($query) {
+                $query->where('status_flow', 9);
+            })
             ->whereBetween('created_at', [$tglSetAnggaran, $endDate])
             ->get();
 

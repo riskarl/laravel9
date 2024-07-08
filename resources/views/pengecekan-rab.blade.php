@@ -43,6 +43,9 @@
                 @endif                
                 </td>
                 <td>
+                  {{-- @if(isset($proker->rab->file_srpd) && $proker->rab->file_srpd)
+                  <span class="badge badge-success">Selesai</span>
+                  @else --}}
                   <button type="button" class="btn btn-primary mr-2 btnModal" data-toggle="modal" data-target="#uploadModal{{ $proker->rab->id }}" data-id="{{ $proker->rab->id }}">
                     Upload File
                 </button>
@@ -69,7 +72,8 @@
                           </form>
                       </div>
                   </div>
-              </div>   
+              </div>  
+              {{-- @endif  --}}
                 </td>       
               </tr> 
               @endif
